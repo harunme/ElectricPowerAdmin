@@ -185,3 +185,4 @@ const option: ECOption = {
   }
 }
 </style>
+@/components/Charts/config

@@ -54,3 +54,4 @@ const option: ECOption = {
 <style scoped lang="scss">
 @import "./index.scss";
 </style>
+@/components/Charts/config

@@ -220,3 +220,4 @@ const option = {
   }
 }
 </style>
+@/components/Charts/config

@@ -129,3 +129,4 @@ const option: ECOption = {
   height: 100%;
 }
 </style>
+@/components/Charts/config
