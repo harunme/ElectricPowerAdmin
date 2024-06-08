@@ -1,18 +1,19 @@
 <template>
   <template v-for="subItem in menuList" :key="subItem.path">
-    <el-sub-menu v-if="subItem.children?.length" :index="subItem.path">
+    <el-sub-menu v-if="subItem.children?.length" :index="subItem.name">
       <template #title>
-        <el-icon v-if="subItem.meta.icon">
-          <component :is="subItem.meta.icon"></component>
-        </el-icon>
+        <img v-if="subItem.meta.icon" :src="subItem.meta.icon" />
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>
       <SubMenu :menu-list="subItem.children" />
     </el-sub-menu>
-    <el-menu-item v-else :index="subItem.path" @click="handleClickMenu(subItem)">
-      <el-icon v-if="subItem.meta.icon">
+    <el-menu-item v-else :index="subItem.name" @click="handleClickMenu(subItem)">
+      <!-- <el-icon v-if="subItem.meta.icon">
         <component :is="subItem.meta.icon"></component>
-      </el-icon>
+      </el-icon> -->
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAFCAYAAAERX61wAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFFJREFUeNpi+P//PwNAADGACIAAYgSzGBgSAAIIxHMAEf8BAghEGPyHAoAAYoBiBxDNAlQIVg0EiiDRAiD+AJIBCDCYsgv/EeAATELhPyYQAACJuVv/fFscNgAAAABJRU5ErkJggg=="
+      />
       <template #title>
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>

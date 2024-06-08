@@ -11,7 +11,6 @@
           </template>
         </el-tab-pane>
       </el-tabs>
-      <MoreButton />
     </div>
   </div>
 </template>
@@ -24,7 +23,6 @@ import { useGlobalStore } from "@/stores/modules/global";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useAuthStore } from "@/stores/modules/auth";
 import { TabsPaneContext, TabPaneName } from "element-plus";
-import MoreButton from "./components/MoreButton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -47,6 +45,7 @@ watch(
   () => {
     if (route.meta.isFull) return;
     tabsMenuValue.value = route.fullPath;
+    console.log(route.fullPath);
     const tabsParams = {
       icon: route.meta.icon as string,
       title: route.meta.title as string,
@@ -62,6 +61,7 @@ watch(
 
 // 初始化需要固定的 tabs
 const initTabs = () => {
+  console.log("initTabs");
   authStore.flatMenuListGet.forEach(item => {
     if (item.meta.isAffix && !item.meta.isHide && !item.meta.isFull) {
       const tabsParams = {

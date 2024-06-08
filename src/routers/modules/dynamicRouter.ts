@@ -38,11 +38,11 @@ export const initDynamicRouter = async () => {
       item.children && delete item.children;
       if (item.component && typeof item.component == "string") {
         item.component = modules["/src/views" + item.component + ".vue"];
-      }
-      if (item.meta.isFull) {
-        router.addRoute(item as unknown as RouteRecordRaw);
-      } else {
-        router.addRoute("layout", item as unknown as RouteRecordRaw);
+        if (item.meta.isFull) {
+          router.addRoute(item as unknown as RouteRecordRaw);
+        } else {
+          router.addRoute("layout", item as unknown as RouteRecordRaw);
+        }
       }
     });
   } catch (error) {
