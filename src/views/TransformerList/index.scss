@@ -1,4 +1,10 @@
-.full-iframe {
-  width: 100%;
+.page {
+  flex-direction: column;
+}
+.chart-box {
+  box-sizing: border-box;
+  width: 220px;
   height: 100%;
+  padding: 18px;
+  margin-right: 10px;
 }

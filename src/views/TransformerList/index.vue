@@ -1,8 +1,16 @@
 <template>
-  <div class="card content-box">变压器状态-简单</div>
+  <div class="flex-column">
+    <TransformerSelect />
+    <div class="main-box">
+      <div class="card chart-box"></div>
+      <div class="card table-box"></div>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts" name="bing"></script>
+<script setup lang="tsx" name="bing">
+import TransformerSelect from "@/components/TransformerSelect/index.vue";
+</script>
 
 <style scoped lang="scss">
 @import "./index.scss";
