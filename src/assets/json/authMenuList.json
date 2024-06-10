@@ -329,6 +329,137 @@
           }
         }
       ]
+    },
+    {
+      "name": "Setting",
+      "meta": {
+        "icon": "/src/assets/images/menu-setting.png",
+        "title": "系统设置",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      },
+      "children": [
+        {
+          "path": "/User",
+          "name": "User",
+          "component": "/User/index",
+          "meta": {
+            "title": "用户管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/SubGroup",
+          "name": "SubGroup",
+          "component": "/SubGroup/index",
+          "meta": {
+            "title": "区域管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/RoleGroup",
+          "name": "RoleGroup",
+          "component": "/RoleGroup/index",
+          "meta": {
+            "title": "组织机构管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/RoleSet",
+          "name": "RoleSet",
+          "component": "/RoleSet/index",
+          "meta": {
+            "title": "角色管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/Substation",
+          "name": "Substation",
+          "component": "/Substation/index",
+          "meta": {
+            "title": "变配电站管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/Meter",
+          "name": "Meter",
+          "component": "/Meter/index",
+          "meta": {
+            "title": "仪表",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/Transformer",
+          "name": "Transformer",
+          "component": "/Transformer/index",
+          "meta": {
+            "title": "变压器",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/MonitoringLoop",
+          "name": "MonitoringLoop",
+          "component": "/MonitoringLoop/index",
+          "meta": {
+            "title": "监测回路",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/Gateway",
+          "name": "Gateway",
+          "component": "/Gateway/index",
+          "meta": {
+            "title": "网关",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     }
   ],
   "msg": "成功"
