@@ -1,8 +1,8 @@
 <!-- 纵向布局 -->
 <template>
   <el-container class="layout">
-    <el-aside>
-      <div class="aside-box" :style="{ width: isCollapse ? '65px' : '210px' }">
+    <el-aside :width="isCollapse ? '65px' : '210px'">
+      <div class="aside-box">
         <div class="logo flx-center">
           <span v-show="!isCollapse" class="logo-text">{{ title }}</span>
         </div>

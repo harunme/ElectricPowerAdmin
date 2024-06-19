@@ -2,7 +2,7 @@
   <div class="flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card chart-box">
+      <div class="card left-box">
         <CirecleNumber label="高损耗运行" />
         <CirecleNumber label="正常运行" color="#e7a900" />
         <CirecleNumber label="经济运行" color="#12bb5d" />

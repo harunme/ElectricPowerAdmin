@@ -32,11 +32,14 @@
   padding: 20px;
   overflow-x: hidden;
   background-color: var(--el-bg-color);
-
-  // border: 1px solid var(--el-border-color-light);
   border-radius: 6px;
-
-  // box-shadow: 0 0 12px rgb(0 0 0 / 5%);
+}
+.left-box {
+  box-sizing: border-box;
+  width: 336px;
+  height: 100%;
+  padding: 18px;
+  margin-right: 10px;
 }
 
 /* ProTable 不需要 card 样式（在组件内使用 ProTable 会使用到） */
@@ -143,4 +146,10 @@
   .el-dialog__footer {
     padding: 15px 20px;
   }
+}
+.table-form-inline .el-input {
+  --el-input-width: 220px;
+}
+.table-form-inline .el-select {
+  --el-select-width: 220px;
 }

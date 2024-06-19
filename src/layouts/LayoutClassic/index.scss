@@ -38,6 +38,7 @@
     :deep(.el-aside) {
       width: auto;
       background-color: var(--el-menu-bg-color);
+      border: 1px solid;
       border-right: 1px solid var(--el-aside-border-color);
       .aside-box {
         display: flex;
