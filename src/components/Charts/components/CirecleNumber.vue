@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<CirecleNumberProps>(), {
   clear: both;
   text-align: center;
   cursor: pointer;
-  border: 2px solid;
+  border: 4px solid;
   border-radius: 50%;
   -ms-flex-item-align: center;
   .value {

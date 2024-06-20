@@ -3,7 +3,9 @@
   .tabs-menu {
     position: relative;
     width: 100%;
-    padding: 4px 0;
+    border-bottom: 1px dashed var(--el-aside-border-color);
+
+    // padding: 4px 0;
     :deep(.el-tabs) {
       --el-tabs-header-height: 30px;
       .el-tabs__header {
@@ -15,6 +17,8 @@
         .el-tabs__nav-wrap {
           position: absolute;
           width: calc(100% - 20px);
+
+          // border: 1px solid;
           .el-tabs__nav-next,
           .el-tabs__nav-prev {
             line-height: 34px;
@@ -30,8 +34,9 @@
               font-size: 12px;
               font-weight: 400;
               color: #000000;
-              background-color: #eeeeee;
+              background-color: rgb(245 245 245);
               border: none;
+              border-radius: 8px 8px 0 0;
               .tabs-icon {
                 margin: 1.5px 4px 0 0;
                 font-size: 15px;

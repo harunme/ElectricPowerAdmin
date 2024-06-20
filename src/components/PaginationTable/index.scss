@@ -1,0 +1,11 @@
+.PaginationTable {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border: 1px solid var(--el-aside-border-color);
+  .pagination {
+    justify-content: end;
+    padding: 0 16px 8px;
+  }
+}

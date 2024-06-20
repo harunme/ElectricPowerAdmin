@@ -8,7 +8,7 @@ import http from "@/api";
  * @name 登录模块
  */
 // 用户登录
-export const loginApi = (params: Login.ReqLoginForm) => {
+export const loginApi = (params: Login.ReqLogin) => {
   return http.postForm<Login.ResLogin>(`/api/login`, params);
 };
 

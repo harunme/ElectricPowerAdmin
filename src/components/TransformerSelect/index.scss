@@ -1,16 +1,33 @@
 .TransformerSelect {
-  //   border: 1px solid;
-  margin-bottom: 8px;
-  > span {
-    display: inline-block;
+  // margin-bottom: 16px;
+  box-sizing: border-box;
+  padding: 12px 20px;
+  overflow: hidden;
+  border: 1px solid var(--el-aside-border-color);
+  box-shadow: none;
+  > .label {
     margin-right: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  > .name {
+    display: inline-block;
+    margin-right: 16px;
     font-size: 14px;
   }
   .select-modal {
     height: 62vh;
     .main {
+      display: flex;
+      flex-direction: column;
       padding-top: 0;
       padding-bottom: 0;
+      .form {
+        display: flex;
+        justify-content: space-between;
+        // border: 1px solid;
+        margin-bottom: 12px;
+      }
     }
   }
 }

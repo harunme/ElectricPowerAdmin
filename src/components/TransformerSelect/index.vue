@@ -1,23 +1,20 @@
 <template>
-  <div class="TransformerSelect">
-    <span> 变配电站名称:</span>
-    <el-input v-model="input3" style="width: 240px" placeholder="Please input" class="input-with-select">
-      <template #append>
-        <el-button :icon="Search" @click="dialogVisible = true" />
-      </template>
-    </el-input>
+  <div class="TransformerSelect card">
+    <span class="label">当前变配电站:</span>
+    <span class="name">{{ stationSelected.stationname ?? "全部站点" }}</span>
+    <el-button size="mini" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
     <el-dialog v-model="dialogVisible" title="选择变配电站" width="1200" :before-close="handleClose">
       <el-container class="select-modal">
         <el-aside width="280px">
           <el-tabs stretch>
             <el-tab-pane label="组织机构">
               <el-tree
+                default-expand-all
                 style="max-width: 600px"
-                :data="data"
+                :data="companyTree"
                 show-checkbox
-                node-key="id"
-                :default-expanded-keys="[2, 3]"
-                :default-checked-keys="[5]"
+                node-key="deptid"
+                :default-checked-keys="[100]"
                 :props="defaultProps"
               />
             </el-tab-pane>
@@ -25,12 +22,22 @@
           </el-tabs>
         </el-aside>
         <el-main class="main">
-          <el-table :data="tableData" border style="width: 100%">
-            <el-table-column prop="date" label="变配电站名称" />
-            <el-table-column prop="name" label="组织机构" />
-            <el-table-column prop="address" label="区域" />
-            <el-table-column prop="address" label="用户地址" />
-          </el-table>
+          <div class="form">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+              <el-form-item label="关键字">
+                <el-input v-model="formInline.user" placeholder="请输入站点名称或编号" clearable />
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="onSubmit">查询</el-button>
+              </el-form-item>
+            </el-form>
+            <el-button type="primary" @click="onSelect">选择全部站点</el-button>
+          </div>
+          <PaginationTable :columns="columns" :fetch-data="fetchData">
+            <template #actions="{ row }">
+              <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
+            </template>
+          </PaginationTable>
         </el-main>
       </el-container>
     </el-dialog>
@@ -38,91 +45,74 @@
 </template>
 
 <script setup lang="tsx" name="TransformerSelect">
+import { Meter, ReqPage } from "@/api/interface/index";
 import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { getCompanyTree } from "@/api/modules/org";
+import { getSubstationListBySubGroupId } from "@/api/modules/meter";
+import { ref, watch, reactive } from "vue";
+import PaginationTable from "@/components/PaginationTable/index.vue";
 
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  }
-];
+// 组织机构树
+const companyTree = ref([] as any);
+// 选择的变配电站
+const stationSelected = ref({} as Meter.Station);
+// 弹框可见
+const dialogVisible = ref(false);
+// 表格检索表单
+const formInline = reactive({
+  user: "",
+  region: "",
+  date: ""
+});
 
 const defaultProps = {
   children: "children",
-  label: "label"
+  label: "deptname"
 };
-const data = [
-  {
-    id: 1,
-    label: "Level one 1",
-    children: [
-      {
-        id: 4,
-        label: "Level two 1-1",
-        children: [
-          {
-            id: 9,
-            label: "Level three 1-1-1"
-          },
-          {
-            id: 10,
-            label: "Level three 1-1-2"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    label: "Level one 2",
-    children: [
-      {
-        id: 5,
-        label: "Level two 2-1"
-      },
-      {
-        id: 6,
-        label: "Level two 2-2"
-      }
-    ]
-  },
-  {
-    id: 3,
-    label: "Level one 3",
-    children: [
-      {
-        id: 7,
-        label: "Level two 3-1"
-      },
-      {
-        id: 8,
-        label: "Level two 3-2"
-      }
-    ]
-  }
+
+const columns = [
+  { prop: "stationid", label: "ID", width: "80px" },
+  { prop: "stationname", label: "变配电站名称" },
+  { prop: "deptname", label: "组织机构" },
+  { prop: "regionname", label: "区域", width: "120px" },
+  { prop: "address", label: "用户地址" },
+  { prop: "actions", label: "操作", width: "80px" }
 ];
-const dialogVisible = ref(false);
+
+const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<Meter.ResGetSubstationListBySubGroupId> => {
+  return new Promise(async resolve => {
+    const { data } = await getSubstationListBySubGroupId({
+      pageNum,
+      pageSize,
+      deptid: 100
+    });
+    resolve(data);
+  });
+};
 
 const handleClose = () => {
   dialogVisible.value = false;
 };
+
+const onSubmit = () => {
+  console.log("submit!");
+};
+
+const onSelect = (row?: Meter.Station) => {
+  if (row) {
+    stationSelected.value = row;
+    dialogVisible.value = false;
+  } else {
+    stationSelected.value = {} as any;
+  }
+};
+
+watch(dialogVisible, async () => {
+  if (dialogVisible.value) {
+    const { data } = await getCompanyTree();
+    companyTree.value = data;
+  }
+});
 </script>
 
 <style scoped lang="scss">

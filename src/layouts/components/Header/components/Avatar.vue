@@ -1,7 +1,8 @@
 <template>
   <el-dropdown trigger="click">
-    <div class="avatar">
-      <img src="@/assets/images/avatar.gif" alt="avatar" />
+    <div class="username">
+      <!-- <img src="@/assets/images/avatar.gif" alt="avatar" /> -->
+      Admin
     </div>
     <template #dropdown>
       <el-dropdown-menu>
@@ -65,15 +66,9 @@ const openDialog = (ref: string) => {
 </script>
 
 <style scoped lang="scss">
-.avatar {
-  width: 40px;
+.username {
   height: 40px;
-  overflow: hidden;
-  cursor: pointer;
-  border-radius: 50%;
-  img {
-    width: 100%;
-    height: 100%;
-  }
+  line-height: 40px;
+  color: #000000;
 }
 </style>

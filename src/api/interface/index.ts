@@ -32,7 +32,7 @@ export namespace Upload {
 
 // 登录模块
 export namespace Login {
-  export interface ReqLoginForm {
+  export interface ReqLogin {
     username: string;
     password: string;
   }
@@ -40,52 +40,23 @@ export namespace Login {
     homeUrl: string;
     token: string;
   }
-  export interface ResAuthButtons {
-    [key: string]: string[];
-  }
 }
 
-// 用户管理模块
-export namespace User {
-  export interface ReqUserParams extends ReqPage {
-    username: string;
-    gender: number;
-    idCard: string;
-    email: string;
-    address: string;
-    createTime: string[];
-    status: number;
+// 变电站模块
+export namespace Meter {
+  export interface Station {
+    stationname: string;
   }
-  export interface ResUserList {
-    id: string;
-    username: string;
-    gender: number;
-    user: { detail: { age: number } };
-    idCard: string;
-    email: string;
-    address: string;
-    createTime: string;
-    status: number;
-    avatar: string;
-    photo: any[];
-    children?: ResUserList[];
+  export interface ReqGetSubstationListBySubGroupId extends ReqPage {
+    deptid?: number;
   }
-  export interface ResStatus {
-    userLabel: string;
-    userValue: number;
-  }
-  export interface ResGender {
-    genderLabel: string;
-    genderValue: number;
-  }
-  export interface ResDepartment {
-    id: string;
-    name: string;
-    children?: ResDepartment[];
-  }
-  export interface ResRole {
-    id: string;
-    name: string;
-    children?: ResDepartment[];
+  export interface ResGetSubstationListBySubGroupId extends ResPage<Station> {}
+}
+
+// 业务模块
+export namespace Main {
+  export interface ReqEnergyReportNoHjPageInfo extends ReqPage {
+    startTime: string;
+    endTime: string;
   }
 }

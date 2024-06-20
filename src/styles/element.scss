@@ -3,6 +3,20 @@
 .el-notification {
   z-index: 2070 !important;
 }
+.el-form--inline .el-form-item {
+  margin-right: 24px;
+}
+
+/*
+    给所有表格空项加上--
+  */
+.el-table .el-table__body td .cell:empty::after,
+.el-table .el-table__body td .cell > span:empty::after,
+.el-table .el-table__body td .cell .approval:empty::after,
+.el-table .el-table__body td .cell div:empty::after,
+.el-table .el-table__body td .cell .line-limit-length:empty::after {
+  content: "-";
+}
 
 /* el-alert */
 .el-alert {
@@ -30,14 +44,17 @@
 .card {
   box-sizing: border-box;
   padding: 20px;
+  margin: 8px;
   overflow-x: hidden;
   background-color: var(--el-bg-color);
-  border-radius: 6px;
+  border-radius: 12px;
+  box-shadow:
+    rgb(145 158 171 / 20%) 0 0 2px 0,
+    rgb(145 158 171 / 12%) 0 12px 24px -4px;
 }
 .left-box {
   box-sizing: border-box;
   width: 336px;
-  height: 100%;
   padding: 18px;
   margin-right: 10px;
 }
@@ -152,4 +169,13 @@
 }
 .table-form-inline .el-select {
   --el-select-width: 220px;
+}
+.el-table {
+  --el-table-header-bg-color: var(--el-fill-color-light);
+  --el-table-header-text-color: var(--el-text-color-primary);
+}
+.el-button--mini {
+  height: 28px;
+  font-size: 13px;
+  font-weight: 400;
 }
