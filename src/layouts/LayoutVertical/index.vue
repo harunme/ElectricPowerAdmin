@@ -4,6 +4,7 @@
     <el-aside :width="isCollapse ? '65px' : '210px'">
       <div class="aside-box">
         <div class="logo flx-center">
+          <img class="logo-img" :src="Logo" />
           <span v-show="!isCollapse" class="logo-text">{{ title }}</span>
         </div>
         <el-scrollbar>
@@ -38,6 +39,7 @@ import Main from "@/layouts/components/Main/index.vue";
 import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
 import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
+import Logo from "@/assets/images/logo.svg";
 
 const title = import.meta.env.VITE_GLOB_APP_TITLE;
 

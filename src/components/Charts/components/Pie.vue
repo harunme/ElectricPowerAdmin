@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts" name="pie">
+import { ref } from "vue";
 import { ECOption } from "../config";
 import ECharts from "../echarts.vue";
 
@@ -16,7 +17,7 @@ const props = withDefaults(defineProps<PieProps>(), {
   data: () => []
 });
 
-const option: ECOption = {
+const option = ref<ECOption>({
   tooltip: {
     trigger: "item"
   },
@@ -38,7 +39,7 @@ const option: ECOption = {
       center: ["50%", "50%"],
       silent: true,
       clockwise: true,
-      data: props.data,
+      data: [...props.data],
 
       label: {
         position: "outer",
@@ -85,7 +86,7 @@ const option: ECOption = {
       ]
     }
   ]
-};
+});
 </script>
 
 <style lang="scss" scoped>

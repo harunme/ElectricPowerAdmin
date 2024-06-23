@@ -59,4 +59,32 @@ export namespace Main {
     startTime: string;
     endTime: string;
   }
+
+  export interface ReqSummary extends ReqPage {
+    sortParam: string;
+    sortTag: string;
+  }
+
+  export interface ResSummary {
+    disconnectNumber: number;
+    red: number;
+    green: number;
+    yellow: number;
+    pageInfo: ResPage<{
+      stationid: string;
+      stationname: string;
+      transformerid: string;
+      transformername: string;
+      voltagestep: string;
+      meter: string;
+      pdatetime: string;
+      loadFactor: string;
+      p: number;
+      p_Unit: string;
+      pf: number;
+      pf_Unit: string;
+      s: number;
+      s_Unit: string;
+    }>;
+  }
 }

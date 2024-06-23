@@ -1,7 +1,7 @@
 // import qs from "qs";
 import { Login } from "@/api/interface/index";
 import { PORT1 } from "@/api/config/servicePort";
-import authMenuList from "@/assets/json/authMenuList.json";
+// import authMenuList from "@/assets/json/authMenuList.json";
 import http from "@/api";
 
 /**
@@ -13,10 +13,8 @@ export const loginApi = (params: Login.ReqLogin) => {
 };
 
 // 获取菜单列表
-export const getAuthMenuListApi = () => {
-  // return http.get<Menu.MenuOptions[]>(PORT1 + `/menu/list`, {}, { loading: false });
-  // 如果想让菜单变为本地数据，注释上一行代码，并引入本地 authMenuList.json 数据
-  return authMenuList;
+export const searchRoleProjectMenu = () => {
+  return http.get<Menu.MenuOptions[]>(`/menu/searchRoleProjectMenu`, { projectType: 0 }, { loading: false });
 };
 
 // 用户退出登录

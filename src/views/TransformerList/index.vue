@@ -3,121 +3,93 @@
     <TransformerSelect />
     <div class="main-box">
       <div class="card left-box">
-        <CirecleNumber label="高损耗运行" />
-        <CirecleNumber label="正常运行" color="#e7a900" />
-        <CirecleNumber label="经济运行" color="#12bb5d" />
+        <CirecleNumber label="高损耗运行" color="rgb(255, 86, 48)" :value="number.red" />
+        <CirecleNumber label="正常运行" color="rgb(250, 175, 0)" :value="number.yellow" />
+        <CirecleNumber label="经济运行" color="#00a76f" :value="number.green" />
         <div class="pie-box">
           <Pie :data="pieData" />
         </div>
       </div>
       <div class="card table-box">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="变配电站名称" />
-          <el-table-column prop="date" label="变压器" />
-          <el-table-column prop="date" label="额定容量(kVA)" width="150" />
-          <el-table-column prop="date" label="有功功率(kW)" width="150" />
-          <el-table-column prop="date" label="功率因数" width="150" />
-          <el-table-column prop="date" label="视在功率(kVA)" width="150" />
-          <el-table-column prop="date" label="负载率" width="150" />
-          <el-table-column label="温度(℃)">
-            <el-table-column prop="name" label="A" width="120" />
-            <el-table-column prop="state" label="B" width="120" />
-            <el-table-column prop="city" label="C" width="120" />
-            <el-table-column prop="address" label="油浸" width="120" />
-          </el-table-column>
-        </el-table>
+        <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="tsx" name="bing">
+import { ref } from "vue";
+import { ReqPage } from "@/api/interface/index";
+import { summary } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CirecleNumber from "@/components/Charts/components/CirecleNumber.vue";
 import Pie from "@/components/Charts/components/Pie.vue";
+import PaginationTable from "@/components/PaginationTable/index.vue";
 
-const pieData = [
+const number = ref({ red: 0, yellow: 0, green: 0 });
+
+const pieData = ref([
   {
-    value: 6,
+    value: 0,
     name: "高损耗运行",
     itemStyle: {
-      color: "#ff4949"
+      color: "rgb(255, 86, 48)"
     }
   },
   {
-    value: 4,
+    value: 0,
     name: "正常运行",
     itemStyle: {
-      color: "#e7a900"
+      color: "rgb(250, 175, 0)"
     }
   },
   {
-    value: 2,
+    value: 0,
     name: "经济运行",
     itemStyle: {
-      color: "#12bb5d"
+      color: "#00a76f"
     }
+  }
+]);
+
+const columns = [
+  { prop: "stationname", label: "变配电站名称" },
+  { prop: "transformername", label: "变压器" },
+  { prop: "voltagestep", label: "额定容量(kVA)" },
+  { prop: "regionname", label: "有功功率(kW)" },
+  { prop: "pf", label: "功率因数" },
+  { prop: "s", label: "视在功率(kVA)" },
+  { prop: "loadFactor", label: "负载率" },
+  {
+    label: "温度(℃)",
+    children: [
+      { prop: "xx", label: "A" },
+      { prop: "2a", label: "B" },
+      { prop: "3sdf", label: "C" },
+      { prop: "gfg", label: "油浸" }
+    ]
   }
 ];
 
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-08",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-06",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  },
-  {
-    date: "2016-05-07",
-    name: "Tom",
-    state: "California",
-    city: "Los Angeles",
-    address: "No. 189, Grove St, Los Angeles",
-    zip: "CA 90036"
-  }
-];
+const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
+  return new Promise(async resolve => {
+    const { data } = await summary({
+      pageNum,
+      pageSize,
+      sortParam: "001",
+      sortTag: "ASC"
+    });
+    number.value = {
+      red: data.red,
+      yellow: data.yellow,
+      green: data.green
+    };
+    pieData.value[0].value = data.red;
+    pieData.value[1].value = data.yellow;
+    pieData.value[2].value = data.green;
+    resolve(data.pageInfo);
+  });
+};
 </script>
 
 <style scoped lang="scss">

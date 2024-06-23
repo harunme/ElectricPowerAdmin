@@ -15,10 +15,20 @@
                 show-checkbox
                 node-key="deptid"
                 :default-checked-keys="[100]"
-                :props="defaultProps"
+                :props="companyProps"
               />
             </el-tab-pane>
-            <el-tab-pane label="区域">Config</el-tab-pane>
+            <el-tab-pane label="区域">
+              <el-tree
+                default-expand-all
+                style="max-width: 600px"
+                :data="groupTree"
+                show-checkbox
+                node-key="regionid"
+                :default-checked-keys="[100]"
+                :props="groupProps"
+              />
+            </el-tab-pane>
           </el-tabs>
         </el-aside>
         <el-main class="main">
@@ -47,13 +57,15 @@
 <script setup lang="tsx" name="TransformerSelect">
 import { Meter, ReqPage } from "@/api/interface/index";
 import { Search } from "@element-plus/icons-vue";
-import { getCompanyTree } from "@/api/modules/org";
+import { getCompanyTree, getSubGroupTree } from "@/api/modules/org";
 import { getSubstationListBySubGroupId } from "@/api/modules/meter";
 import { ref, watch, reactive } from "vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 // 组织机构树
 const companyTree = ref([] as any);
+// 区域树
+const groupTree = ref([] as any);
 // 选择的变配电站
 const stationSelected = ref({} as Meter.Station);
 // 弹框可见
@@ -65,10 +77,8 @@ const formInline = reactive({
   date: ""
 });
 
-const defaultProps = {
-  children: "children",
-  label: "deptname"
-};
+const companyProps = { children: "children", label: "deptname" };
+const groupProps = { children: "children", label: "regionname" };
 
 const columns = [
   { prop: "stationid", label: "ID", width: "80px" },
@@ -109,8 +119,10 @@ const onSelect = (row?: Meter.Station) => {
 
 watch(dialogVisible, async () => {
   if (dialogVisible.value) {
-    const { data } = await getCompanyTree();
-    companyTree.value = data;
+    const getCompanyTreeRes = await getCompanyTree();
+    const getSubGroupTreeRes = await getSubGroupTree();
+    groupTree.value = getSubGroupTreeRes?.data;
+    companyTree.value = getCompanyTreeRes?.data;
   }
 });
 </script>

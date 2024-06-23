@@ -1,6 +1,6 @@
 <template>
   <div class="footer flx-center">
-    <span> 2024 © 智慧运维 为客户创造价值. </span>
+    <span> 2024 © 企业电力运维云平台 为客户创造价值. </span>
   </div>
 </template>
 

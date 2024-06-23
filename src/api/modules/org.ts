@@ -4,3 +4,8 @@ import http from "@/api";
 export const getCompanyTree = () => {
   return http.post(`/org/getCompanyTree`);
 };
+
+// 获取区域
+export const getSubGroupTree = () => {
+  return http.post(`/org/getSubGroupTree`);
+};

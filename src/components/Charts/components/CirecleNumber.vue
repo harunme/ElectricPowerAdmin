@@ -24,11 +24,11 @@ const props = withDefaults(defineProps<CirecleNumberProps>(), {
   align-self: center;
   width: 100px;
   height: 100px;
-  margin: 15px auto;
+  margin: 18px auto;
   clear: both;
   text-align: center;
   cursor: pointer;
-  border: 4px solid;
+  border: 5px solid;
   border-radius: 50%;
   -ms-flex-item-align: center;
   .value {
@@ -44,6 +44,7 @@ const props = withDefaults(defineProps<CirecleNumberProps>(), {
     float: left;
     width: 100%;
     font-size: 12px;
+    font-weight: 600;
     line-height: 70px;
   }
 }
