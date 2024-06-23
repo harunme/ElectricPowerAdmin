@@ -1,8 +1,9 @@
 <template>
   <div class="TransformerSelect card">
     <span class="label">当前变配电站:</span>
-    <span class="name">{{ stationSelected.stationname ?? "全部站点" }}</span>
-    <el-button size="mini" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
+    <el-tag closable round v-if="stationSelected.stationname">{{ stationSelected.stationname }}</el-tag>
+    <span v-else class="name">全部站点</span>
+    <el-button type="text" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
     <el-dialog v-model="dialogVisible" title="选择变配电站" width="1200" :before-close="handleClose">
       <el-container class="select-modal">
         <el-aside width="280px">
@@ -41,7 +42,6 @@
                 <el-button @click="onSubmit">查询</el-button>
               </el-form-item>
             </el-form>
-            <el-button type="primary" @click="onSelect">选择全部站点</el-button>
           </div>
           <PaginationTable :columns="columns" :fetch-data="fetchData">
             <template #actions="{ row }">

@@ -1,6 +1,6 @@
 <template>
   <div class="PaginationTable">
-    <el-table :data="tableData" style="width: 100%" stripe>
+    <el-table :data="tableData" style="width: 100%">
       <template v-for="(column, index) in columns">
         <el-table-column
           v-if="!column.children || column.children.length === 0"

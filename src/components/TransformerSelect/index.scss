@@ -3,8 +3,11 @@
   box-sizing: border-box;
   padding: 12px 20px;
   overflow: hidden;
-  border: 1px solid var(--el-aside-border-color);
-  box-shadow: none;
+
+  // border: 1px solid var(--el-aside-border-color);
+  box-shadow:
+    rgb(145 158 171 / 20%) 0 0 2px 0,
+    rgb(145 158 171 / 12%) 0 12px 24px -4px;
   > .label {
     margin-right: 8px;
     font-size: 14px;
@@ -25,6 +28,7 @@
       .form {
         display: flex;
         justify-content: space-between;
+
         // border: 1px solid;
         margin-bottom: 12px;
       }

@@ -5,3 +5,8 @@ import { Main } from "@/api/interface/index";
 export const summary = (params: Main.ReqSummary) => {
   return http.postForm<Main.ResSummary>(`/main/summary`, params);
 };
+
+// 概览用能月报
+export const EnergyReportNoHjPageInfo = (params: Main.ReqEnergyReportNoHjPageInfo) => {
+  return http.postForm<Main.ResEnergyReportNoHjPageInfo>("/main/EnergyReportNoHjPageInfo", params);
+};

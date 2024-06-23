@@ -60,6 +60,14 @@ export namespace Main {
     endTime: string;
   }
 
+  export interface ResEnergyReportNoHjPageInfo
+    extends ResPage<{
+      stationid: string;
+      stationname: string;
+      date: string;
+      value: number;
+    }> {}
+
   export interface ReqSummary extends ReqPage {
     sortParam: string;
     sortTag: string;
