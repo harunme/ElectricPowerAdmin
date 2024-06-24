@@ -21,6 +21,7 @@
 
 <script setup lang="tsx" name="EnergyReportOfCollection">
 import { reactive } from "vue";
+import { ReqPage } from "@/api/interface";
 import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 

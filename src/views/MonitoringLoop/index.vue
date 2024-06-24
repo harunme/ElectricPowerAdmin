@@ -15,9 +15,9 @@
       </div>
       <div class="table-box">
         <PaginationTable :columns="columns" :fetch-data="fetchData">
-          <template #actions="{ row }">
-            <el-button type="text" size="mini" @click="onSelect(row)">修改</el-button>
-            <el-button type="text" size="mini" @click="onSelect(row)">删除</el-button>
+          <template #actions="">
+            <el-button type="text" size="mini">修改</el-button>
+            <el-button type="text" size="mini">删除</el-button>
           </template>
         </PaginationTable>
       </div>
@@ -27,6 +27,7 @@
 
 <script setup lang="tsx" name="MonitoringLoop">
 import { reactive } from "vue";
+import { ReqPage } from "@/api/interface";
 import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
@@ -41,7 +42,7 @@ const onSubmit = () => {
   console.log("submit!");
 };
 
-const columns = [
+const columns: any = [
   { prop: "stationname", label: "回路名称" },
   { prop: "stationid", label: "回路编号" },
   { prop: "voltagestep", label: "上级回路" },
