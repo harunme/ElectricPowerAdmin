@@ -1,4 +1,22 @@
-.full-iframe {
-  width: 100%;
+.UnbMonitor {
   height: 100%;
+  .content-box {
+    .el-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      :deep(.el-tabs__content) {
+        flex: 1;
+        .content-pane {
+          height: 100%;
+          .chart-box {
+            height: 100%;
+          }
+        }
+      }
+    }
+
+    width: 100%;
+    padding-top: 6px;
+  }
 }

@@ -1,28 +1,11 @@
 <template>
   <div class="PaginationTable">
     <el-table :data="tableData" style="width: 100%">
-      <template v-for="(column, index) in columns">
-        <el-table-column
-          v-if="!column.children || column.children.length === 0"
-          :key="`column-${index}`"
-          :prop="column.prop"
-          :label="column.label"
-          :width="column.width"
-        >
-          <template v-if="column.prop === 'actions'" #default="scope">
-            <slot name="actions" :row="scope.row"></slot>
-          </template>
-        </el-table-column>
-        <el-table-column v-else :key="`parent-${index}`" :label="column.label" :width="column.width">
-          <el-table-column
-            v-for="(child, childIndex) in column.children"
-            :key="`child-${index}-${childIndex}`"
-            :prop="child.prop"
-            :label="child.label"
-            :width="child.width"
-          />
-        </el-table-column>
-      </template>
+      <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
+        <template #actions="{ row }">
+          <slot name="actions" :row="row"></slot>
+        </template>
+      </recursive-columns>
     </el-table>
     <el-pagination
       class="pagination"
@@ -41,6 +24,7 @@
 <script setup lang="tsx">
 import { ref, onMounted } from "vue";
 import { ReqPage, ResPage } from "@/api/interface/index";
+import RecursiveColumns from "./RecursiveColumns.vue";
 
 const props = defineProps<{
   columns: Array<{ prop?: string; label: string; width?: string; children?: { prop: string; label: string; width?: string }[] }>;
