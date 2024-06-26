@@ -25,8 +25,17 @@
 import { ref, onMounted } from "vue";
 import { ReqPage, ResPage } from "@/api/interface/index";
 import RecursiveColumns from "./RecursiveColumns.vue";
+import type { TableColumnCtx } from "element-plus";
+
+export interface SpanMethodProps {
+  row: any;
+  column: TableColumnCtx<any>;
+  rowIndex: number;
+  columnIndex: number;
+}
 
 const props = defineProps<{
+  spanMethod: (param: SpanMethodProps) => number[];
   columns: Array<{ prop?: string; label: string; width?: string; children?: { prop: string; label: string; width?: string }[] }>;
   fetchData: (params: ReqPage) => Promise<ResPage<any>>;
 }>();
