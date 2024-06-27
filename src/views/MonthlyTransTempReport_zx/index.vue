@@ -23,7 +23,6 @@
 import { reactive } from "vue";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
-// import type { TableColumnCtx } from "element-plus";
 import data from "./data.json";
 
 const formInline = reactive({

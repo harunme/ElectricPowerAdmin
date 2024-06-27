@@ -1,4 +1,18 @@
-.full-iframe {
-  width: 100%;
-  height: 100%;
+.EnergyMOM {
+  .content-box {
+    width: 100%;
+    padding-top: 6px;
+    .el-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      :deep(.el-tabs__content) {
+        flex: 1;
+        .table-box {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
 }

@@ -1,6 +1,6 @@
 <template>
-  <el-table-column :prop="column.prop" :label="column.label" :width="column.width">
-    <template v-if="column.prop === 'actions'" #default="scope">
+  <el-table-column :prop="column?.prop" :label="column?.label" :width="column.width">
+    <template v-if="column?.prop === 'actions'" #default="scope">
       <slot name="actions" :row="scope.row"></slot>
     </template>
     <template v-if="column.children">
