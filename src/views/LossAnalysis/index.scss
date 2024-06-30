@@ -1,0 +1,12 @@
+.LossAnalysis {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .content {
+    height: 100%;
+    overflow: hidden;
+    .table-box {
+      height: calc(100% - 50px);
+    }
+  }
+}

@@ -306,9 +306,9 @@ const Menu = [
         }
       },
       {
-        path: "/EnergyLineLoss",
-        name: "EnergyLineLoss",
-        component: "/EnergyLineLoss/index",
+        path: "/LossAnalysis",
+        name: "LossAnalysis",
+        component: "/LossAnalysis/index",
         meta: {
           title: "计量及电路损耗",
           isLink: "",

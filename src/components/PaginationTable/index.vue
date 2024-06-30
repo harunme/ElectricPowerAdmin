@@ -1,6 +1,6 @@
 <template>
   <div class="PaginationTable">
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :summary-method="summaryMethod" :show-summary="showSummary" :data="tableData" style="width: 100%">
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
         <template #actions="{ row }">
           <slot name="actions" :row="row"></slot>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="tsx">
+import type { VNode } from "vue";
 import { ref, onMounted } from "vue";
 import { ReqPage, ResPage } from "@/api/interface/index";
 import RecursiveColumns from "./RecursiveColumns.vue";
@@ -34,7 +35,14 @@ export interface SpanMethodProps {
   columnIndex: number;
 }
 
+interface SummaryMethodProps<T = any> {
+  columns: TableColumnCtx<T>[];
+  data: T[];
+}
+
 const props = defineProps<{
+  summaryMethod?: (param: SummaryMethodProps) => (string | VNode)[];
+  showSummary?: boolean;
   spanMethod?: (param: SpanMethodProps) =>
     | {
         rowspan: number;
