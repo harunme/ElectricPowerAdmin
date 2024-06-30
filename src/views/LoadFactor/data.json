@@ -1,0 +1,195 @@
+{
+  "code": 200,
+  "msg": "请求成功",
+  "data": [
+    {
+      "F_PMaxValue": 740.0,
+      "F_CollectDate": "2024-05-01",
+      "F_PAvg": 344.763636,
+      "F_LoadRate": 0.4659,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1150.0,
+      "F_CollectDate": "2024-05-02",
+      "F_PAvg": 633.923607,
+      "F_LoadRate": 0.5512,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1410.0,
+      "F_CollectDate": "2024-05-03",
+      "F_PAvg": 1032.812504,
+      "F_LoadRate": 0.7325,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1380.0,
+      "F_CollectDate": "2024-05-04",
+      "F_PAvg": 1094.895833,
+      "F_LoadRate": 0.7934,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1460.0,
+      "F_CollectDate": "2024-05-05",
+      "F_PAvg": 967.048612,
+      "F_LoadRate": 0.6624,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1420.0,
+      "F_CollectDate": "2024-05-06",
+      "F_PAvg": 1083.194448,
+      "F_LoadRate": 0.7628,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1420.0,
+      "F_CollectDate": "2024-05-07",
+      "F_PAvg": 931.42361,
+      "F_LoadRate": 0.6559,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1470.0,
+      "F_CollectDate": "2024-05-08",
+      "F_PAvg": 1093.159725,
+      "F_LoadRate": 0.7436,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1620.0,
+      "F_CollectDate": "2024-05-09",
+      "F_PAvg": 1062.326389,
+      "F_LoadRate": 0.6558,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1410.0,
+      "F_CollectDate": "2024-05-10",
+      "F_PAvg": 1033.923611,
+      "F_LoadRate": 0.7333,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1520.0,
+      "F_CollectDate": "2024-05-11",
+      "F_PAvg": 926.73611,
+      "F_LoadRate": 0.6097,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1380.0,
+      "F_CollectDate": "2024-05-12",
+      "F_PAvg": 898.437504,
+      "F_LoadRate": 0.651,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1150.0,
+      "F_CollectDate": "2024-05-13",
+      "F_PAvg": 721.266669,
+      "F_LoadRate": 0.6272,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1380.0,
+      "F_CollectDate": "2024-05-18",
+      "F_PAvg": 1136.842107,
+      "F_LoadRate": 0.8238,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1390.0,
+      "F_CollectDate": "2024-05-19",
+      "F_PAvg": 828.36806,
+      "F_LoadRate": 0.5959,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1340.0,
+      "F_CollectDate": "2024-05-20",
+      "F_PAvg": 944.513889,
+      "F_LoadRate": 0.7049,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1310.0,
+      "F_CollectDate": "2024-05-21",
+      "F_PAvg": 992.986117,
+      "F_LoadRate": 0.758,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1860.0,
+      "F_CollectDate": "2024-05-22",
+      "F_PAvg": 1264.826389,
+      "F_LoadRate": 0.68,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1760.0,
+      "F_CollectDate": "2024-05-23",
+      "F_PAvg": 1284.409727,
+      "F_LoadRate": 0.7298,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1750.0,
+      "F_CollectDate": "2024-05-24",
+      "F_PAvg": 1111.666662,
+      "F_LoadRate": 0.6352,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1440.0,
+      "F_CollectDate": "2024-05-25",
+      "F_PAvg": 867.847231,
+      "F_LoadRate": 0.6027,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1350.0,
+      "F_CollectDate": "2024-05-26",
+      "F_PAvg": 913.26389,
+      "F_LoadRate": 0.6765,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1480.0,
+      "F_CollectDate": "2024-05-27",
+      "F_PAvg": 1059.340283,
+      "F_LoadRate": 0.7158,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1330.0,
+      "F_CollectDate": "2024-05-28",
+      "F_PAvg": 938.506943,
+      "F_LoadRate": 0.7056,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1450.0,
+      "F_CollectDate": "2024-05-29",
+      "F_PAvg": 860.798617,
+      "F_LoadRate": 0.5937,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1150.0,
+      "F_CollectDate": "2024-05-30",
+      "F_PAvg": 776.215275,
+      "F_LoadRate": 0.675,
+      "F_CircuitName": "10kV进线"
+    },
+    {
+      "F_PMaxValue": 1230.0,
+      "F_CollectDate": "2024-05-31",
+      "F_PAvg": 831.111109,
+      "F_LoadRate": 0.6757,
+      "F_CircuitName": "10kV进线"
+    }
+  ]
+}

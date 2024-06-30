@@ -1,5 +1,5 @@
 <template>
-  <div class="card content-box">变电站状态</div>
+  <div class="card content-box">开发中...</div>
 </template>
 
 <script setup lang="ts" name="bing"></script>
