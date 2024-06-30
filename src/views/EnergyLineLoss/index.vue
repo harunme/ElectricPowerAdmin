@@ -1,5 +1,5 @@
 <template>
-  <div class="card content-box">用能月报</div>
+  <div class="card content-box">开发中...</div>
 </template>
 
 <script setup lang="ts" name="bing"></script>

@@ -1,4 +1,17 @@
-.full-iframe {
-  width: 100%;
-  height: 100%;
+.EnergyYOY {
+  .main-box {
+    height: calc(100% - 64px);
+    .right-box {
+      width: 100%;
+      overflow: hidden;
+    }
+    .chart-box {
+      height: 640px;
+      margin-bottom: 8px;
+    }
+    .table-box {
+      width: 100%;
+      height: calc(100% - 690px);
+    }
+  }
 }

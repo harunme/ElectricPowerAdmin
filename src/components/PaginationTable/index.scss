@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  overflow-y: auto;
 
   // border: 1px solid var(--el-aside-border-color);
   .pagination {
