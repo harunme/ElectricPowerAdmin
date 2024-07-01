@@ -24,7 +24,7 @@
 <script setup lang="tsx">
 import type { VNode } from "vue";
 import { ref, onMounted } from "vue";
-import { ReqPage, ResPage } from "@/api/interface/index";
+// import { ReqPage, ResPage } from "@/api/interface/index";
 import RecursiveColumns from "./RecursiveColumns.vue";
 import type { TableColumnCtx } from "element-plus";
 
@@ -49,8 +49,9 @@ const props = defineProps<{
         colspan: number;
       }
     | undefined;
-  columns: Array<{ prop?: string; label: string; width?: string; children?: { prop: string; label: string; width?: string }[] }>;
-  fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
+  columns: any;
+  fetchData: any;
+  // fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
 }>();
 
 const tableData = ref([] as any); // 数据源

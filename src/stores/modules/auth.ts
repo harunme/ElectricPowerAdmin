@@ -7,7 +7,7 @@ const Menu = [
   {
     name: "overview",
     meta: {
-      icon: "./images/menu-overview.png",
+      icon: "./images/menu-overview.svg",
       title: "概况",
       isLink: "",
       isHide: false,
@@ -73,7 +73,7 @@ const Menu = [
   {
     name: "Power",
     meta: {
-      icon: "./images/menu-electric-monitoring.png",
+      icon: "./images/menu-electric-monitoring.svg",
       title: "电力监测",
       isLink: "",
       isHide: false,
@@ -204,7 +204,7 @@ const Menu = [
   {
     name: "Harmonic",
     meta: {
-      icon: "./images/menu-electric-quality.png",
+      icon: "./images/menu-electric-quality.svg",
       title: "电能质量",
       isLink: "",
       isHide: false,
@@ -244,7 +244,7 @@ const Menu = [
   {
     name: "Analysis",
     meta: {
-      icon: "./images/menu-electric-analysis.png",
+      icon: "./images/menu-electric-analysis.svg",
       title: "用电分析",
       isLink: "",
       isHide: false,
@@ -336,7 +336,7 @@ const Menu = [
   {
     name: "Setting",
     meta: {
-      icon: "./images/menu-setting.png",
+      icon: "./images/menu-setting.svg",
       title: "系统设置",
       isLink: "",
       isHide: false,

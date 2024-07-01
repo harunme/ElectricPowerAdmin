@@ -16,15 +16,15 @@
       <div class="card content-box">
         <el-tabs>
           <el-tab-pane label="日报" class="table-box">
-            <el-form :inline="true" :model="formInline" class="table-form-inline">
+            <el-form :inline="true" class="table-form-inline">
               <el-form-item label="时间范围">
                 <el-date-picker
-                  style=" width: 120px;margin-right: 4px"
+                  style="width: 120px; margin-right: 4px"
                   v-model="dayForm.date"
                   type="date"
                   placeholder="Pick a month"
                 />
-                <el-select v-model="dayForm.startTime" style=" width: 70px;margin-right: 4px">
+                <el-select v-model="dayForm.startTime" style="width: 70px; margin-right: 4px">
                   <el-option
                     v-for="item in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
                     :key="item"
@@ -33,8 +33,13 @@
                   />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">时 -</span>
-                <el-select v-model="dayForm.endTime" style=" width: 70px;margin: 0 4px">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                <el-select v-model="dayForm.endTime" style="width: 70px; margin: 0 4px">
+                  <el-option
+                    v-for="item in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">时</span>
               </el-form-item>
@@ -60,15 +65,15 @@
             </PaginationTable>
           </el-tab-pane>
           <el-tab-pane label="月报" class="table-box">
-            <el-form :inline="true" :model="formInline" class="table-form-inline">
+            <el-form :inline="true" class="table-form-inline">
               <el-form-item label="时间范围">
                 <el-date-picker
-                  style=" width: 120px;margin-right: 4px"
+                  style="width: 120px; margin-right: 4px"
                   v-model="dayForm.date"
                   type="date"
                   placeholder="Pick a month"
                 />
-                <el-select v-model="dayForm.startTime" style=" width: 70px;margin-right: 4px">
+                <el-select v-model="dayForm.startTime" style="width: 70px; margin-right: 4px">
                   <el-option
                     v-for="item in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
                     :key="item"
@@ -77,8 +82,13 @@
                   />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">日 -</span>
-                <el-select v-model="dayForm.endTime" style=" width: 70px;margin: 0 4px">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                <el-select v-model="dayForm.endTime" style="width: 70px; margin: 0 4px">
+                  <el-option
+                    v-for="item in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">日</span>
               </el-form-item>
@@ -103,20 +113,25 @@
             <PaginationTable :columns="monthColumns" :fetch-data="fetchData"> </PaginationTable>
           </el-tab-pane>
           <el-tab-pane label="年报" class="table-box">
-            <el-form :inline="true" :model="formInline" class="table-form-inline">
+            <el-form :inline="true" class="table-form-inline">
               <el-form-item label="时间范围">
                 <el-date-picker
-                  style=" width: 120px;margin-right: 4px"
+                  style="width: 120px; margin-right: 4px"
                   v-model="dayForm.date"
                   type="date"
                   placeholder="Pick a month"
                 />
-                <el-select v-model="dayForm.startTime" style=" width: 70px;margin-right: 4px">
+                <el-select v-model="dayForm.startTime" style="width: 70px; margin-right: 4px">
                   <el-option v-for="item in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" :key="item" :label="item" :value="item" />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">月 -</span>
-                <el-select v-model="dayForm.endTime" style=" width: 70px;margin: 0 4px">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                <el-select v-model="dayForm.endTime" style="width: 70px; margin: 0 4px">
+                  <el-option
+                    v-for="item in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
                 </el-select>
                 <span style="color: var(--el-text-color-regular)">月</span>
               </el-form-item>

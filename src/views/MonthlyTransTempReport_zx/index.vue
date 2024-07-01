@@ -6,7 +6,7 @@
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="月份">
-            <el-date-picker v-model="value2" type="month" placeholder="Pick a month" />
+            <el-date-picker type="month" placeholder="Pick a month" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>

@@ -47,7 +47,7 @@ const pieData = ref([
     value: 0,
     name: "经济运行",
     itemStyle: {
-      color: "#00a76f"
+      color: "#1677ff"
     }
   }
 ]);

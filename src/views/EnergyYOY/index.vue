@@ -38,6 +38,7 @@
 import { reactive } from "vue";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import { ECOption } from "@/components/Charts/config";
 import ECharts from "@/components/Charts/echarts.vue";
 import data from "./data.json";
 

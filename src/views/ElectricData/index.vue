@@ -173,14 +173,6 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       sortParam: "001",
       sortTag: "ASC"
     });
-    number.value = {
-      red: data.red,
-      yellow: data.yellow,
-      green: data.green
-    };
-    pieData.value[0].value = data.red;
-    pieData.value[1].value = data.yellow;
-    pieData.value[2].value = data.green;
     resolve(data.pageInfo);
   });
 };

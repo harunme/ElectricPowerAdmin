@@ -13,8 +13,6 @@
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
-              :shortcuts="shortcuts"
-              :size="size"
             />
           </el-form-item>
           <el-form-item label="电能类别">
