@@ -1,4 +1,16 @@
-.full-iframe {
-  width: 100%;
+.Meter {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  .content {
+    height: 100%;
+    overflow: hidden;
+    .action-box {
+      display: flex;
+      justify-content: space-between;
+    }
+    .table-box {
+      height: calc(100% - 50px);
+    }
+  }
 }

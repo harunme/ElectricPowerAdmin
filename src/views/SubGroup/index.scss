@@ -1,4 +1,13 @@
-.full-iframe {
-  width: 100%;
+.SubGroup {
+  display: flex;
+  flex-direction: column;
+
+  // border: 1px solid;
   height: 100%;
+  .table-box {
+    height: 100%;
+  }
+  .card {
+    overflow: hidden;
+  }
 }
