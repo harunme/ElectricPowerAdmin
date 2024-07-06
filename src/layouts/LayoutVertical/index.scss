@@ -62,9 +62,18 @@
         padding-top: 12px;
         padding-bottom: 12px;
         .logo-img {
-          width: 52px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
           margin-right: 6px;
           object-fit: contain;
+          background-color: #ffffff;
+          border-radius: 6px;
+          img {
+            width: 36px;
+            padding-bottom: 2px;
+          }
         }
         .logo-text {
           font-size: 21.5px;

@@ -1,7 +1,7 @@
 <template>
   <div class="EnergyReportOfCollection">
-    <div class="card table-box">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <div class="card flex-column">
+      <el-form :inline="true" :model="formInline">
         <el-form-item label="开始时间">
           <el-date-picker type="date" />
         </el-form-item>

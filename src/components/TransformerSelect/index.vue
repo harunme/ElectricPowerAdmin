@@ -1,7 +1,7 @@
 <template>
   <div class="TransformerSelect card">
     <span class="label">当前变配电站:</span>
-    <el-tag closable round v-if="stationSelected.stationname">{{ stationSelected.stationname }}</el-tag>
+    <el-tag closable round @close="onSelect" v-if="stationSelected.stationname">{{ stationSelected.stationname }}</el-tag>
     <span v-else class="name">全部站点</span>
     <el-button type="text" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
     <el-dialog v-model="dialogVisible" title="选择变配电站" width="1200" :before-close="handleClose">
@@ -60,7 +60,12 @@ import { Search } from "@element-plus/icons-vue";
 import { getCompanyTree, getSubGroupTree } from "@/api/modules/org";
 import { getSubstationListBySubGroupId } from "@/api/modules/meter";
 import { ref, watch, reactive } from "vue";
+import { localSet, localRemove } from "@/utils";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+
+const props = defineProps<{
+  onChange?: (param: any) => any;
+}>();
 
 // 组织机构树
 const companyTree = ref([] as any);
@@ -112,9 +117,12 @@ const onSelect = (row?: Meter.Station) => {
   if (row) {
     stationSelected.value = row;
     dialogVisible.value = false;
+    localSet("context-transformer", row);
   } else {
     stationSelected.value = {} as any;
+    localRemove("context-transformer");
   }
+  props.onChange(row);
 };
 
 watch(dialogVisible, async () => {

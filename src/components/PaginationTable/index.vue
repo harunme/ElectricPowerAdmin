@@ -23,7 +23,7 @@
 
 <script setup lang="tsx">
 import type { VNode } from "vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineExpose } from "vue";
 // import { ReqPage, ResPage } from "@/api/interface/index";
 import RecursiveColumns from "./RecursiveColumns.vue";
 import type { TableColumnCtx } from "element-plus";
@@ -81,9 +81,20 @@ const refreshData = async () => {
   total.value = res.total;
 };
 
+// 重置表格数据
+const resetData = async () => {
+  pageSize.value = 10;
+  currentPage.value = 1;
+  refreshData();
+};
+
 // 在组件创建后获取数据
 onMounted(() => {
   refreshData();
+});
+
+defineExpose({
+  resetData
 });
 </script>
 

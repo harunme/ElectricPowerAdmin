@@ -1,6 +1,6 @@
 <template>
   <div class="flex-column">
-    <TransformerSelect />
+    <TransformerSelect :on-change="selectTransformer" />
     <div class="main-box">
       <div class="card left-box">
         <CirecleNumber label="高损耗运行" color="rgb(255, 86, 48)" :value="number.red" />
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="card table-box">
-        <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
       </div>
     </div>
   </div>
@@ -25,8 +25,11 @@ import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CirecleNumber from "@/components/Charts/components/CirecleNumber.vue";
 import Pie from "@/components/Charts/components/Pie.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import { localGet } from "@/utils";
 
 const number = ref({ red: 0, yellow: 0, green: 0 });
+const tableRef = ref(null);
+const stationId = ref(localGet("context-transformer")?.stationid);
 
 const pieData = ref([
   {
@@ -76,7 +79,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     const { data } = await summary({
       pageNum,
       pageSize,
-      sortParam: "001",
+      stationid: stationId.value,
+      sortParam: "station_id",
       sortTag: "ASC"
     });
     number.value = {
@@ -89,6 +93,11 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     pieData.value[2].value = data.green;
     resolve(data.pageInfo);
   });
+};
+
+const selectTransformer = t => {
+  stationId.value = t.stationid;
+  tableRef.value.resetData();
 };
 </script>
 

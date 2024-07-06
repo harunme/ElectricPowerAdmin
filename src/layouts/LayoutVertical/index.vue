@@ -4,7 +4,9 @@
     <el-aside :width="isCollapse ? '65px' : '210px'">
       <div class="aside-box">
         <div class="logo flx-center">
-          <img class="logo-img" :src="Logo" />
+          <div class="logo-img">
+            <img :src="Logo" />
+          </div>
           <span v-show="!isCollapse" class="logo-text">{{ title }}</span>
         </div>
         <el-scrollbar>
