@@ -95,4 +95,43 @@ export namespace Main {
       s_Unit: string;
     }>;
   }
+  export interface ReqGetAlarmEventYxList extends ReqPage {
+    startTime: string;
+    endTime: string;
+  }
+  export interface ResGetAlarmEventYxList
+    extends ResPage<{
+      eventname0: string;
+      alarmtime: string;
+      stationid: string;
+      stationname: string;
+      meter: string;
+      metername: string;
+      paramname: string;
+      eventdescription: string;
+      codetype: string;
+      stateint: number;
+      statedes: string;
+    }> {}
+
+  export interface ReqGetAlarmEventYcList extends ReqPage {
+    startTime: string;
+    endTime: string;
+  }
+  export interface ResGetAlarmEventYcList
+    extends ResPage<{
+      eventname0: string;
+      alarmtime: string;
+      stationid: string;
+      stationname: string;
+      meter: string;
+      metername: string;
+      paramname: string;
+      eventdescription: string;
+      codetype: string;
+      stateint: number;
+      statefloat: number;
+      statedes: string;
+      limitvalue: number;
+    }> {}
 }

@@ -10,3 +10,13 @@ export const summary = (params: Main.ReqSummary) => {
 export const EnergyReportNoHjPageInfo = (params: Main.ReqEnergyReportNoHjPageInfo) => {
   return http.postForm<Main.ResEnergyReportNoHjPageInfo>("/main/EnergyReportNoHjPageInfo", params);
 };
+
+// 事件记录-遥信事件
+export const GetAlarmEventYxList = (params: Main.ReqGetAlarmEventYxList) => {
+  return http.postForm<Main.ResGetAlarmEventYxList>("/main/getAlarmEventYxList", params);
+};
+
+// 事件记录-越限事件
+export const GetAlarmEventYcList = (params: Main.ReqGetAlarmEventYcList) => {
+  return http.postForm<Main.ResGetAlarmEventYcList>("/main/getAlarmEventYcList", params);
+};
