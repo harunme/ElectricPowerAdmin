@@ -30,10 +30,14 @@ const username = computed(() => userStore.userInfo.name);
 
 <style scoped lang="scss">
 .tool-bar-ri {
+  position: fixed;
+
+  // top:
   display: flex;
   align-items: center;
   justify-content: center;
   padding-right: 25px;
+  border: 1px solid;
   .header-icon {
     display: flex;
     align-items: center;

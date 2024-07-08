@@ -1,11 +1,21 @@
-.el-main {
-  box-sizing: border-box;
-  padding: 10px 12px;
+.main {
+  // border: 1px solid;
+  width: 100%;
   overflow: hidden;
 
-  // background-color: var(--el-bg-color-page);
-}
-.el-footer {
-  height: auto;
-  padding: 0;
+  // padding: 8px 0;
+  .el-main {
+    box-sizing: border-box;
+
+    // border: 1px solid red;
+    height: calc(100% - 30px);
+    padding: 10px 12px;
+    overflow: hidden;
+
+    // background-color: var(--el-bg-color-page);
+  }
+  .el-footer {
+    height: auto;
+    padding: 0;
+  }
 }

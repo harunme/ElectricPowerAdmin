@@ -23,11 +23,7 @@
       </div>
     </el-aside>
     <el-container>
-      <el-header>
-        <ToolBarLeft />
-        <ToolBarRight />
-      </el-header>
-      <Main />
+      <Main></Main>
     </el-container>
   </el-container>
 </template>
@@ -38,8 +34,8 @@ import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/modules/auth";
 import { useGlobalStore } from "@/stores/modules/global";
 import Main from "@/layouts/components/Main/index.vue";
-import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
-import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
+// import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
+// import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
 import Logo from "@/assets/images/logo.svg";
 
