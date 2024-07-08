@@ -334,6 +334,137 @@ const Menu = [
     ]
   },
   {
+    name: "Logging",
+    meta: {
+      icon: "./images/menu-logging.svg",
+      title: "事件记录",
+      isLink: "",
+      isHide: false,
+      isFull: false,
+      isAffix: false,
+      isKeepAlive: false
+    },
+    children: [
+      {
+        path: "/SignalEvent",
+        name: "SignalEvent",
+        component: "/SignalEvent/index",
+        meta: {
+          title: "遥信事件",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/OverLimitEvent",
+        name: "OverLimitEvent",
+        component: "/OverLimitEvent/index",
+        meta: {
+          title: "越限事件",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/SystemDaily",
+        name: "SystemDaily",
+        component: "/SystemDaily/index",
+        meta: {
+          title: "操作日志",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/SMSLog",
+        name: "SMSLog",
+        component: "/SMSLog/index",
+        meta: {
+          title: "短信日志",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/PlatformRunLog",
+        name: "PlatformRunLog",
+        component: "/PlatformRunLog/index",
+        meta: {
+          title: "平台运行日志",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/AlarmInfo",
+        name: "AlarmInfo",
+        component: "/AlarmInfo/index",
+        meta: {
+          title: "报警信息",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/PushRecord",
+        name: "PushRecord",
+        component: "/PushRecord/index",
+        meta: {
+          title: "推送记录",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/AlarmAnalysis",
+        name: "AlarmAnalysis",
+        component: "/AlarmAnalysis/index",
+        meta: {
+          title: "报警分析",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/AlarmInfoHistory",
+        name: "AlarmInfoHistory",
+        component: "/AlarmInfoHistory/index",
+        meta: {
+          title: "报警信息历史",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      }
+    ]
+  },
+  {
     name: "Setting",
     meta: {
       icon: "./images/menu-setting.svg",

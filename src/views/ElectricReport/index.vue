@@ -2,7 +2,9 @@
   <div class="flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <div class="card left-box">
+        <CircuitInfoTree />
+      </div>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -49,7 +51,7 @@
 import { reactive } from "vue";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
-// import data from "./data.json";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const formInline = reactive({
   type: "shanghai",
