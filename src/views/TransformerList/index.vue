@@ -28,7 +28,7 @@ import PaginationTable from "@/components/PaginationTable/index.vue";
 import { localGet } from "@/utils";
 
 const number = ref({ red: 0, yellow: 0, green: 0 });
-const tableRef = ref(null);
+const tableRef = ref<any>(null);
 const stationId = ref(localGet("context-transformer")?.stationid);
 
 const pieData = ref([

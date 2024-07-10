@@ -19,10 +19,7 @@ import Loading from "@/components/Loading/index.vue";
 import ThemeDrawer from "./components/ThemeDrawer/index.vue";
 
 const LayoutComponents: Record<LayoutType, Component> = {
-  vertical: defineAsyncComponent(() => import("./LayoutVertical/index.vue")),
-  classic: defineAsyncComponent(() => import("./LayoutClassic/index.vue")),
-  transverse: defineAsyncComponent(() => import("./LayoutTransverse/index.vue")),
-  columns: defineAsyncComponent(() => import("./LayoutColumns/index.vue"))
+  vertical: defineAsyncComponent(() => import("./LayoutVertical/index.vue"))
 };
 
 const globalStore = useGlobalStore();

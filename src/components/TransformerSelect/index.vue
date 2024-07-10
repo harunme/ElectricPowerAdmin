@@ -122,7 +122,7 @@ const onSelect = (row?: Meter.Station) => {
     stationSelected.value = {} as any;
     localRemove("context-transformer");
   }
-  props.onChange(row);
+  if (props.onChange) props.onChange(row);
 };
 
 watch(dialogVisible, async () => {

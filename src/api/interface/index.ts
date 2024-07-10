@@ -71,6 +71,7 @@ export namespace Main {
   export interface ReqSummary extends ReqPage {
     sortParam: string;
     sortTag: string;
+    stationid?: string;
   }
 
   export interface ResSummary {
