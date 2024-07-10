@@ -96,8 +96,11 @@ export namespace Main {
     }>;
   }
   export interface ReqGetAlarmEventYxList extends ReqPage {
-    startTime: string;
-    endTime: string;
+    starttime?: string;
+    endtime?: string;
+    stationid?: string;
+    metername?: string;
+    paramname?: string;
   }
   export interface ResGetAlarmEventYxList
     extends ResPage<{
@@ -119,6 +122,30 @@ export namespace Main {
     endTime: string;
   }
   export interface ResGetAlarmEventYcList
+    extends ResPage<{
+      eventname0: string;
+      alarmtime: string;
+      stationid: string;
+      stationname: string;
+      meter: string;
+      metername: string;
+      paramname: string;
+      eventdescription: string;
+      codetype: string;
+      stateint: number;
+      statefloat: number;
+      statedes: string;
+      limitvalue: number;
+    }> {}
+
+  export interface ReqPlatformRunLogPageInfo extends ReqPage {
+    starttime?: string;
+    endtime?: string;
+    stationid?: string;
+    meterid?: string;
+    eventtype?: string;
+  }
+  export interface ResPlatformRunLogPageInfo
     extends ResPage<{
       eventname0: string;
       alarmtime: string;

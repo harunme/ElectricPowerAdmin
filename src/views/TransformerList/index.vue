@@ -97,7 +97,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
 
 const selectTransformer = t => {
   stationId.value = t.stationid;
-  tableRef.value.resetData();
+  tableRef?.value?.resetData();
 };
 </script>
 

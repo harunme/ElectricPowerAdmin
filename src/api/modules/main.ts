@@ -20,3 +20,8 @@ export const GetAlarmEventYxList = (params: Main.ReqGetAlarmEventYxList) => {
 export const GetAlarmEventYcList = (params: Main.ReqGetAlarmEventYcList) => {
   return http.postForm<Main.ResGetAlarmEventYcList>("/main/getAlarmEventYcList", params);
 };
+
+// 事件记录-平台运行日志
+export const PlatformRunLogPageInfo = (params: Main.ReqPlatformRunLogPageInfo) => {
+  return http.postForm<Main.ResPlatformRunLogPageInfo>("/main/PlatformRunLogPageInfo", params);
+};
