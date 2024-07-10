@@ -25,3 +25,13 @@ export const GetAlarmEventYcList = (params: Main.ReqGetAlarmEventYcList) => {
 export const PlatformRunLogPageInfo = (params: Main.ReqPlatformRunLogPageInfo) => {
   return http.postForm<Main.ResPlatformRunLogPageInfo>("/main/PlatformRunLogPageInfo", params);
 };
+
+// 事件记录-操作日志
+export const GetLogPageInfo = (params: Main.ReqGetLogPageInfo) => {
+  return http.postForm<Main.ResGetLogPageInfo>("/api/getLogPageInfo", params);
+};
+
+// 事件记录-报警信息历史
+export const GetAlarmEventLogListHis = (params: Main.ReqGetAlarmEventLogListHis) => {
+  return http.postForm<Main.ResGetAlarmEventLogListHis>("/main/getAlarmEventLogListHis", params);
+};

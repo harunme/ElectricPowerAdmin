@@ -118,8 +118,12 @@ export namespace Main {
     }> {}
 
   export interface ReqGetAlarmEventYcList extends ReqPage {
-    startTime: string;
-    endTime: string;
+    starttime?: string;
+    endtime?: string;
+    stationid?: string;
+    metername?: string;
+    paramname?: string;
+    eventtype?: string;
   }
   export interface ResGetAlarmEventYcList
     extends ResPage<{
@@ -160,5 +164,37 @@ export namespace Main {
       statefloat: number;
       statedes: string;
       limitvalue: number;
+    }> {}
+
+  export interface ReqGetLogPageInfo extends ReqPage {
+    starttime?: string;
+    endtime?: string;
+    keyword?: string;
+  }
+  export interface ResGetLogPageInfo
+    extends ResPage<{
+      accountid: string;
+      destext: string;
+      stationname: string;
+      useaddress: string;
+      logintime: string;
+    }> {}
+
+  export interface ReqGetAlarmEventLogListHis extends ReqPage {
+    starttime?: string;
+    endtime?: string;
+    stationid?: string;
+    messinfotype?: string;
+    alarmtype?: string;
+    metersearch?: string;
+    messinfolevel?: string;
+  }
+  export interface ResGetAlarmEventLogListHis
+    extends ResPage<{
+      accountid: string;
+      destext: string;
+      stationname: string;
+      useaddress: string;
+      logintime: string;
     }> {}
 }
