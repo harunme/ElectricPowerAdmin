@@ -35,3 +35,8 @@ export const GetLogPageInfo = (params: Main.ReqGetLogPageInfo) => {
 export const GetAlarmEventLogListHis = (params: Main.ReqGetAlarmEventLogListHis) => {
   return http.postForm<Main.ResGetAlarmEventLogListHis>("/main/getAlarmEventLogListHis", params);
 };
+
+// 电力监测-变压器温度月报
+export const TransformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport) => {
+  return http.postForm<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
+};

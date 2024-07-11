@@ -170,15 +170,15 @@ export namespace Main {
   export interface ReqGetLogPageInfo extends ReqPage {
     starttime?: string;
     endtime?: string;
-    keyword?: string;
+    selectedname?: string;
   }
   export interface ResGetLogPageInfo
     extends ResPage<{
-      accountid: string;
-      destext: string;
+      userid: string;
+      content: string;
       stationname: string;
-      useaddress: string;
-      logintime: string;
+      useraddress: string;
+      datetime: string;
     }> {}
 
   export interface ReqGetAlarmEventLogListHis extends ReqPage {
@@ -197,5 +197,23 @@ export namespace Main {
       stationname: string;
       useaddress: string;
       logintime: string;
+    }> {}
+
+  export interface ReqTransformerTempMonthReport extends ReqPage {
+    stationid?: string;
+    transformerid?: string;
+    starttime?: string;
+  }
+  export interface ResTransformerTempMonthReport
+    extends ResPage<{
+      stationid: string;
+      stationname: string;
+      objectid: string;
+      objectname: string;
+      meter: string;
+      collecttime: string;
+      fTempA: string;
+      fTempB: string;
+      fTempC: string;
     }> {}
 }
