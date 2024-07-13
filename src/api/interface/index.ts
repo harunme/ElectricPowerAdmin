@@ -284,4 +284,40 @@ export namespace Main {
     starttime: string;
     timeinterval: string;
   }
+
+  export interface ResElecMaxMinAvgValue
+    extends Result<{
+      StatisticValue: {
+        stationid: string;
+        stationname: string;
+        objectid: string;
+        objectname: string;
+        meter: string;
+        collecttime: string;
+        fIaavg: string;
+        fIamaxvalue: string;
+        fIaminvalue: string;
+        fIamaxtime: string;
+        fIamintime: string;
+        fIbavg: string;
+        fIbmaxvalue: string;
+        fIbminvalue: string;
+        fIbmaxtime: string;
+        fIbmintime: string;
+        fIcavg: string;
+        fIcmaxvalue: string;
+        fIcminvalue: string;
+        fIcmaxtime: string;
+        fIcmintime: string;
+      }[];
+    }> {}
+
+  export interface ReqElecMaxMinAvgValue {
+    stationid: string;
+    circuitids: string;
+    starttime: string;
+    // 电流 I，电压 U，功率 P，不平衡度 UnB，电压谐波 UHR，电流谐波 IHR。
+    param: "I" | "U" | "P" | "UnB" | "UHR" | "IHR";
+    scheme: "day" | "month" | "custom";
+  }
 }

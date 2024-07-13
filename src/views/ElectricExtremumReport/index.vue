@@ -5,23 +5,24 @@
       <div class="card left-box"></div>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
-          <el-form-item label="日期">
-            <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a month" />
-          </el-form-item>
-          <el-form-item label="电压类别">
-            <el-select v-model="formInline.type">
-              <el-option label="全部" value="shanghai" />
-              <el-option label="相电压" value="beijing" />
-              <el-option label="线电压" value="beijing" />
+          <el-form-item label="报表类型">
+            <el-select v-model="formInline.scheme">
+              <el-option label="日报" value="day" />
+              <el-option label="月报" value="month" />
+              <el-option label="自定义" value="custom" />
             </el-select>
           </el-form-item>
-          <el-form-item label="时间间隔">
-            <el-select v-model="formInline.time">
-              <el-option label="一分钟" value="1min" />
-              <el-option label="五分钟" value="5min" />
-              <el-option label="十五分钟" value="15min" />
-              <el-option label="半小时" value="30min" />
-              <el-option label="一小时" value="60min" />
+          <el-form-item label="日期">
+            <el-date-picker v-model="formInline.starttime" type="date" />
+          </el-form-item>
+          <el-form-item label="电力类别">
+            <el-select v-model="formInline.param">
+              <el-option label="功率" value="P" />
+              <el-option label="电流" value="I" />
+              <el-option label="电压" value="U" />
+              <el-option label="不平衡度" value="UnB" />
+              <el-option label="电压谐波" value="UHR" />
+              <el-option label="电流谐波" value="IHR" />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -47,14 +48,20 @@
 
 <script setup lang="tsx" name="bing">
 import { reactive } from "vue";
+// import moment from "moment";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import { ElecMaxMinAvgValue } from "@/api/modules/main";
 // import data from "./data.json";
 
-const formInline = reactive({
-  type: "shanghai",
-  date: "",
-  time: "1min"
+const formInline = reactive<{
+  param: "I" | "U" | "P" | "UnB" | "UHR" | "IHR";
+  scheme: "day" | "month" | "custom";
+  starttime: string;
+}>({
+  param: "I",
+  scheme: "day",
+  starttime: "2024-06-01"
 });
 
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
@@ -74,8 +81,8 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 };
 
 const columns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "日期" },
+  { prop: "objectname", label: "回路名称" },
+  { prop: "collecttime", label: "日期" },
   {
     label: "有功功率(kW)",
     children: [
@@ -164,7 +171,16 @@ const onSubmit = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    resolve({ list: [], total: 0 });
+    const params: any = {
+      stationid: "000",
+      circuitids: "000-001-002",
+      scheme: formInline.scheme,
+      starttime: formInline.starttime,
+      param: "I"
+    };
+    const { data } = await ElecMaxMinAvgValue(params);
+    const list = data?.StatisticValue || [];
+    resolve({ list, total: 0 });
   });
 };
 </script>

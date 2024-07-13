@@ -55,3 +55,8 @@ export const AveragePowerReport = (params: Main.ReqAveragePowerReport) => {
 export const ElectricReport = (params: Main.ReqElectricReport) => {
   return http.postForm<Main.ResElectricReport>("/main/ElectricReport", params);
 };
+
+// 电力监测-电力极值报表
+export const ElecMaxMinAvgValue = (params: Main.ReqElecMaxMinAvgValue) => {
+  return http.postForm<Main.ResElecMaxMinAvgValue>("/main/ElecMaxMinAvgValue", params);
+};
