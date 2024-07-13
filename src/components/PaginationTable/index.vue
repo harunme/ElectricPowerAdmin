@@ -8,6 +8,7 @@
       </recursive-columns>
     </el-table>
     <el-pagination
+      v-if="total > 0"
       class="pagination"
       background
       @size-change="handleSizeChange"
