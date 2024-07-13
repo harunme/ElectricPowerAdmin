@@ -1,4 +1,14 @@
-.full-iframe {
-  width: 100%;
-  height: 100%;
+.ElectricReport {
+  .main-box {
+    height: calc(100% - 64px);
+  }
+  .chart-box {
+    height: 320px;
+    margin-bottom: 8px;
+  }
+  .table-box {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 380px);
+  }
 }
