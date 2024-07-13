@@ -1,12 +1,8 @@
 // 请求响应参数（不包含data）
-export interface Result {
+export interface Result<T = any> {
+  data: T;
   code: string;
   msg: string;
-}
-
-// 请求响应参数（包含data）
-export interface ResultData<T = any> extends Result {
-  data: T;
 }
 
 // 分页响应参数
@@ -199,7 +195,7 @@ export namespace Main {
       logintime: string;
     }> {}
 
-  export interface ReqTransformerTempMonthReport extends ReqPage {
+  export interface ReqTransformerTempMonthReport {
     stationid?: string;
     transformerid?: string;
     starttime?: string;
@@ -215,5 +211,46 @@ export namespace Main {
       fTempA: string;
       fTempB: string;
       fTempC: string;
+    }> {}
+
+  export interface ResGetCirLoadRate
+    extends Result<{
+      PowerValue: {
+        stationid: string;
+        circuitid: string;
+        circuitname: string;
+        collecttime: string;
+        fPMaxValue: string;
+        fPAverag: string;
+        fPLoadRate: string;
+      }[];
+    }> {}
+
+  export interface ReqGetCirLoadRate {
+    stationid: string;
+    circuitid: string;
+    starttime: string;
+    scheme: "M" | "Y";
+  }
+
+  export interface ReqAveragePowerReport {
+    stationid?: string;
+    circuitid?: string;
+    starttime?: string;
+    scheme: "M" | "Y";
+  }
+  export interface ResAveragePowerReport
+    extends Result<{
+      list: {
+        stationid: string;
+        circuitid: string;
+        circuitname: string;
+        collecttime: string;
+        fEpi: string;
+        fEpe: string;
+        fEql: string;
+        fEqc: string;
+        fPf: string;
+      }[];
     }> {}
 }

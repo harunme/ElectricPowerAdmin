@@ -40,3 +40,13 @@ export const GetAlarmEventLogListHis = (params: Main.ReqGetAlarmEventLogListHis)
 export const TransformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport) => {
   return http.postForm<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
 };
+
+// 电力监测-负荷率
+export const GetCirLoadRate = (params: Main.ReqGetCirLoadRate) => {
+  return http.postForm<Main.ResGetCirLoadRate>("/main/getCirLoadRate", params);
+};
+
+// 电力监测-平均功率因数
+export const AveragePowerReport = (params: Main.ReqAveragePowerReport) => {
+  return http.postForm<Main.ResAveragePowerReport>("/main/AveragePowerReport", params);
+};
