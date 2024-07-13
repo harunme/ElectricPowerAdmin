@@ -253,4 +253,35 @@ export namespace Main {
         fPf: string;
       }[];
     }> {}
+
+  export interface ResElectricReport
+    extends Result<{
+      PowerValue: {
+        circuitid: string;
+        circuitname: string;
+        collecttime: string;
+        fEpe: string;
+        fEpi: string;
+        fIa: string;
+        fIb: string;
+        fIc: string;
+        fP: string;
+        fPf: string;
+        fQ: string;
+        fS: string;
+        fUa: string;
+        fUb: string;
+        fUc: string;
+        fUab: string;
+        fUbc: string;
+        fUca: string;
+      }[];
+    }> {}
+
+  export interface ReqElectricReport {
+    stationid: string;
+    circuitid: string;
+    starttime: string;
+    timeinterval: string;
+  }
 }

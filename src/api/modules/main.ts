@@ -50,3 +50,8 @@ export const GetCirLoadRate = (params: Main.ReqGetCirLoadRate) => {
 export const AveragePowerReport = (params: Main.ReqAveragePowerReport) => {
   return http.postForm<Main.ResAveragePowerReport>("/main/AveragePowerReport", params);
 };
+
+// 电力监测-电力运行报表
+export const ElectricReport = (params: Main.ReqElectricReport) => {
+  return http.postForm<Main.ResElectricReport>("/main/ElectricReport", params);
+};
