@@ -1,7 +1,14 @@
 .AveragePowerReport {
+  .main-box {
+    height: calc(100% - 64px);
+  }
   .chart-box {
-    // border: 1px solid;
     height: 320px;
     margin-bottom: 8px;
+  }
+  .table-box {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 380px);
   }
 }
