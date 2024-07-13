@@ -148,6 +148,32 @@ const Menu = [
         }
       },
       {
+        path: "/ElectricDayReport",
+        name: "ElectricDayReport",
+        component: "/ElectricDayReport/index",
+        meta: {
+          title: "电力运行日报",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/ElectricMonthReport",
+        name: "ElectricMonthReport",
+        component: "/ElectricMonthReport/index",
+        meta: {
+          title: "电力运行月报",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
         path: "/AveragePowerReport",
         name: "AveragePowerReport",
         component: "/AveragePowerReport/index",
