@@ -36,11 +36,6 @@ export const GetAlarmEventLogListHis = (params: Main.ReqGetAlarmEventLogListHis)
   return http.postForm<Main.ResGetAlarmEventLogListHis>("/main/getAlarmEventLogListHis", params);
 };
 
-// 电力监测-变压器温度月报
-export const TransformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport) => {
-  return http.postForm<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
-};
-
 // 电力监测-负荷率
 export const GetCirLoadRate = (params: Main.ReqGetCirLoadRate) => {
   return http.postForm<Main.ResGetCirLoadRate>("/main/getCirLoadRate", params);
@@ -69,4 +64,9 @@ export const ElectricReportNew = (params: Main.ReqElectricReportNew) => {
 // 电力监测-电力运行月报
 export const ElectricMonthReport = (params: Main.ReqElectricMonthReport) => {
   return http.postForm<Main.ResElectricMonthReport>("/main/ElectricMonthReport", params);
+};
+
+// 电力监测-变压器温度月报
+export const transformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport[]) => {
+  return http.post<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
 };
