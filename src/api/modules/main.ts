@@ -60,3 +60,13 @@ export const ElectricReport = (params: Main.ReqElectricReport) => {
 export const ElecMaxMinAvgValue = (params: Main.ReqElecMaxMinAvgValue) => {
   return http.postForm<Main.ResElecMaxMinAvgValue>("/main/ElecMaxMinAvgValue", params);
 };
+
+// 电力监测-电力运行日报
+export const ElectricReportNew = (params: Main.ReqElectricReportNew) => {
+  return http.postForm<Main.ResElectricReportNew>("/main/ElectricReportNew", params);
+};
+
+// 电力监测-电力运行月报
+export const ElectricMonthReport = (params: Main.ReqElectricMonthReport) => {
+  return http.postForm<Main.ResElectricMonthReport>("/main/ElectricMonthReport", params);
+};

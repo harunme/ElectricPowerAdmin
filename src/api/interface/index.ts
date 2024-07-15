@@ -320,4 +320,64 @@ export namespace Main {
     param: "I" | "U" | "P" | "UnB" | "UHR" | "IHR";
     scheme: "day" | "month" | "custom";
   }
+
+  export interface ResElectricReportNew
+    extends Result<{
+      PowerValue: {
+        circuitid: string;
+        circuitname: string;
+        collecttime: string;
+        fEpe: string;
+        fEpi: string;
+        fIa: string;
+        fIb: string;
+        fIc: string;
+        fP: string;
+        fPF: string;
+        fQ: string;
+        fS: string;
+        fUa: string;
+        fUb: string;
+        fUc: string;
+        fUab: string;
+        fUbc: string;
+        fUca: string;
+      }[];
+    }> {}
+
+  export interface ReqElectricReportNew {
+    stationid: string;
+    circuitid: string;
+    starttime: string;
+  }
+
+  export interface ResElectricMonthReport
+    extends Result<{
+      PowerValue: {
+        circuitid: string;
+        circuitname: string;
+        collecttime: string;
+        fEpe: string;
+        fEpi: string;
+        fIa: string;
+        fIb: string;
+        fIc: string;
+        fP: string;
+        fPF: string;
+        fQ: string;
+        fS: string;
+        fUa: string;
+        fUb: string;
+        fUc: string;
+        fUab: string;
+        fUbc: string;
+        fUca: string;
+      }[];
+    }> {}
+
+  export interface ReqElectricMonthReport {
+    stationid: string;
+    circuitid: string;
+    starttime: string;
+  }
 }
