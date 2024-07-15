@@ -1,6 +1,12 @@
 <template>
   <div class="PaginationTable">
-    <el-table :summary-method="summaryMethod" :show-summary="showSummary" :data="tableData" style="width: 100%">
+    <el-table
+      :summary-method="summaryMethod"
+      :span-method="spanMethod"
+      :show-summary="showSummary"
+      :data="tableData"
+      style="width: 100%"
+    >
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
         <template #actions="{ row }">
           <slot name="actions" :row="row"></slot>
