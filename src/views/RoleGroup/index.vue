@@ -30,7 +30,7 @@ const columns = [
   { prop: "stationname", label: "信用编码" },
   { prop: "stationname", label: "地址" },
   { prop: "stationname", label: "负责人" },
-  { prop: "actions", label: "操作" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async (): Promise<any> => {

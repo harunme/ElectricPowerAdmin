@@ -24,7 +24,7 @@ import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const columns = [
   { prop: "stationname", label: "分组名称" },
-  { prop: "actions", label: "操作" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async (): Promise<any> => {

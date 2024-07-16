@@ -19,7 +19,7 @@
       </div>
       <div class="table-box">
         <PaginationTable :columns="columns" :fetch-data="fetchData">
-          <template #actions="">
+          <template #actions="{}">
             <el-button type="text" size="mini">修改</el-button>
             <el-button type="text" size="mini">删除</el-button>
           </template>
@@ -57,7 +57,7 @@ const columns: any = [
   { prop: "voltagestep", label: "仪表状态" },
   { prop: "voltagestep", label: "设备" },
   { prop: "voltagestep", label: "灭火器装置" },
-  { prop: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {

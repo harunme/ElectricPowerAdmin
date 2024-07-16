@@ -79,7 +79,7 @@ const dayColumns = [
   { prop: "transformername", label: "上日用电 / kW·h" },
   { prop: "transformername", label: "增加值" },
   { prop: "transformername", label: "环比(%)" },
-  { prop: "actions", label: "操作", width: "80px" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const weekColumns = [
@@ -88,7 +88,7 @@ const weekColumns = [
   { prop: "transformername", label: "上周用电 / kW·h" },
   { prop: "transformername", label: "增加值" },
   { prop: "transformername", label: "环比(%)" },
-  { prop: "actions", label: "操作", width: "80px" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const monthColumns = [
@@ -97,7 +97,7 @@ const monthColumns = [
   { prop: "transformername", label: "上月用电 / kW·h" },
   { prop: "transformername", label: "增加值" },
   { prop: "transformername", label: "环比(%)" },
-  { prop: "actions", label: "操作", width: "80px" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const fetchData = async (): Promise<any> => {

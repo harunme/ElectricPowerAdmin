@@ -34,7 +34,7 @@ const columns: any = [
   { prop: "voltagestep", label: "额定容量(kVA)" },
   { prop: "voltagestep", label: "额定电流(A)" },
   { prop: "voltagestep", label: "关联仪表" },
-  { prop: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {

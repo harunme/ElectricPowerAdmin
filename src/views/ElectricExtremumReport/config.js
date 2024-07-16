@@ -1,22 +1,23 @@
 const columns = {
   I: [
     { prop: "objectname", label: "回路名称" },
-    { prop: "collecttime", label: "日期", width: 200 },
+    { prop: "customDom", slotName: "collecttime", label: "日期", width: 120 },
     {
       label: "A相电流(A)",
       children: [
         {
           label: "最大值",
           children: [
-            { prop: "fIamaxvalue", label: "数值" },
-            { prop: "fIamaxtime", label: "发生时间" }
+            { prop: "customDom", slotName: "fIamaxvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIamaxtime", label: "发生时间", width: 84 }
           ]
         },
         {
           label: "最小值",
           children: [
-            { prop: "fIaminvalue", label: "数值" },
-            { prop: "fIamintime", label: "发生时间" }
+            // { prop: "fIaminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIaminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIamintime", label: "发生时间", width: 84 }
           ]
         },
         { prop: "fIaavg", label: "平均值" }
@@ -28,15 +29,17 @@ const columns = {
         {
           label: "最大值",
           children: [
-            { prop: "fIbmaxvalue", label: "数值" },
-            { prop: "fIbmaxtime", label: "发生时间" }
+            // { prop: "fIbmaxvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIbmaxvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIbmaxtime", label: "发生时间", width: 84 }
           ]
         },
         {
           label: "最小值",
           children: [
-            { prop: "fIbminvalue", label: "数值" },
-            { prop: "fIbmintime", label: "发生时间" }
+            // { prop: "fIbminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIbminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIbmintime", label: "发生时间", width: 84 }
           ]
         },
         { prop: "fIbavg", label: "平均值" }
@@ -48,15 +51,17 @@ const columns = {
         {
           label: "最大值",
           children: [
-            { prop: "fIcmaxvalue", label: "数值" },
-            { prop: "fIcmaxtime", label: "发生时间" }
+            // { prop: "fIcmaxvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIcmaxvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIcmaxtime", label: "发生时间", width: 84 }
           ]
         },
         {
           label: "最小值",
           children: [
-            { prop: "fIcminvalue", label: "数值" },
-            { prop: "fIcmintime", label: "发生时间" }
+            // { prop: "fIcminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIcminvalue", label: "数值" },
+            { prop: "customDom", slotName: "fIcmintime", label: "发生时间", width: 84 }
           ]
         },
         { prop: "fIcavg", label: "平均值" }
@@ -449,4 +454,4 @@ const columns = {
   ]
 };
 
-export { columns };
+export default columns;

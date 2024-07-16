@@ -63,7 +63,33 @@
             <el-button>导出</el-button>
           </el-form-item>
         </el-form>
-        <PaginationTable ref="tableRef" :columns="columns[formInline.param]" :fetch-data="fetchData"> </PaginationTable>
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+          <template #collecttime="{ row }"> {{ moment(row.collecttime).format("YYYY-MM-DD") }} </template>
+          <template #fIamaxtime="{ row }">{{ moment(row.fIamaxtime).format("HH:mm") }} </template>
+          <template #fIbmaxtime="{ row }">{{ moment(row.fIbmaxtime).format("HH:mm") }} </template>
+          <template #fIcmaxtime="{ row }">{{ moment(row.fIcmaxtime).format("HH:mm") }} </template>
+          <template #fIamintime="{ row }">{{ moment(row.fIamintime).format("HH:mm") }} </template>
+          <template #fIbmintime="{ row }">{{ moment(row.fIbmintime).format("HH:mm") }} </template>
+          <template #fIcmintime="{ row }">{{ moment(row.fIcmintime).format("HH:mm") }} </template>
+          <template #fIamaxvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIamaxvalue }}</span>
+          </template>
+          <template #fIaminvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIaminvalue }}</span>
+          </template>
+          <template #fIcmaxvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIcmaxvalue }}</span>
+          </template>
+          <template #fIcminvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIcminvalue }}</span>
+          </template>
+          <template #fIbmaxvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIbmaxvalue }}</span>
+          </template>
+          <template #fIbminvalue="{ row }">
+            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIbminvalue }}</span>
+          </template>
+        </PaginationTable>
       </div>
     </div>
   </div>
@@ -75,13 +101,14 @@ import moment from "moment";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ElecMaxMinAvgValue } from "@/api/modules/main";
-import { columns } from "./config";
+import columnsConfig from "./config";
 
 const end = new Date();
 const start = new Date();
 start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
 
 const tableRef = ref<any>(null);
+const columns = ref<any>([]);
 
 const formInline = reactive<{
   param: "I" | "U" | "ABCU" | "P" | "UnB" | "UHR" | "IHR";
@@ -134,6 +161,7 @@ const fetchData = async (): Promise<any> => {
       params.starttime = formInline.starttime;
     }
     const { data } = await ElecMaxMinAvgValue(params);
+    columns.value = columnsConfig[formInline.param];
     const list = data?.StatisticValue || [];
     resolve({ list, total: 0 });
   });

@@ -36,7 +36,7 @@ const columns: any = [
   { prop: "voltagestep", label: "网关型号" },
   { prop: "voltagestep", label: "网关状态" },
   { prop: "voltagestep", label: "IP" },
-  { prop: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {

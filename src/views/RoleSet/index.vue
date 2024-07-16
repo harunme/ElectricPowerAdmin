@@ -97,7 +97,7 @@ const columns = [
   { prop: "stationname", label: "角色名称" },
   { prop: "stationname", label: "组织机构" },
   { prop: "stationname", label: "描述" },
-  { prop: "actions", label: "操作" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async (): Promise<any> => {

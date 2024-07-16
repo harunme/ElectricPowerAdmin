@@ -8,8 +8,8 @@
       style="width: 100%"
     >
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
-        <template #actions="{ row }">
-          <slot name="actions" :row="row"></slot>
+        <template v-for="slotName in Object.keys(slots)" #[slotName]="{ row }">
+          <slot :name="slotName" :row="row"></slot>
         </template>
       </recursive-columns>
     </el-table>
@@ -30,10 +30,14 @@
 
 <script setup lang="tsx">
 import type { VNode } from "vue";
-import { ref, onMounted, defineExpose } from "vue";
+import { ref, onMounted, defineExpose, useSlots } from "vue";
 // import { ReqPage, ResPage } from "@/api/interface/index";
 import RecursiveColumns from "./RecursiveColumns.vue";
 import type { TableColumnCtx } from "element-plus";
+
+const slots = useSlots();
+
+console.log(" $slots", slots.value);
 
 export interface SpanMethodProps {
   row: any;

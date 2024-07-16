@@ -91,7 +91,7 @@ const columns = [
   { prop: "deptname", label: "组织机构" },
   { prop: "regionname", label: "区域", width: "120px" },
   { prop: "address", label: "用户地址" },
-  { prop: "actions", label: "操作", width: "80px" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<Meter.ResGetSubstationListBySubGroupId> => {

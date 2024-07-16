@@ -115,7 +115,7 @@ const columns = [
   { prop: "stationname", label: "变压器数量" },
   { prop: "stationname", label: "负责人" },
   { prop: "stationname", label: "负责人手机号" },
-  { prop: "actions", label: "操作" }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async (): Promise<any> => {
