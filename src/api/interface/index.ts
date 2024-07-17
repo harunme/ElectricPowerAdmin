@@ -399,4 +399,24 @@ export namespace Main {
         circuitname: string;
       }[];
     }> {}
+
+  export interface ReqEnergyReportMOM {
+    stationid: string;
+    circuitids?: string;
+    circuitid: string;
+    starttime: string;
+    scheme: "D" | "W" | "M";
+  }
+
+  export interface ResEnergyReportMOM
+    extends Result<{
+      PowerValue: {
+        diffvalue: string;
+        curvalue: string;
+        momvalue: string;
+        beforevalue: string;
+        circuitid: string;
+        circuitname: string;
+      }[];
+    }> {}
 }

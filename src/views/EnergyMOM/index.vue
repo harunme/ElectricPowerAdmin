@@ -2,123 +2,199 @@
   <div class="EnergyMOM flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box">
-        <el-tree
-          default-expand-all
-          style="max-width: 600px"
-          :data="tree"
-          show-checkbox
-          node-key="regionid"
-          :default-checked-keys="[100]"
-          :props="props"
-        />
-      </div>
+      <div class="card left-box"></div>
       <div class="card content-box">
         <el-tabs>
-          <el-tab-pane label="按日" class="table-box">
+          <el-tab-pane lazy label="按日" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a month" />
+              <el-form-item label="日期">
+                <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
               </el-form-item>
-
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
                 <el-button type="primary">导出</el-button>
               </el-form-item>
             </el-form>
-            <PaginationTable :columns="dayColumns" :fetch-data="fetchData"> </PaginationTable>
+            <PaginationTable ref="tableRef" :columns="dayColumns" :fetch-data="fetchData">
+              <template #actions="{ row }">
+                <el-button link size="small" @click="showChart(row)">查看图表</el-button>
+              </template>
+            </PaginationTable>
           </el-tab-pane>
-          <el-tab-pane label="按周" class="table-box">
+          <el-tab-pane lazy label="按周" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a month" />
+              <el-form-item label="日期">
+                <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
               </el-form-item>
-
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
                 <el-button type="primary">导出</el-button>
               </el-form-item>
             </el-form>
-            <PaginationTable :columns="weekColumns" :fetch-data="fetchData"> </PaginationTable>
-          </el-tab-pane>
-          <el-tab-pane label="按月" class="table-box">
-            <el-form :inline="true" :model="formInline" class="table-form-inline">
-              <el-form-item label="时间范围">
-                <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a month" />
-              </el-form-item>
-
-              <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
-                <el-button type="primary">导出</el-button>
-              </el-form-item>
-            </el-form>
-            <PaginationTable :columns="monthColumns" :fetch-data="fetchData">
+            <PaginationTable ref="tableRef" :columns="weekColumns" :fetch-data="fetchData">
               <template #actions="">
-                <el-button type="primary" size="small">图表</el-button>
+                <el-button link size="small">查看图表</el-button>
+              </template>
+            </PaginationTable>
+          </el-tab-pane>
+          <el-tab-pane lazy label="按月" class="table-box">
+            <el-form :inline="true" :model="formInline" class="table-form-inline">
+              <el-form-item label="日期">
+                <el-date-picker v-model="formInline.starttime" type="month" @change="onTimeChange" />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary">导出</el-button>
+              </el-form-item>
+            </el-form>
+            <PaginationTable ref="tableRef" :columns="monthColumns" :fetch-data="fetchData">
+              <template #actions="">
+                <el-button link size="small">查看图表</el-button>
               </template>
             </PaginationTable>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
+    <el-dialog v-model="dialogVisible" :title="row?.circuitname" width="500">
+      <span class="chart-text">增长值：{{ row.diffvalue }}kW·h 增长率：{{ row.momvalue }}%</span>
+      <div class="chart-box">
+        <ECharts v-if="option !== null" :option="option" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
-import { onMounted, ref, reactive } from "vue";
-import { getCircuitInfoTree } from "@/api/modules/sys";
+<script setup lang="tsx" name="EnergyMOM">
+import { ref, reactive } from "vue";
+import moment from "moment";
+import { energyReportMOM } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import ECharts from "@/components/Charts/echarts.vue";
 
-const tree = ref([] as any);
-const props = { children: "children", label: "circuitname" };
+const tableRef = ref<any>(null);
+const dialogVisible = ref(false);
+const row = ref<any>(null);
+
+const option = ref<any>(null);
+
+const formInline = reactive<{
+  starttime: string;
+  scheme: "M" | "D" | "W";
+}>({
+  starttime: "2024-06-05",
+  scheme: "D"
+});
 
 const dayColumns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "当日用电 / kW·h" },
-  { prop: "transformername", label: "上日用电 / kW·h" },
-  { prop: "transformername", label: "增加值" },
-  { prop: "transformername", label: "环比(%)" },
+  { prop: "circuitname", label: "回路名称" },
+  { prop: "curvalue", label: "当日用电 / kW·h" },
+  { prop: "beforevalue", label: "上日用电 / kW·h" },
+  { prop: "diffvalue", label: "增加值" },
+  { prop: "momvalue", label: "环比(%)" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const weekColumns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "当周用电 / kW·h" },
-  { prop: "transformername", label: "上周用电 / kW·h" },
-  { prop: "transformername", label: "增加值" },
-  { prop: "transformername", label: "环比(%)" },
+  { prop: "circuitname", label: "回路名称" },
+  { prop: "curvalue", label: "当周用电 / kW·h" },
+  { prop: "beforevalue", label: "上周用电 / kW·h" },
+  { prop: "diffvalue", label: "增加值" },
+  { prop: "momvalue", label: "环比(%)" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const monthColumns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "当月用电 / kW·h" },
-  { prop: "transformername", label: "上月用电 / kW·h" },
-  { prop: "transformername", label: "增加值" },
-  { prop: "transformername", label: "环比(%)" },
+  { prop: "circuitname", label: "回路名称" },
+  { prop: "curvalue", label: "当月用电 / kW·h" },
+  { prop: "beforevalue", label: "上月用电 / kW·h" },
+  { prop: "diffvalue", label: "增加值" },
+  { prop: "momvalue", label: "环比(%)" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
-const fetchData = async (): Promise<any> => {
-  return new Promise(async resolve => {
-    resolve({ list: [], totle: 0 });
-  });
+const onTimeChange = value => {
+  formInline.starttime = moment(value).format("YYYY-MM-DD");
+  tableRef?.value?.resetData();
 };
 
-onMounted(async () => {
-  const res = await getCircuitInfoTree();
-  tree.value = res?.data;
-});
+const showChart = value => {
+  dialogVisible.value = true;
+  row.value = value;
+  let curvalueText, beforevalueText;
+  if (formInline.scheme === "D") {
+    curvalueText = "当日用电";
+    beforevalueText = "上日用电";
+  }
+  if (formInline.scheme === "M") {
+    curvalueText = "当月用电";
+    beforevalueText = "上月用电";
+  }
+  if (formInline.scheme === "W") {
+    curvalueText = "当周用电";
+    beforevalueText = "上周用电";
+  }
+  option.value = {
+    grid: {
+      left: 20,
+      right: 20,
+      bottom: 20,
+      top: 64,
+      containLabel: true
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross",
+        crossStyle: {
+          color: "#999"
+        }
+      }
+    },
+    legend: {
+      data: [curvalueText, beforevalueText]
+    },
+    xAxis: [
+      {
+        type: "category",
+        data: [value.circuitname],
+        axisPointer: {
+          type: "shadow"
+        }
+      }
+    ],
+    yAxis: [
+      {
+        type: "value",
+        name: "单位（kW.h）"
+      }
+    ],
+    series: [
+      {
+        name: curvalueText,
+        type: "bar",
+        data: [Number(value.curvalue)]
+      },
+      {
+        name: beforevalueText,
+        type: "bar",
+        data: [Number(value.beforevalue)]
+      }
+    ]
+  };
+};
 
-const formInline = reactive({
-  user: "",
-  region: "shanghai",
-  date: ""
-});
-
-const onSubmit = () => {
-  console.log("submit!");
+const fetchData = async (): Promise<any> => {
+  return new Promise(async resolve => {
+    const params = {
+      stationid: "000",
+      circuitid: "000",
+      circuitids: "000",
+      starttime: formInline.starttime,
+      scheme: formInline.scheme
+    };
+    const { data } = await energyReportMOM(params);
+    // console.log("dataa", data);
+    resolve({ list: data.PowerValue });
+  });
 };
 </script>
 

@@ -76,7 +76,7 @@ export const getMonthMom = (params: Main.ReqGetMonthMom) => {
   return http.postForm<Main.ResGetMonthMom>("/main/getMonthMom", params);
 };
 
-// 用能分析-同比分析
-// export const energyReportMOM = (params: Main.ReqEnergyReportMOM[]) => {
-//   return http.post<Main.ResEnergyReportMOM>("/main/energyReportMOM", params);
-// };
+// 用能分析-环比分析
+export const energyReportMOM = (params: Main.ReqEnergyReportMOM) => {
+  return http.postForm<Main.ResEnergyReportMOM>("/main/energyReportMOM", params);
+};
