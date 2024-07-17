@@ -380,4 +380,23 @@ export namespace Main {
     circuitid: string;
     starttime: string;
   }
+
+  export interface ReqGetMonthMom {
+    stationid: string;
+    circuitid: string;
+    starttime: string;
+  }
+
+  export interface ResGetMonthMom
+    extends Result<{
+      PowerValue: {
+        sumyoyvalue: string;
+        collecttime: string;
+        data: string;
+        yoyvalue: string;
+        predata: string;
+        circuitid: string;
+        circuitname: string;
+      }[];
+    }> {}
 }

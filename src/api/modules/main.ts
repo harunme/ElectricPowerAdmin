@@ -70,3 +70,13 @@ export const ElectricMonthReport = (params: Main.ReqElectricMonthReport) => {
 export const transformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport[]) => {
   return http.post<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
 };
+
+// 用能分析-同比分析
+export const getMonthMom = (params: Main.ReqGetMonthMom) => {
+  return http.postForm<Main.ResGetMonthMom>("/main/getMonthMom", params);
+};
+
+// 用能分析-同比分析
+// export const energyReportMOM = (params: Main.ReqEnergyReportMOM[]) => {
+//   return http.post<Main.ResEnergyReportMOM>("/main/energyReportMOM", params);
+// };
