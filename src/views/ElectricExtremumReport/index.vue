@@ -72,22 +72,22 @@
           <template #fIbmintime="{ row }">{{ moment(row.fIbmintime).format("HH:mm") }} </template>
           <template #fIcmintime="{ row }">{{ moment(row.fIcmintime).format("HH:mm") }} </template>
           <template #fIamaxvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIamaxvalue }}</span>
+            <span style="font-weight: 600; color: rgb(255 153 0)">{{ row.fIamaxvalue }}</span>
           </template>
           <template #fIaminvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIaminvalue }}</span>
+            <span style="font-weight: 600; color: rgb(100 218 61)">{{ row.fIaminvalue }}</span>
           </template>
           <template #fIcmaxvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIcmaxvalue }}</span>
+            <span style="font-weight: 600; color: rgb(255 153 0)">{{ row.fIcmaxvalue }}</span>
           </template>
           <template #fIcminvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIcminvalue }}</span>
+            <span style="font-weight: 600; color: rgb(100 218 61)">{{ row.fIcminvalue }}</span>
           </template>
           <template #fIbmaxvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(255 153 0)">{{ row.fIbmaxvalue }}</span>
+            <span style="font-weight: 600; color: rgb(255 153 0)">{{ row.fIbmaxvalue }}</span>
           </template>
           <template #fIbminvalue="{ row }">
-            <span style=" font-weight: 600;color: rgb(100 218 61)">{{ row.fIbminvalue }}</span>
+            <span style="font-weight: 600; color: rgb(100 218 61)">{{ row.fIbminvalue }}</span>
           </template>
         </PaginationTable>
       </div>
