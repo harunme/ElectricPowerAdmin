@@ -34,8 +34,8 @@
 
 <script setup lang="tsx" name="MonitoringLoop">
 import { reactive, ref } from "vue";
-import { ReqPage } from "@/api/interface";
-import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
+// import { ReqPage } from "@/api/interface";
+import { EnergyLineLoss2Tree } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
@@ -89,16 +89,15 @@ const shortcuts = [
   }
 ];
 
-const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
+const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await EnergyReportNoHjPageInfo({
-      pageNum,
-      pageSize,
-      startTime: "2024-06-01",
-      endTime: "2024-06-23"
+    const { data } = await EnergyLineLoss2Tree({
+      stationid: "000",
+      starttime: "2024-06-01 01:00:00",
+      endtime: "2024-06-02 00:00:00"
     });
-    console.log("fetchData", data.list);
-    resolve(data);
+    // console.log("fetchData", data.list);
+    resolve({ list: data.LineLossData });
   });
 };
 </script>

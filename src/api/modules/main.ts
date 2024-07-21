@@ -80,3 +80,23 @@ export const getMonthMom = (params: Main.ReqGetMonthMom) => {
 export const energyReportMOM = (params: Main.ReqEnergyReportMOM) => {
   return http.postForm<Main.ResEnergyReportMOM>("/main/energyReportMOM", params);
 };
+
+// 用能分析-电能集抄
+export const ConsumeEnergyReport = (params: Main.ReqConsumeEnergyReport) => {
+  return http.postForm<Main.ResConsumeEnergyReport>("/main/ConsumeEnergyReport", params);
+};
+
+// 用能分析-计量及电路损耗
+export const EnergyLineLoss2Tree = (params: Main.ReqEnergyLineLoss2Tree) => {
+  return http.postForm<Main.ResEnergyLineLoss2Tree>("/main/EnergyLineLoss2Tree", params);
+};
+
+// 电力监测-变压器监测曲线查询接口
+export const getCurveDataOfPowerAndTempABCNew = (params: Main.ReqGetCurveDataOfPowerAndTempABCNew) => {
+  return http.postForm<Main.ResGetCurveDataOfPowerAndTempABCNew>("/main/getCurveDataOfPowerAndTempABCNew", params);
+};
+
+// 电力监测-变压器监测初始接口
+export const TransformerMonitor = (params: Main.ReqTransformerMonitor) => {
+  return http.postForm<Main.ResTransformerMonitor>("/main/TransformerMonitor", params);
+};

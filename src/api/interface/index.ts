@@ -419,4 +419,134 @@ export namespace Main {
         circuitname: string;
       }[];
     }> {}
+
+  export interface ReqConsumeEnergyReport {
+    stationid: string;
+    circuitids: string;
+    starttime: string;
+    endtime: string;
+    energyKind?: "EPI" | "EPE" | "ZHEPI";
+  }
+  export interface ResConsumeEnergyReport
+    extends Result<{
+      PowerValue: {
+        diffvalue: string;
+        endvalue: string;
+        startvalue: string;
+        circuitid: string;
+        circuitname: string;
+      }[];
+    }> {}
+
+  export interface ReqEnergyLineLoss2Tree {
+    stationid: string;
+    starttime: string;
+    endtime: string;
+  }
+
+  export interface ResEnergyLineLoss2Tree
+    extends Result<{
+      LineLossData: {
+        isincoming: boolean;
+        subValue: number;
+        meter: string;
+        hasChildren: boolean;
+        diffValue: number;
+        stationname: string;
+        parentValue: number;
+        percent: number;
+        circuitid: string;
+        circuitname: string;
+        stationid: string;
+      }[];
+    }> {}
+
+  export interface ReqGetCurveDataOfPowerAndTempABCNew {
+    transformerid: string;
+    starttime: string;
+    params: "S" | "P" | "Q" | "Pf" | "U" | "I" | "Temp";
+  }
+
+  export interface ResGetCurveDataOfPowerAndTempABCNew
+    extends Result<{
+      yesterdayOrigPower: {
+        stationid: string;
+        stationname: string;
+        objectid: string;
+        objectname: string;
+        meter: string;
+        collecttime: string;
+        data: string;
+        fP: string;
+        fPF: string;
+        fPFa: string;
+        fPFb: string;
+        fPFc: string;
+        fPa: string;
+        fPb: string;
+        fPc: string;
+        fQ: string;
+        fQa: string;
+        fQb: string;
+        fQc: string;
+        fS: string;
+        fSa: string;
+        fSb: string;
+        fSc: string;
+      }[];
+      origPower: {
+        stationid: string;
+        stationname: string;
+        objectid: string;
+        objectname: string;
+        meter: string;
+        collecttime: string;
+        data: string;
+        fP: string;
+        fPF: string;
+        fPFa: string;
+        fPFb: string;
+        fPFc: string;
+        fPa: string;
+        fPb: string;
+        fPc: string;
+        fQ: string;
+        fQa: string;
+        fQb: string;
+        fQc: string;
+        fS: string;
+        fSa: string;
+        fSb: string;
+        fSc: string;
+      }[];
+    }> {}
+
+  export interface ReqTransformerMonitor {
+    stationid: string;
+    transformerid: string;
+  }
+  export interface ResTransformerMonitor
+    extends Result<{
+      TransformerStatus: {
+        fIa: string;
+        fIb: string;
+        fIc: string;
+        fP: string;
+        fPF: string;
+        fQ: string;
+        fS: string;
+        fTempA: string;
+        fTempB: string;
+        fTempC: string;
+        fUab: string;
+        fUbc: string;
+        fUca: string;
+        fInstalledcapacity: string;
+        fRatedcurrent: string;
+        loadFactor: string;
+        maxDemand: string;
+        loadRate: string;
+        averageVal: string;
+      };
+    }> {}
 }
