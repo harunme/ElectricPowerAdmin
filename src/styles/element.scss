@@ -53,12 +53,6 @@
     rgb(145 158 171 / 20%) 0 0 2px 0,
     rgb(145 158 171 / 12%) 0 12px 24px -4px;
 }
-.left-box {
-  box-sizing: border-box;
-  width: 336px;
-  padding: 18px;
-  margin-right: 10px;
-}
 
 /* ProTable 不需要 card 样式（在组件内使用 ProTable 会使用到） */
 .no-card {
@@ -91,6 +85,17 @@
   .table-box {
     width: calc(100% - 300px);
     overflow: hidden;
+  }
+  .left-box {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 336px;
+    padding: 18px;
+    margin-right: 10px;
+  }
+  .right-box {
+    display: inline-block;
+    width: calc(100% - 346px);
   }
 }
 

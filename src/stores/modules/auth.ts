@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
-import { searchRoleProjectMenu } from "@/api/modules/login";
+// import { searchRoleProjectMenu } from "@/api/modules/login";
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
 
 const Menu = [
@@ -644,8 +644,8 @@ export const useAuthStore = defineStore({
   actions: {
     // Get AuthMenuList
     async searchRoleProjectMenu() {
-      const { data } = await searchRoleProjectMenu();
-      console.log("authMenuList", data);
+      // const { data } = await searchRoleProjectMenu();
+      // console.log("authMenuList", data);
       this.authMenuList = Menu as any;
     },
     // Set RouteName
