@@ -16,19 +16,23 @@
       <div class="card content-box">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="时间范围">
-            <el-date-picker
-              v-model="formInline.date"
-              type="daterange"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              :shortcuts="shortcuts"
-              :size="size"
-            />
+            <el-date-picker v-model="formInline.date" type="date" :size="size" />
           </el-form-item>
           <el-form-item label="谐波类型">
-            <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
+            <el-select v-model="formInline.region">
+              <el-option label="电流谐波" value="shanghai" />
+              <el-option label="电压谐波" value="beijing" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox-group v-model="formInline.EnergyKindPhase">
+              <el-checkbox label="A相" value="Value A" />
+              <el-checkbox label="B相" value="Value B" />
+              <el-checkbox label="C相" value="Value C" />
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="选择">
+            <el-select v-model="formInline.region" clearable>
               <el-option label="电流谐波" value="shanghai" />
               <el-option label="电压谐波" value="beijing" />
             </el-select>
@@ -81,36 +85,6 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     resolve(data.pageInfo);
   });
 };
-
-const shortcuts = [
-  {
-    text: "近一周",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      return [start, end];
-    }
-  },
-  {
-    text: "近一个月",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-      return [start, end];
-    }
-  },
-  {
-    text: "近三个月",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-      return [start, end];
-    }
-  }
-];
 
 onMounted(async () => {
   const res = await getCircuitInfoTree();
@@ -189,7 +163,8 @@ const option: ECOption = {
 const formInline = reactive({
   user: "",
   region: "shanghai",
-  date: ""
+  date: "",
+  EnergyKindPhase: ""
 });
 
 const onSubmit = () => {

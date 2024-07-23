@@ -100,3 +100,53 @@ export const getCurveDataOfPowerAndTempABCNew = (params: Main.ReqGetCurveDataOfP
 export const TransformerMonitor = (params: Main.ReqTransformerMonitor) => {
   return http.postForm<Main.ResTransformerMonitor>("/main/TransformerMonitor", params);
 };
+
+// 电能质量-不平衡度接口
+export const ElectricData = (params: Main.ReqElectricData) => {
+  return http.postForm<Main.ResElectricData>("/main/ElectricData", params);
+};
+
+// 电能质量-谐波次数统计
+export const ThreePhaseHarmonic = (params: Main.ReqThreePhaseHarmonic) => {
+  return http.postForm<Main.ResThreePhaseHarmonic>("/main/ThreePhaseHarmonic", params);
+};
+
+// 报警信息数量定时查询
+export const getUnConfirmedEventsByCache = () => {
+  return http.postForm<Main.ResGetUnConfirmedEventsByCache>("/main/getUnConfirmedEventsByCache");
+};
+
+// 事件记录-报警信息 接口
+export const getAlarmEventLogList = (params: Main.ReqGetAlarmEventLogList) => {
+  return http.postForm<Main.ResGetAlarmEventLogList>("/main/getAlarmEventLogList", params);
+};
+
+// 电力监测-电力数据 接口1
+export const ElectricDataMonth = (params: Main.ReqElectricDataMonth) => {
+  return http.postForm<Main.ResElectricDataMonth>("/main/ElectricDataMonth", params);
+};
+
+// 电力监测-电力数据 接口2
+export const ElectricDataPaging = (params: Main.ReqElectricDataPaging) => {
+  return http.postForm<Main.ResElectricDataPaging>("/main/ElectricDataPaging", params);
+};
+
+// 事件记录-报警分析 接口1 环比计算
+export const getDMYAlarmCompare = () => {
+  return http.postForm<Main.ResGetDMYAlarmCompare>("/main/getDMYAlarmCompare");
+};
+
+// 事件记录-报警分析 接口2 报警种类统计
+export const getMessInfoTypeAlarmLogNum = () => {
+  return http.postForm<Main.ResGetMessInfoTypeAlarmLogNum>("/main/getMessInfoTypeAlarmLogNum");
+};
+
+// 事件记录-报警分析 接口3 平台月报警统计
+export const getMonthAlarmLogNum = (params: Main.ReqGetMonthAlarmLogNum) => {
+  return http.postForm<Main.ResGetMonthAlarmLogNum>("/main/getMonthAlarmLogNum", params);
+};
+
+// 事件记录-报警分析 接口4 站点报警排名
+export const getSubstationAlarmLogNum = (params: Main.ReqGetSubstationAlarmLogNum) => {
+  return http.postForm<Main.ResGetSubstationAlarmLogNum>("/main/getSubstationAlarmLogNum", params);
+};

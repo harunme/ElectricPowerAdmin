@@ -549,4 +549,200 @@ export namespace Main {
         averageVal: string;
       };
     }> {}
+
+  export interface ReqElectricData {
+    stationid: string;
+    circuitids: string;
+    startTime: string;
+    endTime: string;
+    phase: "IUnB" | "UUnB";
+  }
+
+  export interface ResElectricData
+    extends Result<{
+      PowerValue: {
+        stationid: string;
+        circuitid: string;
+        circuitname: string;
+        date: string;
+        phase: string;
+        data: number;
+      }[];
+    }> {}
+
+  export interface ReqThreePhaseHarmonic {
+    stationid: string;
+    circuitids: string;
+    time: string;
+    energyKind: "I" | "U";
+    thdtype: string;
+    phase: string;
+  }
+  export interface ResThreePhaseHarmonic
+    extends Result<{
+      PowerValue: {
+        stationid: string;
+        circuitid: string;
+        circuitname: string;
+        date: string;
+        energykind: string;
+        phase: string;
+        thdtype: string;
+        data: number;
+      }[];
+    }> {}
+
+  export interface ResGetUnConfirmedEventsByCache {
+    code: number;
+    msg: string;
+    numsByLevel: {
+      eventtype: number;
+      eventname: string;
+      eventcount: number;
+      unconfirmcount: number;
+    }[];
+    numsByType: {
+      eventtype: number;
+      eventname: string;
+      eventcount: number;
+      unconfirmcount: number;
+    }[];
+  }
+
+  export interface ReqGetAlarmEventLogList extends ReqPage {
+    stationid: string;
+    confirmstatus?: 0;
+    starttime: string;
+    endtime: string;
+    messinfotype?: 2 | 3 | 4;
+    alarmtype?: string;
+    metersearch?: string;
+    messinfolevel: "1" | "2" | "3";
+  }
+
+  export interface ResGetAlarmEventLogList
+    extends ResPage<{
+      eventname0: string;
+      alarmtime: string;
+      eventdescription: string;
+      confirmer: string;
+      deptid: string;
+      deptname: string;
+      stationid: string;
+      stationname: string;
+      circuitid: string;
+      circuitname: string;
+      meter: string;
+      metername: string;
+      messinfolevel: number;
+      messinfoleveltext: string;
+      messinfotype: number;
+      messinfotypetext: string;
+      confirmid: string;
+      confirmstatus: boolean;
+      alarmtype: string;
+      paramname: string;
+      mconfirmtime: string;
+    }> {}
+
+  export interface ReqElectricDataMonth {
+    stationid: string;
+    circuitids: string;
+    starttime: string;
+    endtime: string;
+    energykind: "P";
+    phase: string;
+  }
+
+  export interface ResElectricDataMonth
+    extends Result<{
+      P: string[];
+      Pa: string[];
+      Pb: string[];
+      Pc: string[];
+      times: string[];
+    }> {}
+
+  export interface ReqElectricDataPaging extends ReqPage {
+    stationid: string;
+    circuitids: string;
+    starttime: string;
+    endtime: string;
+    energykind: "P";
+    phase: string;
+  }
+  export interface ResElectricDataPaging
+    extends ResPage<{
+      stationid: string;
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fP: number;
+      fPa: number;
+      fPb: number;
+      fPc: number;
+    }> {}
+
+  export interface ResGetDMYAlarmCompare
+    extends Result<{
+      curdaynums: number;
+      yesdaynums: number;
+      dayMom: string;
+      curmonnums: number;
+      yesmonnums: number;
+      monthMom: string;
+      curyearnums: number;
+      yesyearnums: number;
+      yearMom: string;
+    }> {}
+
+  export interface ResGetMessInfoTypeAlarmLogNum
+    extends Result<
+      {
+        messinfotypeexplain: "string";
+        messinfotypeid: "string";
+        todaylognum: "string";
+      }[]
+    > {}
+
+  export interface ResGetMonthAlarmLogNum
+    extends Result<
+      {
+        fday: number;
+        fdaynum: number;
+      }[]
+    > {}
+
+  export interface ReqGetSubstationAlarmLogNum extends ReqPage {
+    starttime: string;
+    endtime: string;
+  }
+
+  export interface ReqGetMonthAlarmLogNum {
+    starttime?: string;
+  }
+  export interface ResGetSubstationAlarmLogNum
+    extends ResPage<{
+      eventname0: string;
+      alarmtime: string | null;
+      eventdescription: string;
+      confirmer: string;
+      deptid: string | null;
+      deptname: string | null;
+      stationid: string | null;
+      stationname: string;
+      circuitid: string | null;
+      circuitname: string | null;
+      meter: string | null;
+      metername: string | null;
+      messinfolevel: number;
+      messinfoleveltext: string | null;
+      messinfotype: number;
+      messinfotypetext: string | null;
+      confirmid: string | null;
+      confirmstatus: false;
+      alarmtype: string | null;
+      paramname: string | null;
+      mconfirmtime: string;
+    }> {}
 }
