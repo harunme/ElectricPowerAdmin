@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="TransformerList">
 import { ref } from "vue";
 import { ReqPage } from "@/api/interface/index";
 import { summary } from "@/api/modules/main";

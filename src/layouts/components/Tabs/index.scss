@@ -45,9 +45,10 @@
                 margin-top: 1px;
               }
               &.is-active {
-                color: var(--el-color-primary);
-                background-color: #e5f7f6;
+                color: #ffffff;
+                background-color: var(--el-color-primary);
                 border-color: #069bab;
+                transition-duration: 0.2s;
               }
             }
           }
