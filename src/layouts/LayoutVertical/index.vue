@@ -20,6 +20,7 @@
             <SubMenu :menu-list="menuList" />
           </el-menu>
         </el-scrollbar>
+        <CollapseIcon />
       </div>
     </el-aside>
     <el-container>
@@ -37,6 +38,7 @@ import Main from "@/layouts/components/Main/index.vue";
 // import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
 // import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
+import CollapseIcon from "./CollapseIcon.vue";
 import Logo from "@/assets/images/logo.svg";
 
 const title = import.meta.env.VITE_GLOB_APP_TITLE;

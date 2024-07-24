@@ -12,10 +12,32 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <div class="tool-box">
+      <div class="alarm">
+        <el-badge :value="12" :max="10" class="item">
+          <span>普通</span>
+        </el-badge>
+        <el-badge :value="12" :max="10" class="item">
+          <span>严重</span>
+        </el-badge>
+        <el-badge :value="12" :max="10" class="item">
+          <span>事故</span>
+        </el-badge>
+      </div>
+      <div style="cursor: pointer">
+        <el-popover placement="bottom" trigger="click">
+          <template #reference>
+            <el-icon size="26"><UserFilled /></el-icon>
+          </template>
+          <el-button @click="logout" type="text">退出登录</el-button>
+        </el-popover>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { LOGIN_URL } from "@/config";
 import Sortable from "sortablejs";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -23,11 +45,14 @@ import { useGlobalStore } from "@/stores/modules/global";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useAuthStore } from "@/stores/modules/auth";
 import { TabsPaneContext, TabPaneName } from "element-plus";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { useUserStore } from "@/stores/modules/user";
 
 const route = useRoute();
 const router = useRouter();
 const tabStore = useTabsStore();
 const authStore = useAuthStore();
+const userStore = useUserStore();
 const globalStore = useGlobalStore();
 
 const tabsMenuValue = ref(route.fullPath);
@@ -58,6 +83,24 @@ watch(
   },
   { immediate: true }
 );
+
+const logout = () => {
+  ElMessageBox.confirm("您是否确认退出登录?", "温馨提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(async () => {
+    // 1.执行退出登录接口
+    // await logoutApi();
+
+    // 2.清除 Token
+    userStore.setToken("");
+
+    // 3.重定向到登陆页
+    router.replace(LOGIN_URL);
+    ElMessage.success("退出登录成功！");
+  });
+};
 
 // 初始化需要固定的 tabs
 const initTabs = () => {
