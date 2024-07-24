@@ -14,14 +14,16 @@
     </div>
     <div class="tool-box">
       <div class="alarm">
-        <el-badge :value="12" :max="10" class="item">
-          <span>普通</span>
-        </el-badge>
-        <el-badge :value="12" :max="10" class="item">
-          <span>严重</span>
-        </el-badge>
-        <el-badge :value="12" :max="10" class="item">
-          <span>事故</span>
+        <el-badge
+          v-for="level in alarmInfo"
+          :key="level.text"
+          :style="`background-color: ${level.color};`"
+          :value="level.count"
+          :max="10"
+          class="item"
+          :hidden="Number(level.count) === 0"
+        >
+          <span>{{ level.text }}</span>
         </el-badge>
       </div>
       <div style="cursor: pointer">
@@ -47,6 +49,7 @@ import { useAuthStore } from "@/stores/modules/auth";
 import { TabsPaneContext, TabPaneName } from "element-plus";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
+import { getUnConfirmedEventsByCache } from "@/api/modules/main";
 
 const route = useRoute();
 const router = useRouter();
@@ -56,12 +59,16 @@ const userStore = useUserStore();
 const globalStore = useGlobalStore();
 
 const tabsMenuValue = ref(route.fullPath);
+const alarmInfo = ref<{ text: string; count: number; color: string }[]>([]);
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsIcon = computed(() => globalStore.tabsIcon);
 
 onMounted(() => {
   tabsDrop();
   initTabs();
+  GetUnConfirmedEventsByCache();
+
+  window.setInterval(GetUnConfirmedEventsByCache, 5000);
 });
 
 // 监听路由的变化（防止浏览器后退/前进不变化 tabsMenuValue）
@@ -143,6 +150,16 @@ const tabClick = (tabItem: TabsPaneContext) => {
 // Remove Tab
 const tabRemove = (fullPath: TabPaneName) => {
   tabStore.removeTabs(fullPath as string, fullPath == route.fullPath);
+};
+
+const GetUnConfirmedEventsByCache = async () => {
+  const { numsByLevel } = await getUnConfirmedEventsByCache();
+  const colors = ["#13ce66", "#ffba00", "#ff4949"];
+  alarmInfo.value = numsByLevel.map(({ eventname, eventcount }, index) => ({
+    text: eventname,
+    count: eventcount,
+    color: colors[index]
+  }));
 };
 </script>
 
