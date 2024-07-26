@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequ
 import { showFullScreenLoading, tryHideFullScreenLoading } from "@/components/Loading/fullScreen";
 import { LOGIN_URL } from "@/config";
 import { ElMessage } from "element-plus";
-import { ResultData } from "@/api/interface";
+import { ResultData, Result } from "@/api/interface";
 import { ResultEnum } from "@/enums/httpEnum";
 import { checkStatus } from "./helper/checkStatus";
 import { AxiosCanceler } from "./helper/axiosCancel";
@@ -106,7 +106,7 @@ class RequestHttp {
   post<T>(url: string, params?: object | string, _object = {}): Promise<ResultData<T>> {
     return this.service.post(url, params, _object);
   }
-  postForm<T>(url: string, params?: object | string, _object = {}): Promise<ResultData<T>> {
+  postForm<T>(url: string, params?: object | string, _object = {}): Promise<Result<T>> {
     return this.service.postForm(url, params, _object);
   }
   put<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {

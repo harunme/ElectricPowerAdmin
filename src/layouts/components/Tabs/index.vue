@@ -153,7 +153,7 @@ const tabRemove = (fullPath: TabPaneName) => {
 };
 
 const GetUnConfirmedEventsByCache = async () => {
-  const { numsByLevel } = await getUnConfirmedEventsByCache();
+  const { numsByLevel }: any = await getUnConfirmedEventsByCache();
   const colors = ["#13ce66", "#ffba00", "#ff4949"];
   alarmInfo.value = numsByLevel.map(({ eventname, eventcount }, index) => ({
     text: eventname,

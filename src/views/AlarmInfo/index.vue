@@ -126,7 +126,7 @@ onMounted(() => {
 });
 
 const GetUnConfirmedEventsByCache = async () => {
-  const { numsByType, numsByLevel } = await getUnConfirmedEventsByCache();
+  const { numsByType, numsByLevel }: any = await getUnConfirmedEventsByCache();
   if (activeTab.value === "all")
     total.value = numsByType.reduce(function (acc, obj) {
       return acc + obj.eventcount;

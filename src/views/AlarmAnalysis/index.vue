@@ -136,7 +136,7 @@ const formInline = reactive({
   starttime: moment().format("YYYY-MM")
 });
 
-const pieData = ref([]);
+const pieData = ref<any>([]);
 const tableRef = ref<any>(null);
 const option = ref<any>(null);
 

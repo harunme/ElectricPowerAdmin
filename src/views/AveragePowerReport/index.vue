@@ -118,7 +118,7 @@ const fetchData = async (): Promise<any> => {
     const list =
       data?.list.map(i => ({
         ...i,
-        fPf: Number(i.fPf) / 1000
+        fPf: Number(i.fPF) / 1000
       })) || [];
     option.value = {
       grid: {
@@ -165,8 +165,8 @@ const fetchData = async (): Promise<any> => {
         {
           type: "value",
           name: "功率因数",
-          min: min(list.map(({ pf }) => pf)),
-          max: max(list.map(({ pf }) => pf))
+          min: min(list.map(({ fPF }) => fPF)),
+          max: max(list.map(({ fPF }) => fPF))
         }
       ],
       series: [

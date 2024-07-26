@@ -218,18 +218,17 @@ export namespace Main {
       fTempC: string;
     }> {}
 
-  export interface ResGetCirLoadRate
-    extends Result<{
-      PowerValue: {
-        stationid: string;
-        circuitid: string;
-        circuitname: string;
-        collecttime: string;
-        fPMaxValue: string;
-        fPAverag: string;
-        fPLoadRate: string;
-      }[];
-    }> {}
+  export interface ResGetCirLoadRate {
+    PowerValue: {
+      stationid: string;
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fPMaxValue: string;
+      fPAverag: string;
+      fPLoadRate: string;
+    }[];
+  }
 
   export interface ReqGetCirLoadRate {
     stationid: string;
@@ -244,45 +243,42 @@ export namespace Main {
     starttime?: string;
     scheme: "M" | "Y";
   }
-  export interface ResAveragePowerReport
-    extends Result<{
-      list: {
-        stationid: string;
-        circuitid: string;
-        circuitname: string;
-        collecttime: string;
-        fEpi: string;
-        fEpe: string;
-        fEql: string;
-        fEqc: string;
-        fPf: string;
-      }[];
-    }> {}
+  export interface ResAveragePowerReport {
+    list: {
+      stationid: string;
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fEpi: string;
+      fEpe: string;
+      fEql: string;
+      fEqc: string;
+      fPF: string;
+    }[];
+  }
 
-  export interface ResElectricReport
-    extends Result<{
-      PowerValue: {
-        circuitid: string;
-        circuitname: string;
-        collecttime: string;
-        fEpe: string;
-        fEpi: string;
-        fIa: string;
-        fIb: string;
-        fIc: string;
-        fP: string;
-        fPf: string;
-        fQ: string;
-        fS: string;
-        fUa: string;
-        fUb: string;
-        fUc: string;
-        fUab: string;
-        fUbc: string;
-        fUca: string;
-      }[];
-    }> {}
-
+  export interface ResElectricReport {
+    PowerValue: {
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fEpe: string;
+      fEpi: string;
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fP: string;
+      fPf: string;
+      fQ: string;
+      fS: string;
+      fUa: string;
+      fUb: string;
+      fUc: string;
+      fUab: string;
+      fUbc: string;
+      fUca: string;
+    }[];
+  }
   export interface ReqElectricReport {
     stationid: string;
     circuitid: string;
@@ -290,32 +286,31 @@ export namespace Main {
     timeinterval: string;
   }
 
-  export interface ResElecMaxMinAvgValue
-    extends Result<{
-      StatisticValue: {
-        stationid: string;
-        stationname: string;
-        objectid: string;
-        objectname: string;
-        meter: string;
-        collecttime: string;
-        fIaavg: string;
-        fIamaxvalue: string;
-        fIaminvalue: string;
-        fIamaxtime: string;
-        fIamintime: string;
-        fIbavg: string;
-        fIbmaxvalue: string;
-        fIbminvalue: string;
-        fIbmaxtime: string;
-        fIbmintime: string;
-        fIcavg: string;
-        fIcmaxvalue: string;
-        fIcminvalue: string;
-        fIcmaxtime: string;
-        fIcmintime: string;
-      }[];
-    }> {}
+  export interface ResElecMaxMinAvgValue {
+    StatisticValue: {
+      stationid: string;
+      stationname: string;
+      objectid: string;
+      objectname: string;
+      meter: string;
+      collecttime: string;
+      fIaavg: string;
+      fIamaxvalue: string;
+      fIaminvalue: string;
+      fIamaxtime: string;
+      fIamintime: string;
+      fIbavg: string;
+      fIbmaxvalue: string;
+      fIbminvalue: string;
+      fIbmaxtime: string;
+      fIbmintime: string;
+      fIcavg: string;
+      fIcmaxvalue: string;
+      fIcminvalue: string;
+      fIcmaxtime: string;
+      fIcmintime: string;
+    }[];
+  }
 
   export interface ReqElecMaxMinAvgValue {
     stationid: string;
@@ -326,59 +321,56 @@ export namespace Main {
     scheme: "day" | "month" | "custom";
   }
 
-  export interface ResElectricReportNew
-    extends Result<{
-      PowerValue: {
-        circuitid: string;
-        circuitname: string;
-        collecttime: string;
-        fEpe: string;
-        fEpi: string;
-        fIa: string;
-        fIb: string;
-        fIc: string;
-        fP: string;
-        fPF: string;
-        fQ: string;
-        fS: string;
-        fUa: string;
-        fUb: string;
-        fUc: string;
-        fUab: string;
-        fUbc: string;
-        fUca: string;
-      }[];
-    }> {}
-
+  export interface ResElectricReportNew {
+    PowerValue: {
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fEpe: string;
+      fEpi: string;
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fP: string;
+      fPF: string;
+      fQ: string;
+      fS: string;
+      fUa: string;
+      fUb: string;
+      fUc: string;
+      fUab: string;
+      fUbc: string;
+      fUca: string;
+    }[];
+  }
   export interface ReqElectricReportNew {
     stationid: string;
     circuitid: string;
     starttime: string;
   }
 
-  export interface ResElectricMonthReport
-    extends Result<{
-      PowerValue: {
-        circuitid: string;
-        circuitname: string;
-        collecttime: string;
-        fEpe: string;
-        fEpi: string;
-        fIa: string;
-        fIb: string;
-        fIc: string;
-        fP: string;
-        fPF: string;
-        fQ: string;
-        fS: string;
-        fUa: string;
-        fUb: string;
-        fUc: string;
-        fUab: string;
-        fUbc: string;
-        fUca: string;
-      }[];
-    }> {}
+  export interface ResElectricMonthReport {
+    PowerValue: {
+      circuitid: string;
+      circuitname: string;
+      collecttime: string;
+      fEpe: string;
+      fEpi: string;
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fP: string;
+      fPF: string;
+      fQ: string;
+      fS: string;
+      fUa: string;
+      fUb: string;
+      fUc: string;
+      fUab: string;
+      fUbc: string;
+      fUca: string;
+    }[];
+  }
 
   export interface ReqElectricMonthReport {
     stationid: string;
@@ -392,18 +384,17 @@ export namespace Main {
     starttime: string;
   }
 
-  export interface ResGetMonthMom
-    extends Result<{
-      PowerValue: {
-        sumyoyvalue: string;
-        collecttime: string;
-        data: string;
-        yoyvalue: string;
-        predata: string;
-        circuitid: string;
-        circuitname: string;
-      }[];
-    }> {}
+  export interface ResGetMonthMom {
+    PowerValue: {
+      sumyoyvalue: string;
+      collecttime: string;
+      data: string;
+      yoyvalue: string;
+      predata: string;
+      circuitid: string;
+      circuitname: string;
+    }[];
+  }
 
   export interface ReqEnergyReportMOM {
     stationid: string;
@@ -413,17 +404,16 @@ export namespace Main {
     scheme: "D" | "W" | "M";
   }
 
-  export interface ResEnergyReportMOM
-    extends Result<{
-      PowerValue: {
-        diffvalue: string;
-        curvalue: string;
-        momvalue: string;
-        beforevalue: string;
-        circuitid: string;
-        circuitname: string;
-      }[];
-    }> {}
+  export interface ResEnergyReportMOM {
+    PowerValue: {
+      diffvalue: string;
+      curvalue: string;
+      momvalue: string;
+      beforevalue: string;
+      circuitid: string;
+      circuitname: string;
+    }[];
+  }
 
   export interface ReqConsumeEnergyReport {
     stationid: string;
@@ -432,16 +422,15 @@ export namespace Main {
     endtime: string;
     energyKind?: "EPI" | "EPE" | "ZHEPI";
   }
-  export interface ResConsumeEnergyReport
-    extends Result<{
-      PowerValue: {
-        diffvalue: string;
-        endvalue: string;
-        startvalue: string;
-        circuitid: string;
-        circuitname: string;
-      }[];
-    }> {}
+  export interface ResConsumeEnergyReport {
+    PowerValue: {
+      diffvalue: string;
+      endvalue: string;
+      startvalue: string;
+      circuitid: string;
+      circuitname: string;
+    }[];
+  }
 
   export interface ReqEnergyLineLoss2Tree {
     stationid: string;
@@ -449,22 +438,21 @@ export namespace Main {
     endtime: string;
   }
 
-  export interface ResEnergyLineLoss2Tree
-    extends Result<{
-      LineLossData: {
-        isincoming: boolean;
-        subValue: number;
-        meter: string;
-        hasChildren: boolean;
-        diffValue: number;
-        stationname: string;
-        parentValue: number;
-        percent: number;
-        circuitid: string;
-        circuitname: string;
-        stationid: string;
-      }[];
-    }> {}
+  export interface ResEnergyLineLoss2Tree {
+    LineLossData: {
+      isincoming: boolean;
+      subValue: number;
+      meter: string;
+      hasChildren: boolean;
+      diffValue: number;
+      stationname: string;
+      parentValue: number;
+      percent: number;
+      circuitid: string;
+      circuitname: string;
+      stationid: string;
+    }[];
+  }
 
   export interface ReqGetCurveDataOfPowerAndTempABCNew {
     transformerid: string;
@@ -472,88 +460,108 @@ export namespace Main {
     params: "S" | "P" | "Q" | "Pf" | "U" | "I" | "Temp";
   }
 
-  export interface ResGetCurveDataOfPowerAndTempABCNew
-    extends Result<{
-      yesterdayOrigPower: {
-        stationid: string;
-        stationname: string;
-        objectid: string;
-        objectname: string;
-        meter: string;
-        collecttime: string;
-        data: string;
-        fP: string;
-        fPF: string;
-        fPFa: string;
-        fPFb: string;
-        fPFc: string;
-        fPa: string;
-        fPb: string;
-        fPc: string;
-        fQ: string;
-        fQa: string;
-        fQb: string;
-        fQc: string;
-        fS: string;
-        fSa: string;
-        fSb: string;
-        fSc: string;
-      }[];
-      origPower: {
-        stationid: string;
-        stationname: string;
-        objectid: string;
-        objectname: string;
-        meter: string;
-        collecttime: string;
-        data: string;
-        fP: string;
-        fPF: string;
-        fPFa: string;
-        fPFb: string;
-        fPFc: string;
-        fPa: string;
-        fPb: string;
-        fPc: string;
-        fQ: string;
-        fQa: string;
-        fQb: string;
-        fQc: string;
-        fS: string;
-        fSa: string;
-        fSb: string;
-        fSc: string;
-      }[];
-    }> {}
+  export interface ResGetCurveDataOfPowerAndTempABCNew {
+    yesterdayOrigPower: {
+      stationid: string;
+      stationname: string;
+      objectid: string;
+      objectname: string;
+      meter: string;
+      collecttime: string;
+      fP: string;
+      fPF: string;
+      fPFa: string;
+      fPFb: string;
+      fPFc: string;
+      fPa: string;
+      fPb: string;
+      fPc: string;
+      fQ: string;
+      fQa: string;
+      fQb: string;
+      fQc: string;
+      fS: string;
+      fSa: string;
+      fSb: string;
+      fSc: string;
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fTempA: string;
+      fTempB: string;
+      fTempC: string;
+      Uab: string;
+      Ubc: string;
+      Uca: string;
+      Ua: string;
+      Ub: string;
+      Uc: string;
+    }[];
+    origPower: {
+      stationid: string;
+      stationname: string;
+      objectid: string;
+      objectname: string;
+      meter: string;
+      collecttime: string;
+      fP: string;
+      fPF: string;
+      fPFa: string;
+      fPFb: string;
+      fPFc: string;
+      fPa: string;
+      fPb: string;
+      fPc: string;
+      fQ: string;
+      fQa: string;
+      fQb: string;
+      fQc: string;
+      fS: string;
+      fSa: string;
+      fSb: string;
+      fSc: string;
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fTempA: string;
+      fTempB: string;
+      fTempC: string;
+      Uab: string;
+      Ubc: string;
+      Uca: string;
+      Ua: string;
+      Ub: string;
+      Uc: string;
+    }[];
+  }
 
   export interface ReqTransformerMonitor {
     stationid: string;
     transformerid: string;
   }
-  export interface ResTransformerMonitor
-    extends Result<{
-      TransformerStatus: {
-        fIa: string;
-        fIb: string;
-        fIc: string;
-        fP: string;
-        fPF: string;
-        fQ: string;
-        fS: string;
-        fTempA: string;
-        fTempB: string;
-        fTempC: string;
-        fUab: string;
-        fUbc: string;
-        fUca: string;
-        fInstalledcapacity: string;
-        fRatedcurrent: string;
-        loadFactor: string;
-        maxDemand: string;
-        loadRate: string;
-        averageVal: string;
-      };
-    }> {}
+  export interface ResTransformerMonitor {
+    TransformerStatus: {
+      fIa: string;
+      fIb: string;
+      fIc: string;
+      fP: string;
+      fPF: string;
+      fQ: string;
+      fS: string;
+      fTempA: string;
+      fTempB: string;
+      fTempC: string;
+      fUab: string;
+      fUbc: string;
+      fUca: string;
+      fInstalledcapacity: string;
+      fRatedcurrent: string;
+      loadFactor: string;
+      maxDemand: string;
+      loadRate: string;
+      averageVal: string;
+    };
+  }
 
   export interface ReqElectricData {
     stationid: string;
@@ -563,17 +571,16 @@ export namespace Main {
     phase: "IUnB" | "UUnB";
   }
 
-  export interface ResElectricData
-    extends Result<{
-      PowerValue: {
-        stationid: string;
-        circuitid: string;
-        circuitname: string;
-        date: string;
-        phase: string;
-        data: number;
-      }[];
-    }> {}
+  export interface ResElectricData {
+    PowerValue: {
+      stationid: string;
+      circuitid: string;
+      circuitname: string;
+      date: string;
+      phase: string;
+      data: number;
+    }[];
+  }
 
   export interface ReqThreePhaseHarmonic {
     stationid: string;
@@ -583,19 +590,18 @@ export namespace Main {
     thdtype: string;
     phase: string;
   }
-  export interface ResThreePhaseHarmonic
-    extends Result<{
-      PowerValue: {
-        stationid: string;
-        circuitid: string;
-        circuitname: string;
-        date: string;
-        energykind: string;
-        phase: string;
-        thdtype: string;
-        data: number;
-      }[];
-    }> {}
+  export interface ResThreePhaseHarmonic {
+    PowerValue: {
+      stationid: string;
+      circuitid: string;
+      circuitname: string;
+      date: string;
+      energykind: string;
+      phase: string;
+      thdtype: string;
+      data: number;
+    }[];
+  }
 
   export interface ResGetUnConfirmedEventsByCache {
     code: number;
@@ -659,14 +665,13 @@ export namespace Main {
     phase: string;
   }
 
-  export interface ResElectricDataMonth
-    extends Result<{
-      P: string[];
-      Pa: string[];
-      Pb: string[];
-      Pc: string[];
-      times: string[];
-    }> {}
+  export interface ResElectricDataMonth {
+    P: string[];
+    Pa: string[];
+    Pb: string[];
+    Pc: string[];
+    times: string[];
+  }
 
   export interface ReqElectricDataPaging extends ReqPage {
     stationid: string;
@@ -688,35 +693,28 @@ export namespace Main {
       fPc: number;
     }> {}
 
-  export interface ResGetDMYAlarmCompare
-    extends Result<{
-      curdaynums: number;
-      yesdaynums: number;
-      dayMom: string;
-      curmonnums: number;
-      yesmonnums: number;
-      monthMom: string;
-      curyearnums: number;
-      yesyearnums: number;
-      yearMom: string;
-    }> {}
+  export interface ResGetDMYAlarmCompare {
+    curdaynums: number;
+    yesdaynums: number;
+    dayMom: string;
+    curmonnums: number;
+    yesmonnums: number;
+    monthMom: string;
+    curyearnums: number;
+    yesyearnums: number;
+    yearMom: string;
+  }
 
-  export interface ResGetMessInfoTypeAlarmLogNum
-    extends Result<
-      {
-        messinfotypeexplain: "string";
-        messinfotypeid: "string";
-        todaylognum: "string";
-      }[]
-    > {}
+  export interface ResGetMessInfoTypeAlarmLogNum {
+    messinfotypeexplain: "string";
+    messinfotypeid: "string";
+    todaylognum: "string";
+  }
 
-  export interface ResGetMonthAlarmLogNum
-    extends Result<
-      {
-        fday: number;
-        fdaynum: number;
-      }[]
-    > {}
+  export interface ResGetMonthAlarmLogNum {
+    fday: number;
+    fdaynum: number;
+  }
 
   export interface ReqGetSubstationAlarmLogNum extends ReqPage {
     starttime: string;

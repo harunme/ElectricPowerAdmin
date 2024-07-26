@@ -138,12 +138,12 @@ export const getDMYAlarmCompare = () => {
 
 // 事件记录-报警分析 接口2 报警种类统计
 export const getMessInfoTypeAlarmLogNum = () => {
-  return http.postForm<Main.ResGetMessInfoTypeAlarmLogNum>("/main/getMessInfoTypeAlarmLogNum");
+  return http.postForm<Main.ResGetMessInfoTypeAlarmLogNum[]>("/main/getMessInfoTypeAlarmLogNum");
 };
 
 // 事件记录-报警分析 接口3 平台月报警统计
 export const getMonthAlarmLogNum = (params: Main.ReqGetMonthAlarmLogNum) => {
-  return http.postForm<Main.ResGetMonthAlarmLogNum>("/main/getMonthAlarmLogNum", params);
+  return http.postForm<Main.ResGetMonthAlarmLogNum[]>("/main/getMonthAlarmLogNum", params);
 };
 
 // 事件记录-报警分析 接口4 站点报警排名
