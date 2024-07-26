@@ -56,6 +56,8 @@
       display: inline-block;
       width: calc(50% - 4px);
       height: 100%;
+
+      // border: 1px solid;
       &:first-of-type {
         background-color: #ffffff;
         border: 1px solid #e2e2e2;
