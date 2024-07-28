@@ -1,4 +1,30 @@
-.full-iframe {
+.DistributDiagram {
   width: 100%;
   height: 100%;
+  .controls {
+    height: 38px;
+  }
+  .content {
+    width: 100%;
+    height: calc(100% - 38px);
+    background-color: #000000;
+  }
+  .fullScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0;
+    margin: 0;
+    background-color: #000000;
+    .close-icon {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      font-size: 36px;
+      color: #ffffff;
+      cursor: pointer;
+    }
+  }
 }
