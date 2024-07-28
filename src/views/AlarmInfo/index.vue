@@ -53,11 +53,11 @@
             <el-button type="primary">查询</el-button>
           </el-form-item>
         </el-form>
-        <el-tabs type="card" class="tabs" @tab-change="alarmTypeTabChange">
-          <el-tab-pane label="全部"> </el-tab-pane>
-          <el-tab-pane label="普通"> </el-tab-pane>
-          <el-tab-pane label="严重"> </el-tab-pane>
-          <el-tab-pane label="事故"> </el-tab-pane>
+        <el-tabs type="card" class="tabs" v-model="formInline.messinfolevel" @tab-change="alarmTypeTabChange">
+          <el-tab-pane label="全部" name="all"> </el-tab-pane>
+          <el-tab-pane label="普通" name="1"> </el-tab-pane>
+          <el-tab-pane label="严重" name="2"> </el-tab-pane>
+          <el-tab-pane label="事故" name="3"> </el-tab-pane>
         </el-tabs>
         <div class="table-box">
           <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
@@ -84,6 +84,7 @@
 <script setup lang="tsx" name="AlarmInfo">
 import { ref, reactive, onMounted } from "vue";
 import moment from "moment";
+import { getParameterByName } from "@/utils";
 import { ReqPage } from "@/api/interface/index";
 import { getAlarmEventLogList, getUnConfirmedEventsByCache } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
@@ -95,7 +96,7 @@ const start = new Date();
 start.setTime(start.getTime() - 3600 * 1000 * 24);
 
 const formInline = reactive<{
-  messinfolevel?: "0" | "1" | "2" | "3";
+  messinfolevel?: "all" | "1" | "2" | "3";
   range: any[];
   metersearch?: string;
   alarmtype?: string;
@@ -104,12 +105,14 @@ const formInline = reactive<{
 }>({
   range: [start, end],
   confirmstatus: "all",
-  messinfotype: "all"
+  messinfotype: "all",
+  messinfolevel: "all"
 });
 
 const tableRef = ref<any>(null);
 const option = ref<any>(null);
 const activeTab = ref<"all" | "unconfirm">("all");
+// const activeAlarmTypeTab = ref<"all" | "1" | "2" | "3">("all");
 const total = ref<number>(0);
 const pieOption = ref<any>(null);
 
@@ -139,7 +142,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     if (formInline.messinfotype !== "all") {
       params.messinfotype = formInline.messinfotype;
     }
-    if (formInline.messinfolevel !== "0") {
+    if (formInline.messinfolevel !== "all") {
       params.messinfolevel = formInline.messinfolevel;
     }
 
@@ -149,6 +152,11 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
 };
 
 onMounted(() => {
+  const messinfolevel: any = getParameterByName("messinfolevel");
+  console.log("messinfolevel", messinfolevel);
+  if (messinfolevel) {
+    formInline.messinfolevel = messinfolevel;
+  }
   GetUnConfirmedEventsByCache();
 });
 

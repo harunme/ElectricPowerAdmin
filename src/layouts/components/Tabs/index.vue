@@ -22,11 +22,12 @@
           :max="10"
           class="item"
           :hidden="Number(level.count) === 0"
+          @click="toAlarmInfo(level.eventtype)"
         >
           <span>{{ level.text }}</span>
         </el-badge>
       </div>
-      <div style="cursor: pointer">
+      <div class="user">
         <el-popover placement="bottom" trigger="click">
           <template #reference>
             <el-icon size="26"><UserFilled /></el-icon>
@@ -41,6 +42,7 @@
 <script setup lang="ts">
 import { LOGIN_URL } from "@/config";
 import Sortable from "sortablejs";
+// import router from "@/routers";
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
@@ -111,7 +113,6 @@ const logout = () => {
 
 // 初始化需要固定的 tabs
 const initTabs = () => {
-  console.log("initTabs");
   authStore.flatMenuListGet.forEach(item => {
     if (item.meta.isAffix && !item.meta.isHide && !item.meta.isFull) {
       const tabsParams = {
@@ -155,11 +156,16 @@ const tabRemove = (fullPath: TabPaneName) => {
 const GetUnConfirmedEventsByCache = async () => {
   const { numsByLevel }: any = await getUnConfirmedEventsByCache();
   const colors = ["#13ce66", "#ffba00", "#ff4949"];
-  alarmInfo.value = numsByLevel.map(({ eventname, eventcount }, index) => ({
+  alarmInfo.value = numsByLevel.map(({ eventname, eventcount, eventtype }, index) => ({
     text: eventname,
     count: eventcount,
-    color: colors[index]
+    color: colors[index],
+    eventtype: eventtype
   }));
+};
+
+const toAlarmInfo = eventtype => {
+  router.push(`/AlarmInfo?messinfolevel=${eventtype}`);
 };
 </script>
 

@@ -58,18 +58,25 @@
   }
   .tool-box {
     display: flex;
+    align-items: center;
     width: 258px;
     > .alarm {
+      width: 180px;
       margin-right: 20px;
       > .item {
         padding: 2px 8px;
         margin: 0 10px;
         font-size: 12px;
-        line-height: 16px;
+
+        // line-height: 16px;
         color: #ffffff;
         cursor: pointer;
         border-radius: 4px;
       }
+    }
+    > .user {
+      height: 26px;
+      cursor: pointer;
     }
   }
 }
