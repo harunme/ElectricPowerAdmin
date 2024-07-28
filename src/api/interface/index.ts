@@ -621,14 +621,14 @@ export namespace Main {
   }
 
   export interface ReqGetAlarmEventLogList extends ReqPage {
-    stationid: string;
+    stationid?: string;
     confirmstatus?: 0;
-    starttime: string;
-    endtime: string;
+    starttime?: string;
+    endtime?: string;
     messinfotype?: 2 | 3 | 4;
     alarmtype?: string;
     metersearch?: string;
-    messinfolevel: "1" | "2" | "3";
+    messinfolevel?: "1" | "2" | "3";
   }
 
   export interface ResGetAlarmEventLogList

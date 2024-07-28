@@ -47,12 +47,30 @@
       }
     }
     .right-box {
+      display: flex;
       width: calc(100% - 336px);
     }
     .table-box {
+      // border: 1px solid;
       position: relative;
       width: 100%;
-      height: calc(100%);
+      height: calc(100% - 58px);
+      .messinfoleveltext {
+        height: 22px;
+        // border: 1px solid;
+        padding: 1px 15px;
+        font-size: 14px;
+        line-height: 18px;
+        color: #ffffff;
+        border-radius: 12px;
+        &-2 {
+          background-color: rgb(19 206 102);
+        }
+      }
+      .confirmstatus-false {
+        font-size: 14px;
+        color: #ff4949;
+      }
     }
   }
 }

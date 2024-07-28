@@ -25,41 +25,56 @@
       <div class="card flex-column right-box">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="确认状态">
-            <el-select v-model="formInline.scheme">
-              <el-option label="全部" value="M" />
+            <el-select v-model="formInline.confirmstatus">
+              <el-option label="全部" value="all" />
               <el-option label="未确认" value="Y" />
               <el-option label="已确认" value="Y" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" type="range" />
+            <el-date-picker v-model="formInline.range" type="range" />
           </el-form-item>
           <el-form-item label="报警类型分类">
-            <el-select v-model="formInline.scheme">
-              <el-option label="全部" value="M" />
-              <el-option label="通讯状态" value="Y" />
-              <el-option label="现场报警" value="Y" />
-              <el-option label="设备故障" value="Y" />
+            <el-select v-model="formInline.messinfotype">
+              <el-option label="全部" value="all" />
+              <el-option label="工作通知" value="1" />
+              <el-option label="通讯状态" value="2" />
+              <el-option label="现场报警" value="3" />
+              <el-option label="设备故障" value="4" />
             </el-select>
           </el-form-item>
-          <el-form-item label="事件类型">
+          <el-form-item v-model="formInline.alarmtype" label="事件类型">
             <el-input />
           </el-form-item>
           <el-form-item label="设备名称或编号">
-            <el-input />
+            <el-input v-model="formInline.metersearch" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary">查询</el-button>
           </el-form-item>
         </el-form>
+        <el-tabs type="card" class="tabs" @tab-change="alarmTypeTabChange">
+          <el-tab-pane label="全部"> </el-tab-pane>
+          <el-tab-pane label="普通"> </el-tab-pane>
+          <el-tab-pane label="严重"> </el-tab-pane>
+          <el-tab-pane label="事故"> </el-tab-pane>
+        </el-tabs>
         <div class="table-box">
-          <el-tabs type="card" class="tabs">
-            <el-tab-pane label="全部"> </el-tab-pane>
-            <el-tab-pane label="普通"> </el-tab-pane>
-            <el-tab-pane label="严重"> </el-tab-pane>
-            <el-tab-pane label="事故"> </el-tab-pane>
-          </el-tabs>
-          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+            <template #alarmtime="{ row }">
+              {{ moment(row.alarmtime).format("YYYY-MM-DD HH:mm:ss") }}
+            </template>
+            <template #messinfoleveltext="{ row }">
+              <span :class="`messinfoleveltext messinfoleveltext-${row.messinfolevel}`">{{ row.messinfoleveltext }}</span>
+            </template>
+            <template #confirmstatus="{ row }">
+              <span :class="`confirmstatus-${row.confirmstatus}`">{{ row.confirmstatus ? "已确认" : "未确认" }}</span>
+            </template>
+            <template #actions="">
+              <el-button type="text" size="mini">标记为已确认</el-button>
+              <el-button type="text" size="mini">查看详情</el-button>
+            </template>
+          </PaginationTable>
         </div>
       </div>
     </div>
@@ -68,10 +83,10 @@
 
 <script setup lang="tsx" name="AlarmInfo">
 import { ref, reactive, onMounted } from "vue";
+import moment from "moment";
 import { ReqPage } from "@/api/interface/index";
-import { summary, getUnConfirmedEventsByCache } from "@/api/modules/main";
+import { getAlarmEventLogList, getUnConfirmedEventsByCache } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import { localGet } from "@/utils";
 import ECharts from "@/components/Charts/echarts.vue";
 import * as echarts from "echarts/core";
 
@@ -80,44 +95,56 @@ const start = new Date();
 start.setTime(start.getTime() - 3600 * 1000 * 24);
 
 const formInline = reactive<{
-  scheme: "M" | "Y";
-  starttime: any[];
+  messinfolevel?: "0" | "1" | "2" | "3";
+  range: any[];
+  metersearch?: string;
+  alarmtype?: string;
+  messinfotype?: "1" | "2" | "3" | "4" | "all";
+  confirmstatus?: 0 | 1 | "all";
 }>({
-  scheme: "M",
-  starttime: [start, end]
+  range: [start, end],
+  confirmstatus: "all",
+  messinfotype: "all"
 });
 
-// const number = ref({ red: 0, yellow: 0, green: 0 });
 const tableRef = ref<any>(null);
 const option = ref<any>(null);
 const activeTab = ref<"all" | "unconfirm">("all");
 const total = ref<number>(0);
-const stationId = ref(localGet("context-transformer")?.stationid);
 const pieOption = ref<any>(null);
 
 const columns = [
   { prop: "stationname", label: "变配电站名称" },
-  { prop: "transformername", label: "设备名称" },
-  { prop: "voltagestep", label: "报警类型分类" },
-  { prop: "regionname", label: "事件类型" },
-  { prop: "pf", label: "发生时间" },
-  { prop: "s", label: "报警描述" },
-  { prop: "loadFactor", label: "报警等级" },
-  { prop: "loadFactor", label: "确认状态" },
-  { prop: "loadFactor", label: "详情" },
-  { prop: "loadFactor", label: "操作" }
+  { prop: "metername", label: "设备名称" },
+  { prop: "messinfotypetext", label: "报警类型分类", width: 124 },
+  { prop: "alarmtype", label: "事件类型", width: 124 },
+  { prop: "customDom", slotName: "alarmtime", label: "发生时间", width: 184 },
+  { prop: "eventdescription", label: "报警描述" },
+  { prop: "customDom", slotName: "messinfoleveltext", label: "报警等级", width: 94 },
+  { prop: "customDom", slotName: "confirmstatus", label: "确认状态", width: 84 },
+  { prop: "customDom", slotName: "actions", label: "操作", width: 184 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await summary({
+    const params: any = {
       pageNum,
       pageSize,
-      stationid: stationId.value,
-      sortParam: "station_id",
-      sortTag: "ASC"
-    });
-    resolve(data.pageInfo);
+      starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endtime: moment(formInline.range[1]).format("YYYY-MM-DD")
+    };
+    if (formInline.confirmstatus !== "all") {
+      params.confirmstatus = formInline.confirmstatus;
+    }
+    if (formInline.messinfotype !== "all") {
+      params.messinfotype = formInline.messinfotype;
+    }
+    if (formInline.messinfolevel !== "0") {
+      params.messinfolevel = formInline.messinfolevel;
+    }
+
+    const { data } = await getAlarmEventLogList(params);
+    resolve({ list: data.list, total: data.total });
   });
 };
 
@@ -208,9 +235,12 @@ const GetUnConfirmedEventsByCache = async () => {
 };
 
 const tabChange = () => {
-  // console.log(value);
-  // activeTab.value=value;
   GetUnConfirmedEventsByCache();
+};
+
+const alarmTypeTabChange = value => {
+  formInline.messinfolevel = value;
+  tableRef?.value?.resetData();
 };
 </script>
 
