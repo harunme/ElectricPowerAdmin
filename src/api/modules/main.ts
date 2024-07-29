@@ -150,3 +150,28 @@ export const getMonthAlarmLogNum = (params: Main.ReqGetMonthAlarmLogNum) => {
 export const getSubstationAlarmLogNum = (params: Main.ReqGetSubstationAlarmLogNum) => {
   return http.postForm<Main.ResGetSubstationAlarmLogNum>("/main/getSubstationAlarmLogNum", params);
 };
+
+// 概况-变配电站状态 接口1
+export const getSubstationStatus = (params: Main.ReqGetSubstationStatus) => {
+  return http.postForm<Main.ResGetSubstationStatus>("/main/getSubstationStatus", params);
+};
+
+// 概况-变配电站状态 接口2   当日逐时曲线 分时段
+export const getMothJFPG = (params: Main.ReqGetMothJFPG) => {
+  return http.postForm<Main.ResGetMothJFPG>("/main/getMothJFPG", params);
+};
+
+// 概况-变配电站状态 接口3  用电概况里的日 月年总电量
+export const getNowAndLastEnergyTotalValue = (params: Main.ReqGetNowAndLastEnergyTotalValue) => {
+  return http.postForm<Main.ResGetNowAndLastEnergyTotalValue>("/main/getNowAndLastEnergyTotalValue", params);
+};
+
+// 概况-变配电站状态 接口4 点击变压器接口
+export const getTransformerListByfSubid = (params: Main.ReqGetTransformerListByfSubid) => {
+  return http.postForm<Main.ResGetTransformerListByfSubid>("/main/getTransformerListByfSubid", params);
+};
+
+// 概况-变配电站状态 接口5  点击失联装置接口
+export const CommunicationStatusNew = (params: Main.ReqCommunicationStatusNew) => {
+  return http.postForm<Main.ResCommunicationStatusNew>("/main/CommunicationStatusNew", params);
+};

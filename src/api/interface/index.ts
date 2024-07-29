@@ -748,4 +748,209 @@ export namespace Main {
       paramname: string | null;
       mconfirmtime: string;
     }> {}
+
+  export interface ReqGetSubstationStatus {
+    stationid: string;
+    starttime: string;
+  }
+
+  export interface ResGetSubstationStatus {
+    SubStationStatus: {
+      DayReport: {
+        DisconnectNumber: number;
+        OverLimitTimes: number;
+        SwitchingTimes: number;
+      };
+      RunningStatus: {
+        FPFQ: {
+          stationid: string;
+          fP: number;
+          fQ: number;
+          collecttime: string;
+        };
+        FTempFHumidity: {
+          stationid: string;
+          fTemp: number;
+          fHumi: number;
+          collecttime: string;
+        };
+      };
+      substationstatus: {
+        subMeterNums: number;
+        substationinfo: {
+          stationid: string;
+          stationname: string;
+          deptname: string;
+          deptid: string;
+          regionname: string;
+          regionid: string;
+          head: null;
+          telephone: null;
+          code: null;
+          address: null;
+          voltagestep: number;
+          sxtsumP: string;
+          sxtsumQ: string;
+          transformernum: number;
+          type: number;
+          order: number;
+          level: number;
+          source: number;
+          startno: number;
+          changeflag: number;
+          index: number;
+          selected: number;
+          editflag: number;
+        };
+      };
+    };
+    EHCAndES: {
+      EnergyHourCurve: {
+        resToday: {
+          stationid: string;
+          collecttime: string;
+          value: number;
+        }[];
+        resYesterday: {
+          stationid: string;
+          collecttime: string;
+          value: number;
+        }[];
+      };
+      EnergyStatus: {
+        MaxValueInfoOfOneDay: number;
+        MaxValueTimes: string;
+        TotalPValue: string;
+        TodayTotalValue: {
+          stationid: string;
+          sumvalue: number;
+        };
+        YesterdayTotalValue: {
+          stationid: string;
+          sumvalue: number;
+        };
+        linkRelativeRatio: number;
+      };
+    };
+    PlaceCheckformListParamMap: {
+      formerPlacecheckform: "{}";
+      latterPlacecheckform: "";
+      list: {
+        chargename: string;
+        createtime: string;
+        distance: string;
+        placecheckformid: string;
+        stationname: string;
+        stationid: string;
+        taskstartdate: string;
+        taskfinishdate: string;
+        taskid: string;
+        tasknumber: string;
+        taskstateid: string;
+        problemtotal: string;
+        unsolvedtotal: string;
+        inspectionnum: number;
+        passrate: number;
+        taskresult: number;
+        taskuserfinishnum: number;
+        taskusernum: number;
+        userlist: {
+          createtime: string;
+          distance: number;
+          exesituation: number;
+          explain: string;
+          latitude: string;
+          longitude: string;
+          location: string;
+          signintime: string;
+          taskresultid: number;
+          taskstateid: number;
+          userid: number;
+          username: string;
+        }[];
+      }[];
+    };
+  }
+
+  export interface ReqGetMothJFPG {
+    stationid: string;
+  }
+
+  export interface ResGetMothJFPG {
+    Epijlist: {
+      stationid: string;
+      fEpij: number;
+      collecttime: string;
+    }[];
+    Epiflist: {
+      stationid: string;
+      fEpif: number;
+      collecttime: string;
+    }[];
+    Epiplist: {
+      stationid: string;
+      fEpip: number;
+      collecttime: string;
+    }[];
+    Epiglist: {
+      stationid: string;
+      fEpig: number;
+      collecttime: string;
+    }[];
+    JFPGSum: {
+      fEpijsum: number;
+      fEpifsum: number;
+      fEpipsum: number;
+      fEpigsum: number;
+    };
+  }
+
+  export interface ReqGetNowAndLastEnergyTotalValue {
+    stationid: string;
+    starttime: string;
+    scheme: "D" | "M" | "Y";
+  }
+
+  export interface ResGetNowAndLastEnergyTotalValue {
+    NowTotalValue: {
+      stationid: string;
+      sumvalue: number;
+    };
+    LastTotalValue: {
+      stationid: string;
+      sumvalue: number;
+    };
+    linkRelativeRatio: number;
+  }
+
+  export interface ReqGetTransformerListByfSubid {
+    stationid: string;
+  }
+  export interface ResGetTransformerListByfSubid
+    extends ResPage<{
+      transformername: string;
+      metercode: string;
+      voltagestep: number;
+      maxdemand: number;
+      maxtime: string;
+    }> {}
+
+  export interface ReqCommunicationStatusNew extends ReqPage {
+    stationid: string;
+  }
+
+  export interface ResCommunicationStatusNew
+    extends ResPage<{
+      channelid: string;
+      channelname: string;
+      channelport: string;
+      meterid: string;
+      metername: string;
+      laststoptime: string;
+      lostContacttime: string;
+      dayrundate: string;
+      faultnums: number;
+      totalrundate: string;
+      isdisconnect: true;
+    }> {}
 }
