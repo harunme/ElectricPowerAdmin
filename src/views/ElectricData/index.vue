@@ -2,17 +2,7 @@
   <div class="ElectricData flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box">
-        <el-tree
-          default-expand-all
-          style="max-width: 600px"
-          :data="tree"
-          show-checkbox
-          node-key="regionid"
-          :default-checked-keys="[100]"
-          :props="props"
-        />
-      </div>
+      <div class="card left-box"></div>
       <div class="card content-box">
         <el-tabs>
           <el-tab-pane label="日原始数据" class="content-pane">
@@ -20,7 +10,7 @@
               <el-form :inline="true" :model="formInline" class="table-form-inline">
                 <el-form-item label="时间范围">
                   <el-date-picker
-                    v-model="formInline.date"
+                    v-model="formInline.range"
                     type="daterange"
                     unlink-panels
                     range-separator="至"
@@ -31,21 +21,21 @@
                   />
                 </el-form-item>
                 <el-form-item label="电力类别">
-                  <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
-                    <el-option label="有功功率" value="shanghai" />
-                    <el-option label="电流" value="beijing" />
-                    <el-option label="相电压" value="beijing" />
-                    <el-option label="线电压" value="beijing" />
-                    <el-option label="频率" value="beijing" />
-                    <el-option label="功率因数" value="beijing" />
-                    <el-option label="无功功率" value="beijing" />
-                    <el-option label="视在功率" value="beijing" />
-                    <el-option label="三相不平衡度" value="beijing" />
-                    <el-option label="负载率" value="beijing" />
+                  <el-select v-model="formInline.energykind">
+                    <el-option label="有功功率" value="P" />
+                    <el-option label="电流" value="I" />
+                    <el-option label="相电压" value="U" />
+                    <el-option label="线电压" value="UL" />
+                    <el-option label="频率" value="Fr" />
+                    <el-option label="功率因数" value="PF" />
+                    <el-option label="无功功率" value="Q" />
+                    <el-option label="视在功率" value="S" />
+                    <el-option label="三相不平衡度" value="UnB" />
+                    <el-option label="负载率" value="LF" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-checkbox-group v-model="formInline.type1">
+                  <el-checkbox-group v-model="formInline.phase">
                     <el-checkbox value="type1a" name="type">A相</el-checkbox>
                     <el-checkbox value="type1b" name="type">B相</el-checkbox>
                     <el-checkbox value="type1c" name="type">C相</el-checkbox>
@@ -59,10 +49,10 @@
               </el-form>
               <el-tabs>
                 <el-tab-pane label="图表" class="chart-box">
-                  <ECharts :option="option" />
+                  <ECharts v-if="option !== null" :option="option" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
-                  <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+                  <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -72,7 +62,7 @@
               <el-form :inline="true" :model="formInline" class="table-form-inline">
                 <el-form-item label="时间范围">
                   <el-date-picker
-                    v-model="formInline.date"
+                    v-model="formInline.range"
                     type="daterange"
                     unlink-panels
                     range-separator="至"
@@ -83,17 +73,17 @@
                   />
                 </el-form-item>
                 <el-form-item label="电力类别">
-                  <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
-                    <el-option label="有功功率" value="shanghai" />
-                    <el-option label="电流" value="beijing" />
-                    <el-option label="相电压" value="beijing" />
-                    <el-option label="线电压" value="beijing" />
-                    <el-option label="频率" value="beijing" />
-                    <el-option label="功率因数" value="beijing" />
-                    <el-option label="无功功率" value="beijing" />
-                    <el-option label="视在功率" value="beijing" />
-                    <el-option label="三相不平衡度" value="beijing" />
-                    <el-option label="负载率" value="beijing" />
+                  <el-select v-model="formInline.energykind">
+                    <el-option label="有功功率" value="P" />
+                    <el-option label="电流" value="I" />
+                    <el-option label="相电压" value="U" />
+                    <el-option label="线电压" value="UL" />
+                    <el-option label="频率" value="Fr" />
+                    <el-option label="功率因数" value="PF" />
+                    <el-option label="无功功率" value="Q" />
+                    <el-option label="视在功率" value="S" />
+                    <el-option label="三相不平衡度" value="UnB" />
+                    <el-option label="负载率" value="LF" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -102,7 +92,7 @@
               </el-form>
               <el-tabs>
                 <el-tab-pane label="图表" class="chart-box">
-                  <ECharts :option="option" />
+                  <ECharts v-if="option !== null" :option="option" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
                   <PaginationTable :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
@@ -116,29 +106,31 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
-import { onMounted, ref, reactive } from "vue";
-import { getCircuitInfoTree } from "@/api/modules/sys";
+<script setup lang="tsx" name="ElectricData">
+import { ref, reactive } from "vue";
+import moment from "moment";
+// import { getCircuitInfoTree } from "@/api/modules/sys";
+import { ElectricDataMonth, ElectricDataPaging } from "@/api/modules/main";
 import { ReqPage } from "@/api/interface/index";
-import { summary } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
+import { columnsConfig, phaseConfig } from "./config";
 
-const tree = ref([] as any);
-const props = { children: "children", label: "circuitname" };
+// const end = new Date();
+// const start = new Date();
+// start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
 const size = ref<"default" | "large" | "small">("default");
-
-const columns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "采集时间" },
-  { prop: "transformername", label: "Pa(kW)" },
-  { prop: "transformername", label: "Pb(kW)" },
-  { prop: "transformername", label: "Pc(kW)" },
-  { prop: "transformername", label: "P(kW)" }
-];
+const formInline = reactive({
+  range: ["2024-06-01", "2024-07-01"],
+  energykind: "P",
+  phase: ""
+});
+const tableRef = ref<any>(null);
+const option = ref<ECOption | null>(null);
+const columns = ref<any>([]);
 
 const columns2 = [
   { prop: "stationname", label: "回路名称" },
@@ -167,13 +159,92 @@ const columns2 = [
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await summary({
+    columns.value = columnsConfig[formInline.energykind];
+    // params.starttime = moment(formInline.daterange[0]).format("YYYY-MM-DD");
+    // params.endtime = moment(formInline.daterange[1]).format("YYYY-MM-DD");
+    const ElectricDataPagingParams: any = {
+      stationid: "000",
+      circuitids: "000",
       pageNum,
       pageSize,
-      sortParam: "001",
-      sortTag: "ASC"
+      starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
+      phase: phaseConfig[formInline.energykind],
+      energykind: formInline.energykind
+    };
+
+    const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
+    const { data: ElectricDataMonthData } = await ElectricDataMonth({
+      stationid: "000",
+      circuitids: "000",
+      starttime: "2024-06-01",
+      endtime: "2024-06-30",
+      energykind: "P",
+      phase: "Pa-Pb-Pc-P"
     });
-    resolve(data.pageInfo);
+    option.value = {
+      title: {
+        text: "有功功率"
+      },
+      tooltip: {
+        trigger: "axis"
+      },
+      legend: {
+        data: ["P", "Pa", "Pb", "Pc"]
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none"
+          },
+          dataView: { readOnly: false },
+          magicType: { type: ["line", "bar"] },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: ElectricDataMonthData.times
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          name: "P",
+          type: "line",
+          stack: "Total",
+          data: ElectricDataMonthData.P.map(Number)
+        },
+        {
+          name: "Pa",
+          type: "line",
+          stack: "Total",
+          data: ElectricDataMonthData.Pa.map(Number)
+        },
+        {
+          name: "Pb",
+          type: "line",
+          stack: "Total",
+          data: ElectricDataMonthData.Pb.map(Number)
+        },
+        {
+          name: "Pc",
+          type: "line",
+          stack: "Total",
+          data: ElectricDataMonthData.Pc.map(Number)
+        }
+      ]
+    };
+    resolve({ list: ElectricDataPagingData.list, total: ElectricDataPagingData.total });
   });
 };
 
@@ -207,89 +278,8 @@ const shortcuts = [
   }
 ];
 
-onMounted(async () => {
-  const res = await getCircuitInfoTree();
-  tree.value = res?.data;
-});
-
-const option: ECOption = {
-  title: {
-    text: "有功功率"
-  },
-  tooltip: {
-    trigger: "axis"
-  },
-  legend: {
-    data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"]
-  },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  },
-  toolbox: {
-    feature: {
-      dataZoom: {
-        yAxisIndex: "none"
-      },
-      dataView: { readOnly: false },
-      magicType: { type: ["line", "bar"] },
-      restore: {},
-      saveAsImage: {}
-    }
-  },
-  xAxis: {
-    type: "category",
-    boundaryGap: false,
-    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  },
-  yAxis: {
-    type: "value"
-  },
-  series: [
-    {
-      name: "Email",
-      type: "line",
-      stack: "Total",
-      data: [120, 132, 101, 134, 90, 230, 210]
-    },
-    {
-      name: "Union Ads",
-      type: "line",
-      stack: "Total",
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      name: "Video Ads",
-      type: "line",
-      stack: "Total",
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      name: "Direct",
-      type: "line",
-      stack: "Total",
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      name: "Search Engine",
-      type: "line",
-      stack: "Total",
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
-    }
-  ]
-};
-
-const formInline = reactive({
-  user: "",
-  region: "shanghai",
-  date: "",
-  type1: ["type1b", "type1a"]
-});
-
 const onSubmit = () => {
-  console.log("submit!");
+  tableRef?.value?.resetData();
 };
 </script>
 
