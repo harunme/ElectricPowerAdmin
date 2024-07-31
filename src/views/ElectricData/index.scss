@@ -1,17 +1,27 @@
 .ElectricData {
   height: 100%;
   .content-box {
-    .el-tabs {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      :deep(.el-tabs__content) {
-        flex: 1;
-        .content-pane {
-          height: 100%;
+    .flex-column {
+      height: calc(100% - 54px);
+
+      // border: 1px solid;
+      .el-tabs {
+        // border: 1px solid;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 50px);
+        :deep(.el-tabs__content) {
+          // border: 1px solid red;
+          flex: 1;
           .chart-box {
             height: 100%;
           }
+
+          // .content-pane {
+          //   border: 1px solid;
+          //   height: 100%;
+
+          // }
         }
       }
     }

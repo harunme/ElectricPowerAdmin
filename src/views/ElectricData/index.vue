@@ -4,103 +4,60 @@
     <div class="main-box">
       <div class="card left-box"></div>
       <div class="card content-box">
-        <el-tabs>
-          <el-tab-pane label="日原始数据" class="content-pane">
-            <div class="flex-column">
-              <el-form :inline="true" :model="formInline" class="table-form-inline">
-                <el-form-item label="时间范围">
-                  <el-date-picker
-                    v-model="formInline.range"
-                    type="daterange"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始时间"
-                    end-placeholder="结束时间"
-                    :shortcuts="shortcuts"
-                    :size="size"
-                  />
-                </el-form-item>
-                <el-form-item label="电力类别">
-                  <el-select v-model="formInline.energykind">
-                    <el-option label="有功功率" value="P" />
-                    <el-option label="电流" value="I" />
-                    <el-option label="相电压" value="U" />
-                    <el-option label="线电压" value="UL" />
-                    <el-option label="频率" value="Fr" />
-                    <el-option label="功率因数" value="PF" />
-                    <el-option label="无功功率" value="Q" />
-                    <el-option label="视在功率" value="S" />
-                    <el-option label="三相不平衡度" value="UnB" />
-                    <el-option label="负载率" value="LF" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item>
-                  <el-checkbox-group v-model="formInline.phase">
-                    <el-checkbox value="type1a" name="type">A相</el-checkbox>
-                    <el-checkbox value="type1b" name="type">B相</el-checkbox>
-                    <el-checkbox value="type1c" name="type">C相</el-checkbox>
-                    <el-checkbox value="all" name="type">总有功功率</el-checkbox>
-                  </el-checkbox-group>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="onSubmit">查询</el-button>
-                  <el-button type="primary" @click="onSubmit">设置</el-button>
-                </el-form-item>
-              </el-form>
-              <el-tabs>
-                <el-tab-pane label="图表" class="chart-box">
-                  <ECharts v-if="option !== null" :option="option" />
-                </el-tab-pane>
-                <el-tab-pane label="数据" class="chart-box">
-                  <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="逐日极值数据" class="content-pane" lazy>
-            <div class="flex-column">
-              <el-form :inline="true" :model="formInline" class="table-form-inline">
-                <el-form-item label="时间范围">
-                  <el-date-picker
-                    v-model="formInline.range"
-                    type="daterange"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始时间"
-                    end-placeholder="结束时间"
-                    :shortcuts="shortcuts"
-                    :size="size"
-                  />
-                </el-form-item>
-                <el-form-item label="电力类别">
-                  <el-select v-model="formInline.energykind">
-                    <el-option label="有功功率" value="P" />
-                    <el-option label="电流" value="I" />
-                    <el-option label="相电压" value="U" />
-                    <el-option label="线电压" value="UL" />
-                    <el-option label="频率" value="Fr" />
-                    <el-option label="功率因数" value="PF" />
-                    <el-option label="无功功率" value="Q" />
-                    <el-option label="视在功率" value="S" />
-                    <el-option label="三相不平衡度" value="UnB" />
-                    <el-option label="负载率" value="LF" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="onSubmit">查询</el-button>
-                </el-form-item>
-              </el-form>
-              <el-tabs>
-                <el-tab-pane label="图表" class="chart-box">
-                  <ECharts v-if="option !== null" :option="option" />
-                </el-tab-pane>
-                <el-tab-pane label="数据" class="chart-box">
-                  <PaginationTable :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-          </el-tab-pane>
+        <el-tabs v-model="activeTab">
+          <el-tab-pane label="日原始数据" :name="0"> </el-tab-pane>
+          <el-tab-pane label="逐日极值数据" lazy :name="1"> </el-tab-pane>
         </el-tabs>
+        <div class="flex-column">
+          <el-form :inline="true" :model="formInline" class="table-form-inline">
+            <el-form-item label="时间范围">
+              <el-date-picker
+                v-model="formInline.range"
+                type="daterange"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                :shortcuts="shortcuts"
+                :size="size"
+              />
+            </el-form-item>
+            <el-form-item label="电力类别">
+              <el-select v-model="formInline.energykind">
+                <el-option label="有功功率" value="P" />
+                <el-option label="电流" value="I" />
+                <el-option label="相电压" value="U" />
+                <el-option label="线电压" value="UL" />
+                <el-option label="频率" value="Fr" />
+                <el-option label="功率因数" value="PF" />
+                <el-option label="无功功率" value="Q" />
+                <el-option label="视在功率" value="S" />
+                <el-option label="三相不平衡度" value="UnB" />
+                <el-option label="负载率" value="LF" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">查询</el-button>
+            </el-form-item>
+          </el-form>
+
+          <el-tabs v-if="activeTab === 0">
+            <el-tab-pane label="图表" class="chart-box">
+              <ECharts v-if="option !== null" :option="option" />
+            </el-tab-pane>
+            <el-tab-pane label="数据" class="chart-box">
+              <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+            </el-tab-pane>
+          </el-tabs>
+          <el-tabs v-if="activeTab === 1">
+            <el-tab-pane label="图表" class="chart-box">
+              <ECharts v-if="option !== null" :option="option" />
+            </el-tab-pane>
+            <el-tab-pane label="数据" class="chart-box">
+              <PaginationTable ref="tableRef" :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
     </div>
   </div>
@@ -131,6 +88,7 @@ const formInline = reactive({
 const tableRef = ref<any>(null);
 const option = ref<ECOption | null>(null);
 const columns = ref<any>([]);
+const activeTab = ref<0 | 1>(0);
 
 const columns2 = [
   { prop: "stationname", label: "回路名称" },
