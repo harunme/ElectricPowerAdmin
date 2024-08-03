@@ -24,16 +24,7 @@
             </el-form-item>
             <el-form-item label="电力类别">
               <el-select v-model="formInline.energykind">
-                <el-option label="有功功率" value="P" />
-                <el-option label="电流" value="I" />
-                <el-option label="相电压" value="U" />
-                <el-option label="线电压" value="UL" />
-                <el-option label="频率" value="Fr" />
-                <el-option label="功率因数" value="PF" />
-                <el-option label="无功功率" value="Q" />
-                <el-option label="视在功率" value="S" />
-                <el-option label="三相不平衡度" value="UnB" />
-                <el-option label="负载率" value="LF" />
+                <el-option v-for="kind in energyKinds" :key="kind.value" :label="kind.name" :value="kind.value" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -46,7 +37,7 @@
               <ECharts v-if="option !== null" :option="option" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
-              <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+              <PaginationTable ref="tableRef1" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
             </el-tab-pane>
           </el-tabs>
           <el-tabs v-if="activeTab === 1">
@@ -54,7 +45,7 @@
               <ECharts v-if="option !== null" :option="option" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
-              <PaginationTable ref="tableRef" :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
+              <PaginationTable ref="tableRef2" :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -66,18 +57,13 @@
 <script setup lang="tsx" name="ElectricData">
 import { ref, reactive } from "vue";
 import moment from "moment";
-// import { getCircuitInfoTree } from "@/api/modules/sys";
 import { ElectricDataMonth, ElectricDataPaging } from "@/api/modules/main";
 import { ReqPage } from "@/api/interface/index";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
-import { columnsConfig, phaseConfig } from "./config";
-
-// const end = new Date();
-// const start = new Date();
-// start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+import { columnsConfig, phaseConfig, energyKinds } from "./config";
 
 const size = ref<"default" | "large" | "small">("default");
 const formInline = reactive({
@@ -85,7 +71,8 @@ const formInline = reactive({
   energykind: "P",
   phase: ""
 });
-const tableRef = ref<any>(null);
+const tableRef1 = ref<any>(null);
+const tableRef2 = ref<any>(null);
 const option = ref<ECOption | null>(null);
 const columns = ref<any>([]);
 const activeTab = ref<0 | 1>(0);
@@ -118,8 +105,6 @@ const columns2 = [
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
     columns.value = columnsConfig[formInline.energykind];
-    // params.starttime = moment(formInline.daterange[0]).format("YYYY-MM-DD");
-    // params.endtime = moment(formInline.daterange[1]).format("YYYY-MM-DD");
     const ElectricDataPagingParams: any = {
       stationid: "000",
       circuitids: "000",
@@ -131,24 +116,26 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       energykind: formInline.energykind
     };
 
-    const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
-    const { data: ElectricDataMonthData } = await ElectricDataMonth({
+    const ElectricDataMonthParams: any = {
       stationid: "000",
       circuitids: "000",
-      starttime: "2024-06-01",
-      endtime: "2024-06-30",
-      energykind: "P",
-      phase: "Pa-Pb-Pc-P"
-    });
+      starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
+      energykind: formInline.energykind,
+      phase: phaseConfig[formInline.energykind]
+    };
+
+    const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
+    const { data: ElectricDataMonthData } = await ElectricDataMonth(ElectricDataMonthParams);
     option.value = {
       title: {
-        text: "有功功率"
+        text: energyKinds.find(kind => kind.value === formInline.energykind).name
       },
       tooltip: {
         trigger: "axis"
       },
       legend: {
-        data: ["P", "Pa", "Pb", "Pc"]
+        data: energyKinds.find(kind => kind.value === formInline.energykind).chartkeys
       },
       grid: {
         left: "3%",
@@ -175,32 +162,14 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       yAxis: {
         type: "value"
       },
-      series: [
-        {
-          name: "P",
+      series: energyKinds
+        .find(kind => kind.value === formInline.energykind)
+        .chartkeys.map(key => ({
+          name: key,
           type: "line",
           stack: "Total",
-          data: ElectricDataMonthData.P.map(Number)
-        },
-        {
-          name: "Pa",
-          type: "line",
-          stack: "Total",
-          data: ElectricDataMonthData.Pa.map(Number)
-        },
-        {
-          name: "Pb",
-          type: "line",
-          stack: "Total",
-          data: ElectricDataMonthData.Pb.map(Number)
-        },
-        {
-          name: "Pc",
-          type: "line",
-          stack: "Total",
-          data: ElectricDataMonthData.Pc.map(Number)
-        }
-      ]
+          data: ElectricDataMonthData[key].map(Number)
+        }))
     };
     resolve({ list: ElectricDataPagingData.list, total: ElectricDataPagingData.total });
   });
@@ -237,7 +206,12 @@ const shortcuts = [
 ];
 
 const onSubmit = () => {
-  tableRef?.value?.resetData();
+  if (activeTab.value === 0) {
+    tableRef1?.value?.resetData();
+  }
+  if (activeTab.value === 1) {
+    tableRef2?.value?.resetData();
+  }
 };
 </script>
 

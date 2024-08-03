@@ -82,4 +82,17 @@ const phaseConfig = {
   LF: "Lf"
 };
 
-export { columnsConfig, phaseConfig };
+const energyKinds = [
+  { name: "有功功率", value: "P", chartkeys: ["P", "Pa", "Pb", "Pc"] },
+  { name: "电流", value: "I", chartkeys: ["Ia", "Ib", "Ic"] },
+  { name: "相电压", value: "U", chartkeys: ["Ua", "Ub", "Uc"] },
+  { name: "线电压", value: "UL", chartkeys: ["Uab", "Ubc", "Uca"] },
+  { name: "频率", value: "Fr", chartkeys: ["Fr"] },
+  { name: "功率因数", value: "PF", chartkeys: ["Pf", "Pfa", "Pfb", "Pfc"] },
+  { name: "无功功率", value: "Q", chartkeys: ["Q", "Qa", "Qb", "Qc"] },
+  { name: "视在功率", value: "S", chartkeys: ["S", "Sa", "Sb", "Sc"] },
+  { name: "三相不平衡度", value: "UnB", chartkeys: ["IUnB", "UUnB"] },
+  { name: "负载率", value: "LF", chartkeys: ["LF"] }
+];
+
+export { columnsConfig, phaseConfig, energyKinds };
