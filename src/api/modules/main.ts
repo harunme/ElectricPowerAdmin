@@ -175,3 +175,9 @@ export const getTransformerListByfSubid = (params: Main.ReqGetTransformerListByf
 export const CommunicationStatusNew = (params: Main.ReqCommunicationStatusNew) => {
   return http.postForm<Main.ResCommunicationStatusNew>("/main/CommunicationStatusNew", params);
 };
+
+// 用能分析-用能报表
+// http://111.231.24.91/main/ElectricityFeesNoHj
+export const ElectricityFeesNoHj = (params: Main.ReqElectricityFeesNoHj) => {
+  return http.postForm<Main.ResElectricityFeesNoHj>("/main/ElectricityFeesNoHj", params);
+};

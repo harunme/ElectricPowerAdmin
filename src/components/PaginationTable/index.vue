@@ -4,9 +4,11 @@
       :summary-method="summaryMethod"
       :span-method="spanMethod"
       :show-summary="showSummary"
+      @selection-change="selectionChange"
       :data="tableData"
       style="width: 100%"
     >
+      <el-table-column v-if="tableData.length !== 0" type="selection" width="55"></el-table-column>
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
         <template v-for="slotName in Object.keys(slots)" #[slotName]="{ row }">
           <slot :name="slotName" :row="row"></slot>
@@ -62,6 +64,7 @@ const props = defineProps<{
     | undefined;
   columns: any;
   fetchData: any;
+  selectionChange?: (param: any[]) => void;
   // fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
 }>();
 
@@ -88,7 +91,7 @@ const refreshData = async () => {
     pageSize: pageSize.value,
     pageNum: currentPage.value
   });
-  tableData.value = res.list;
+  tableData.value = res.list || [];
   total.value = res.total;
 };
 

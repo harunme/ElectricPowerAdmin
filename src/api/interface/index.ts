@@ -953,4 +953,22 @@ export namespace Main {
       totalrundate: string;
       isdisconnect: true;
     }> {}
+
+  export interface ReqElectricityFeesNoHj {
+    stationid: string;
+    circuitids: string;
+    scheme: "D" | "M" | "Y";
+    starttime: string;
+    endtime: string;
+  }
+
+  export interface ResElectricityFeesNoHj {
+    EnergyReport: {
+      circuitid: string;
+      circuitname: string;
+      data: number;
+      isincoming: boolean;
+      collecttime: string;
+    }[][];
+  }
 }
