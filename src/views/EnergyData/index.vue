@@ -86,12 +86,17 @@
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
-              <el-button type="primary">图表</el-button>
-              <el-button type="primary">饼图</el-button>
+              <el-button type="primary" @click="showChart">图表</el-button>
+              <el-button type="primary" @click="showPie">饼图</el-button>
               <el-button type="primary">导出</el-button>
               <div style="margin-left: 8px; color: var(--el-text-color-regular)">(*为进线回路)</div>
             </el-form-item>
           </el-form>
+          <el-dialog v-model="dialogVisible" title="用能柱状图" width="500">
+            <div class="chart-box">
+              <ECharts v-if="option !== null" :option="option" />
+            </div>
+          </el-dialog>
           <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
           </PaginationTable>
         </div>
@@ -107,9 +112,13 @@ import moment from "moment";
 import { ElectricityFeesNoHj } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import ECharts from "@/components/Charts/echarts.vue";
 
 const tree = ref([] as any);
+const option = ref<any>(null);
 const tableRef = ref<any>(null);
+const dialogVisible = ref(false);
+const ElectricityFeesNoHjResponse = ref<any>(null);
 const activeTab = ref<"D" | "M" | "Y">("D");
 const props = { children: "children", label: "circuitname" };
 
@@ -120,6 +129,7 @@ const lineForm = reactive({
 });
 
 const columns = ref<any>([]);
+const selectedRows = ref<any>([]);
 
 const tabClick = tab => {
   if (tab.paneName === "D") {
@@ -174,6 +184,7 @@ const fetchData = async (): Promise<any> => {
       starttime,
       endtime
     });
+    ElectricityFeesNoHjResponse.value = data?.EnergyReport;
     let _columns: any = [];
     const list = data?.EnergyReport.map((row: any, index) => {
       let data: any = {};
@@ -199,8 +210,73 @@ const fetchData = async (): Promise<any> => {
   });
 };
 
-const handleSelectionChange = () => {
-  console.log("handleSelectionChange1111111");
+const handleSelectionChange = rows => {
+  console.log("handleSelectionChange1111111", rows);
+  selectedRows.value = rows;
+};
+
+const showChart = () => {
+  if (selectedRows.value.length === 0) return ElMessage.info({ message: "请先选择一行数据" });
+  dialogVisible.value = true;
+
+  let legend: any = [];
+  let xAxisData: any = [];
+  let series: any = [];
+  selectedRows.value.forEach((row: any) => {
+    const { circuitname, total, ...rest } = row;
+
+    const data = ElectricityFeesNoHjResponse.value.find(data => data[0].circuitname === circuitname);
+    console.log("datadata", data, rest, total);
+    legend.push(circuitname);
+    series.push({
+      name: circuitname,
+      type: "bar",
+      data: data.map(({ data }) => data)
+    });
+    xAxisData = data.map(({ collecttime }) => collecttime);
+  });
+
+  option.value = {
+    grid: {
+      left: 20,
+      right: 20,
+      bottom: 20,
+      top: 64,
+      containLabel: true
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross",
+        crossStyle: {
+          color: "#999"
+        }
+      }
+    },
+    legend: {
+      data: legend
+    },
+    xAxis: [
+      {
+        type: "category",
+        data: xAxisData,
+        axisPointer: {
+          type: "shadow"
+        }
+      }
+    ],
+    yAxis: [
+      {
+        type: "value",
+        name: "单位（kW.h）"
+      }
+    ],
+    series: series
+  };
+};
+
+const showPie = () => {
+  console.log("showPie");
 };
 
 const onSubmit = () => {
