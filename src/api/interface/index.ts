@@ -52,6 +52,72 @@ export namespace Meter {
     deptid?: number;
   }
   export interface ResGetSubstationListBySubGroupId extends ResPage<Station> {}
+
+  export interface ReqGetSubstationPageInfo extends ReqPage {
+    deptid?: string;
+    regionid?: string;
+  }
+  export interface ResGetSubstationPageInfo
+    extends ResPage<{
+      stationid: string;
+      stationname: string;
+      deptname: string;
+      deptid: string;
+      regionid: string;
+      regionname: string;
+      head: string;
+      telephone: string;
+      address: string;
+      voltagestep: number;
+      sxtsumP: string;
+      sxtsumQ: string;
+      transformernum: number;
+      type: number;
+      order: number;
+      level: number;
+      startno: number;
+    }> {}
+
+  export interface ReqInsertSubstationInfo {
+    stationid: string;
+    stationname: string;
+    deptid: string;
+    regionid: string;
+    type: string;
+    installedcapacity: string;
+    voltagestep: string;
+    head: string;
+    telephone: string;
+    headphone: string;
+    voltagelevel: number;
+    voltageoftrans: number;
+    address: string;
+    longitude: string;
+    latitude: string;
+    transformernum: string;
+    startno: string;
+    order: string;
+  }
+
+  export interface ResInsertSubstationInfo {
+    stationid: string;
+    stationname: string;
+    deptname: string;
+    deptid: string;
+    regionid: string;
+    regionname: string;
+    head: string;
+    telephone: string;
+    address: string;
+    voltagestep: number;
+    sxtsumP: string;
+    sxtsumQ: string;
+    transformernum: number;
+    type: number;
+    order: number;
+    level: number;
+    startno: number;
+  }
 }
 
 // 业务模块
@@ -971,4 +1037,36 @@ export namespace Main {
       collecttime: string;
     }[][];
   }
+
+  export interface ReqOverLimitEventNew extends ReqPage {
+    stationid: string;
+  }
+  export interface ResOverLimitEventNew
+    extends ResPage<{
+      metercode: string;
+      metername: string;
+      paramcode: string;
+      paramname: string;
+      alarmtype: string;
+      alarmdesc: string;
+      limitvalue: string;
+      value: string;
+      starttime: string;
+      endtime: string;
+    }> {}
+
+  export interface ReqEnergyLineLoss {
+    stationid: string;
+  }
+
+  export interface ResEnergyLineLoss
+    extends ResPage<{
+      metercode: string;
+      metername: string;
+      paramcode: string;
+      paramname: string;
+      alarmdesc: string;
+      starttime: string;
+      value: string;
+    }> {}
 }

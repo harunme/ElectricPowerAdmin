@@ -176,8 +176,17 @@ export const CommunicationStatusNew = (params: Main.ReqCommunicationStatusNew) =
   return http.postForm<Main.ResCommunicationStatusNew>("/main/CommunicationStatusNew", params);
 };
 
+// 概况-变配电站状态 接口6 点击遥测越限 接口
+export const OverLimitEventNew = (params: Main.ReqOverLimitEventNew) => {
+  return http.postForm<Main.ResOverLimitEventNew>("/main/OverLimitEventNew", params);
+};
+
+// 概况-变配电站状态 接口7 点击遥信变位 接口
+export const EnergyLineLoss = (params: Main.ReqEnergyLineLoss) => {
+  return http.postForm<Main.ResEnergyLineLoss>("/main/EnergyLineLoss", params);
+};
+
 // 用能分析-用能报表
-// http://111.231.24.91/main/ElectricityFeesNoHj
 export const ElectricityFeesNoHj = (params: Main.ReqElectricityFeesNoHj) => {
   return http.postForm<Main.ResElectricityFeesNoHj>("/main/ElectricityFeesNoHj", params);
 };
