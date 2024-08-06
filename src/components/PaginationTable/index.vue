@@ -8,7 +8,7 @@
       :data="tableData"
       style="width: 100%"
     >
-      <el-table-column v-if="tableData.length !== 0" type="selection" width="55"></el-table-column>
+      <el-table-column v-if="tableData.length !== 0 && selectionChange" type="selection" width="55"></el-table-column>
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
         <template v-for="slotName in Object.keys(slots)" #[slotName]="{ row }">
           <slot :name="slotName" :row="row"></slot>

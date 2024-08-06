@@ -118,6 +118,30 @@ export namespace Meter {
     level: number;
     startno: number;
   }
+
+  export interface ReqDeleteSubstationInfoById {
+    stationid: string;
+  }
+
+  export interface ResDeleteSubstationInfoById {
+    stationid: string;
+    stationname: string;
+    deptname: string;
+    deptid: string;
+    regionid: string;
+    regionname: string;
+    head: string;
+    telephone: string;
+    address: string;
+    voltagestep: number;
+    sxtsumP: string;
+    sxtsumQ: string;
+    transformernum: number;
+    type: number;
+    order: number;
+    level: number;
+    startno: number;
+  }
 }
 
 // 业务模块

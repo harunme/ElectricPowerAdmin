@@ -12,20 +12,20 @@
                   <div>
                     <img :src="overview1" />
                     <h5>电压等级</h5>
-                    <p>10/0.4kV</p>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.voltagelevel }}kV</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
                     <img :src="overview2" />
-                    <h5>电压等级</h5>
-                    <p>4台</p>
+                    <h5>变压器台数</h5>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.transformernum }}台</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
                     <img :src="overview3" />
-                    <h5>电压等级</h5>
+                    <h5>负载率</h5>
                     <p>20.57%</p>
                   </div>
                 </el-col>
@@ -34,22 +34,22 @@
                 <el-col :span="8">
                   <div>
                     <img :src="overview4" />
-                    <h5>电压等级</h5>
-                    <p>10000kVA</p>
+                    <h5>额定容量</h5>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.installedcapacity }}kVA</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
                     <img :src="overview5" />
-                    <h5>电压等级</h5>
-                    <p>6000kW</p>
+                    <h5>最大需量</h5>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.voltagestep }} kW</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
                     <img :src="overview6" />
-                    <h5>电压等级</h5>
-                    <p>182个</p>
+                    <h5>测控装置</h5>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.subMeterNums }} 个</p>
                   </div>
                 </el-col>
               </el-row>
@@ -66,28 +66,36 @@
                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEoAAABKCAYAAAAc0MJxAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABpZJREFUeNrsnE1UG1UUx+8LbGDFMd2iuJHuDK4UFqQK7gS6sWUhBFo+2tqD8bhVwJ2eKnBOv9RTMqEL1A0Rd1IFzhGXZroDN8bSJZyTVXfhee+8mUkyTCaTyXxkkt5zhhnyMXnzy//ed999k9cODWBnM9Mx4NBV8QWcy5FHqXyQbWS+Apm91oVA4ngYw21Q3XepMMAClHa0h1sOt6d0jPDkpgF1Nnu9B3djeLWTChheFYb95zhB4wQvHVmX9kIJCgEhHJgUkIpX5jIoKDkhKS2N2ypCyzc8qLO56wncLWL7e0yvzDtQmuXxoQzuk5GUe8BcA1WYm4kz4Ctq3KkAxBdQ2kMEaQ3btMpS6XzgoBAQBWMClGCljQ4elHqBnFxyCmHtBQaqMD8Tx0ZtaT1Xg4LSDklZSd9BIaQlNRaZNaoRQdHjlE5cZlI65zkoBKS7WpVGNSIoLXZdQlg15WARB5B2dUjhNOUaeGJyzBNQhflZ/AC2q/dq4TaCtcUTEwlXXU9AAhUSr0Xmjeh6xhf2MWlDdkdRDFJNoiQz2+WTE7G6QRVuzC6VD0OazoQbTk50OQaFkMaUFKD5jYZbKUegEFJXtTc3mY2hqj5xoqiUXitqHVtEWD22QaGa4k0el6ziVaoWRaWgdS2OqopXBYVqSqjBrZVtxY6iFuGlxVBVZaGnvVxNc6qaeH0f09kJ8HY/sFgNOarjjyx548kJ8IMDgMNDF1jxBfyTMR3CFG7O7YpZEqthQZUhTHc3sE8/A+joDE4PO78B39y0O4SxGm71sY3HcpmiEBLFpXi9bWTzt4qQTk9xO/FHUaTi7lfF8fD7ANmsG8qiyRHZ6HoLdX+TqCaIRsWxLAN/cM/fQXHfW8A+vi2+sIEB4PWDolCUNAbzutVU6m789yf+u1z2b4DjZ+L4wgVX8io+8VFcB6W6XXNUB168cPuMo6WKiocOSBQV03tRxCaPE9DSGDUYKkhDw8CujusK4l9/VXQ5D3KqUkWFKhPXIam9HRsf9/TzKE6F1/V8ztTb1UAeWJxh/f3iW/vrQMmsbQfs0th0dOR5VaE9MLcjl/n8C/2C2XtDwL9crpqgspFR8R6CdXyMQ5Y/AWjz1t5sD07MfeWqIHAjI8BT6xYJLWbeI6NCgeuPRPZd77i04RVlZv0DwHp7gW9vA5ArGtU0PS0Onuxg5p/1tWnBgeroMI87FLemEAipC4EROCVn6uwQisI0gP+46Xtzg3E9gvHBiDomzAIndZAbdQj3I2XpwAww+fp6IE0OBBS7eUuoh4Lx/XvFgS+BoBhFStKAGToADxNLS6M8as9XSFeuiioDQZEqqAN7PgWYsQe0W7LxCJR/9gbGG0wDFAH9uq0oyjIjJljaIJfA3r0bGCh/XO+dfmCJqeL/FJPslGEwkeQLtwXgo0MI0HKRtvvfeet60Wg5JMWFTms7R7CQyP7TXM+7n09ETQpoFKPCZbIGyrufSjw/PldM49ls2EDlNFD7nn0EBeFv7wD8cyQ2CuJBlImdW55mYrRgTnHKu4lPype+uQOWkwuNa3t6euB5QA+37RvzqIzbvV0gps3tuWcZYx71C9R7q09J5sw+vCK87KnsxczIeeu9CGx4uFi6eebKUEfG+JQzgiJydBeH85vHKD/6AwP1u0OivmTMn/wy6kB2dtw409q5IQzGqbwb7sd//knACspQScqszEnd48IyHuU3adxQ6uf/1nWThmavRMUNG3rMsLohwoq8vTdxcm+aQqfqQm33mVe6SUNi6cdTpqAErNkt01hVK6jw3JBfqU2vs/RGzqp6kISXJpVCMgXV9uB7eoHUwpDyZmKpVI9KejpQbmxbQzXlbYFCVdELl1sQkoyQlsyeqFjhRFir4HOZuAFcrmLiV60UfLmFXDCJapIdgVJd8FKL9HKWHVjVyQWEJVtJskniUtXrszULg7CkJoUl2/UY29NVbQ+bDpYCiUkbeVdBNRmsmiCZjvXsWGF+hsaC4vd84RvrSUxK1/xlO5opbnv4Q0b1bTlkSko6geQYlApLC4SrIXG1PoTkuK2uLItESyLhbgVlHmsw18tjm9ZYKr1U7zW6utCWusjWijF2BQSKOp7lSErKuXFtXqxIRjX3MWwszRP2BABKwodcA+QZqDJo59a58wwUQaGJAMmL9e08B1UCDFXGCdagurxkjwug9vBc+/hkBuF43vv6ug6nDm7mGoGKqdtrCjgBo7guZ7G3yqvP7auVDFq81Pfyz/8CDAAQ3efoHJMAoQAAAABJRU5ErkJggg=="
                   />
                   <h5>有功功率</h5>
-                  <h4><span>1573.9</span>kW</h4>
+                  <h4>
+                    <span>{{ SubstationStatus.SubStationStatus.RunningStatus.FPFQ.fP }} </span>kW
+                  </h4>
                 </el-col>
                 <el-col :span="6">
                   <img
                     src="data:image/png;base64,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"
                   />
                   <h5>无功功率</h5>
-                  <h4><span>1573.9</span>kW</h4>
+                  <h4>
+                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FPFQ.fQ }} </span>kW
+                  </h4>
                 </el-col>
                 <el-col :span="6">
                   <img
                     src="data:image/png;base64,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"
                   />
                   <h5>环境温度</h5>
-                  <h4><span>1573.9</span>℃</h4>
+                  <h4>
+                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fTemp }} </span>℃
+                  </h4>
                 </el-col>
                 <el-col :span="6">
                   <img
                     src="data:image/png;base64,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"
                   />
                   <h5>环境湿度</h5>
-                  <h4><span>1573.9</span>%</h4>
+                  <h4>
+                    <span>{{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fHumi }} </span>%
+                  </h4>
                 </el-col>
               </el-row>
               <el-row class="bottom">
@@ -145,28 +153,28 @@
               <div class="title">当日事件记录</div>
               <div class="content">
                 <el-row>
-                  <el-col :span="8">
+                  <el-col :span="8" @click="showTable('OverLimitEventNew')">
                     <div class="label">
                       <span>遥测越限</span>
                     </div>
                     <div class="count">
-                      <h4>18次</h4>
+                      <h4>{{ SubstationStatus.SubStationStatus.DayReport.OverLimitTimes }}次</h4>
                     </div>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="8" @click="showTable('EnergyLineLoss')">
                     <div class="label">
                       <span>遥信变位</span>
                     </div>
                     <div class="count">
-                      <h4>18次</h4>
+                      <h4>{{ SubstationStatus.SubStationStatus.DayReport.SwitchingTimes }}次</h4>
                     </div>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="8" @click="showTable('CommunicationStatusNew')">
                     <div class="label">
                       <span>失联装置</span>
                     </div>
                     <div class="count">
-                      <h4>18次</h4>
+                      <h4>{{ SubstationStatus.SubStationStatus.DayReport.DisconnectNumber }}次</h4>
                     </div>
                   </el-col>
                 </el-row>
@@ -180,24 +188,28 @@
                 <div class="left">
                   <p>
                     <span>巡检时间：</span>
-                    <span>2024-05-29 10:00 - 2024-05-29 10:52</span>
+                    <span>
+                      {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.taskstartdate }}
+                      -
+                      {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.taskfinishdate }}
+                    </span>
                   </p>
                   <p>
                     <span>巡检项数：</span>
-                    <span>40项</span>
+                    <span> {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.inspectionnum }}项</span>
                   </p>
                   <p>
                     <span>缺陷项：</span>
-                    <span>0项</span>
+                    <span> {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.problemtotal }}项</span>
                   </p>
                   <p>
                     <span>巡检人员：</span>
-                    <span>王国龙</span>
+                    <span> {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.chargename }}</span>
                   </p>
                 </div>
                 <div class="right">
                   <div class="passrate">
-                    <span>100%</span>
+                    <span> {{ SubstationStatus.PlaceCheckformListParamMap.list[0]?.passrate * 100 }}%</span>
                     <h5>合格率</h5>
                   </div>
                 </div>
@@ -255,17 +267,160 @@
         </el-col>
       </el-row>
     </div>
+    <el-dialog v-model="dialogVisible" :title="title" width="800">
+      <div class="chart-box">
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
-<script setup lang="tsx" name="dataVisualize">
+<script setup lang="tsx" name="SubstationStatus">
+import { onMounted, ref } from "vue";
+import moment from "moment";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import PaginationTable from "@/components/PaginationTable/index.vue";
+import { CommunicationStatusNew, OverLimitEventNew, EnergyLineLoss } from "@/api/modules/main";
 import overview1 from "./images/overview-1.png";
 import overview2 from "./images/overview-2.png";
 import overview3 from "./images/overview-3.png";
 import overview4 from "./images/overview-4.png";
 import overview5 from "./images/overview-5.png";
 import overview6 from "./images/overview-6.png";
+
+import { getSubstationStatus } from "@/api/modules/main";
+
+const dialogVisible = ref<boolean>(false);
+const title = ref<string>("");
+const tableRef = ref<any>(null);
+const columns = ref<any>([]);
+const url = ref<"CommunicationStatusNew" | "OverLimitEventNew" | "EnergyLineLoss">("CommunicationStatusNew");
+const SubstationStatus = ref({
+  SubStationStatus: {
+    DayReport: {
+      DisconnectNumber: 3,
+      OverLimitTimes: 3,
+      SwitchingTimes: 0
+    },
+    RunningStatus: {
+      FPFQ: {
+        fP: 0,
+        fQ: 0
+      },
+      FTempFHumidity: {
+        fTemp: 0.0,
+        fHumi: 0.0
+      }
+    },
+    substationstatus: {
+      subMeterNums: 0,
+      substationinfo: {
+        voltagestep: 0,
+        installedcapacity: 0,
+        transformernum: 0,
+        voltagelevel: 0,
+        voltageoftrans: 0.0,
+        loadfactor: 0
+      }
+    }
+  },
+  EHCAndES: {
+    EnergyHourCurve: {
+      resToday: [
+        {
+          stationid: "000",
+          collecttime: "2024-08-05 00:00:00",
+          value: 250.0
+        }
+      ],
+      resYesterday: [
+        {
+          stationid: "000",
+          collecttime: "2024-08-04 00:00:00",
+          value: 200.0
+        }
+      ]
+    }
+  },
+  PlaceCheckformListParamMap: {
+    list: [
+      {
+        chargename: "周维龙",
+        taskstartdate: "2024-07-23 10:16:09",
+        taskfinishdate: "2024-07-23 11:31:18",
+        problemtotal: "0",
+        unsolvedtotal: "0",
+        inspectionnum: 87,
+        passrate: 1
+      }
+    ]
+  }
+});
+
+onMounted(() => {
+  GetSubstationStatus();
+});
+
+const fetchData = async ({ pageSize, pageNum }): Promise<any> => {
+  return new Promise(async resolve => {
+    const params = {
+      stationid: "000",
+      pageNum,
+      pageSize
+    };
+    let res;
+    if (url.value === "CommunicationStatusNew") res = await CommunicationStatusNew(params);
+    if (url.value === "OverLimitEventNew") res = await OverLimitEventNew(params);
+    if (url.value === "EnergyLineLoss") res = await EnergyLineLoss(params);
+
+    resolve({ list: res.data.list, total: res.data.total });
+  });
+};
+
+const showTable = (type: "CommunicationStatusNew" | "OverLimitEventNew" | "EnergyLineLoss") => {
+  if (type === "OverLimitEventNew") {
+    columns.value = [
+      { prop: "starttime", label: "开始时间" },
+      { prop: "endtime", label: "结束时间" },
+      { prop: "alarmtype", label: "类型" },
+      { prop: "metername", label: "仪表名称" },
+      { prop: "paramname", label: "参数名称", width: 80 },
+      { prop: "value", label: "报警值", width: 80 }
+    ];
+    title.value = "遥测越限";
+  }
+  if (type === "CommunicationStatusNew") {
+    columns.value = [
+      { prop: "channelname", label: "网关" },
+      { prop: "channelport", label: "串口号" },
+      { prop: "metername", label: "仪表名称" },
+      { prop: "laststoptime", label: "离线时间", width: 180 },
+      { prop: "lostContacttime", label: "累计中断时间", width: 120 }
+    ];
+    title.value = "失联装置";
+  }
+  if (type === "EnergyLineLoss") {
+    columns.value = [
+      { prop: "starttime", label: "时间" },
+      { prop: "metername", label: "仪表名称" },
+      { prop: "metercode", label: "仪表编号" },
+      { prop: "paramname", label: "参数名称" },
+      { prop: "value", label: "报警值", width: 80 }
+    ];
+    title.value = "遥信变位";
+  }
+  url.value = type;
+  dialogVisible.value = true;
+  tableRef?.value?.resetData();
+};
+
+const GetSubstationStatus = async () => {
+  const { data } = await getSubstationStatus({
+    stationid: "000",
+    starttime: moment().format("YYYY-MM-DD HH:mm:ss")
+  });
+  console.log("dataa", data);
+};
 </script>
 
 <style scoped lang="scss">
