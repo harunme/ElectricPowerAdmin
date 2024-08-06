@@ -221,35 +221,61 @@
       <el-row>
         <el-col :span="16">
           <div class="box">
-            <div class="title">当日逐时用电曲线</div>
+            <div class="title">
+              <span>当日逐时用电曲线</span>
+              <el-radio-group v-model="type" @input="changeType">
+                <el-radio-button label="month">分时段</el-radio-button>
+                <el-radio-button label="day">总用电</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div class="chart-box" v-if="type === 'month'">
+              <div class="line">
+                <ECharts v-if="option !== null" :option="option" />
+              </div>
+              <div class="pie">
+                <ECharts v-if="pieOption !== null" :option="pieOption" />
+              </div>
+            </div>
+            <div class="chart-box" v-else>
+              <div class="line" style="width: 100%">
+                <ECharts v-if="totalOption !== null" :option="totalOption" />
+              </div>
+            </div>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="box">
-            <div class="title">用电概况</div>
+            <div class="title">
+              <span>用电概况</span>
+              <el-radio-group v-model="scheme" @input="changeScheme">
+                <el-radio-button label="D">日</el-radio-button>
+                <el-radio-button label="M">月</el-radio-button>
+                <el-radio-button label="Y">年</el-radio-button>
+              </el-radio-group>
+            </div>
             <div class="power-overview">
               <div class="energy">
                 <div>
                   <span>今年用电</span>
                 </div>
                 <div>
-                  <span>7928919.31 kW·h</span>
+                  <span>{{ NowAndLastEnergyTotalValue.NowTotalValue.sumvalue }} kW·h</span>
                 </div>
               </div>
               <div class="energy">
                 <div>
-                  <span>今年用电</span>
+                  <span>昨天同期</span>
                 </div>
                 <div>
-                  <span>7928919.31 kW·h</span>
+                  <span>{{ NowAndLastEnergyTotalValue.LastTotalValue.sumvalue }} kW·h</span>
                 </div>
               </div>
               <div class="energy">
                 <div>
-                  <span>今年用电</span>
+                  <span>环比</span>
                 </div>
                 <div>
-                  <span>7928919.31 kW·h</span>
+                  <span>{{ NowAndLastEnergyTotalValue.linkRelativeRatio }}%</span>
                 </div>
               </div>
               <div class="energytime">
@@ -277,10 +303,18 @@
 
 <script setup lang="tsx" name="SubstationStatus">
 import { onMounted, ref } from "vue";
+import { ECOption } from "@/components/Charts/config";
+import ECharts from "@/components/Charts/echarts.vue";
 import moment from "moment";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import { CommunicationStatusNew, OverLimitEventNew, EnergyLineLoss } from "@/api/modules/main";
+import {
+  CommunicationStatusNew,
+  OverLimitEventNew,
+  getMothJFPG,
+  EnergyLineLoss,
+  getNowAndLastEnergyTotalValue
+} from "@/api/modules/main";
 import overview1 from "./images/overview-1.png";
 import overview2 from "./images/overview-2.png";
 import overview3 from "./images/overview-3.png";
@@ -291,10 +325,27 @@ import overview6 from "./images/overview-6.png";
 import { getSubstationStatus } from "@/api/modules/main";
 
 const dialogVisible = ref<boolean>(false);
+const option = ref<ECOption | null>(null);
+const totalOption = ref<ECOption | null>(null);
+const pieOption = ref<ECOption | null>(null);
 const title = ref<string>("");
 const tableRef = ref<any>(null);
 const columns = ref<any>([]);
+const scheme = ref<"D" | "M" | "Y">("D");
+const type = ref<"month" | "day">("month");
 const url = ref<"CommunicationStatusNew" | "OverLimitEventNew" | "EnergyLineLoss">("CommunicationStatusNew");
+
+// const pieData = ref<any>([]);
+
+const NowAndLastEnergyTotalValue = ref<any>({
+  NowTotalValue: {
+    sumvalue: 0
+  },
+  LastTotalValue: {
+    sumvalue: 0
+  },
+  linkRelativeRatio: 0
+});
 const SubstationStatus = ref({
   SubStationStatus: {
     DayReport: {
@@ -343,22 +394,14 @@ const SubstationStatus = ref({
     }
   },
   PlaceCheckformListParamMap: {
-    list: [
-      {
-        chargename: "周维龙",
-        taskstartdate: "2024-07-23 10:16:09",
-        taskfinishdate: "2024-07-23 11:31:18",
-        problemtotal: "0",
-        unsolvedtotal: "0",
-        inspectionnum: 87,
-        passrate: 1
-      }
-    ]
+    list: [] as any[]
   }
 });
 
 onMounted(() => {
   GetSubstationStatus();
+  GetNowAndLastEnergyTotalValue();
+  GetMothJFPG();
 });
 
 const fetchData = async ({ pageSize, pageNum }): Promise<any> => {
@@ -415,12 +458,217 @@ const showTable = (type: "CommunicationStatusNew" | "OverLimitEventNew" | "Energ
 };
 
 const GetSubstationStatus = async () => {
-  const { data } = await getSubstationStatus({
+  const { data }: any = await getSubstationStatus({
     stationid: "000",
     starttime: moment().format("YYYY-MM-DD HH:mm:ss")
   });
-  console.log("dataa", data);
+  SubstationStatus.value = data;
 };
+
+const GetNowAndLastEnergyTotalValue = async (scheme: "D" | "M" | "Y" = "D") => {
+  const { data }: any = await getNowAndLastEnergyTotalValue({
+    stationid: "000",
+    starttime: moment().format("YYYY-MM-DD HH:mm:ss"),
+    scheme
+  });
+  NowAndLastEnergyTotalValue.value = data;
+};
+
+const GetMothJFPG = async (type = "month") => {
+  const { data }: any = await getMothJFPG({
+    stationid: "000"
+  });
+  let legend = [] as any;
+  let xAxisData = [] as any;
+  let series = [] as any;
+  if (type === "month") {
+    const NameMap = {
+      fEpijsum: "尖总电量",
+      fEpifsum: "峰总电量",
+      fEpipsum: "平总电量",
+      fEpigsum: "谷总电量"
+    };
+    let total = 0;
+    const pieData = Object.keys(data.JFPGSum).map(key => {
+      total += data.JFPGSum[key];
+      return {
+        value: data.JFPGSum[key],
+        name: NameMap[key]
+      };
+    });
+
+    pieOption.value = {
+      title: {
+        text: "当月占比环形图",
+        subtext: `合计: ${total}`,
+        textStyle: {
+          color: "#999",
+          fontWeight: "normal",
+          fontSize: 14
+        }
+      },
+      tooltip: {
+        trigger: "item"
+      },
+      legend: {
+        bottom: "0%",
+        left: "20%",
+        align: "left",
+        textStyle: {
+          fontSize: 12,
+          color: "#a1a1a1",
+          fontWeight: 400
+        }
+      },
+      series: [
+        {
+          type: "pie",
+          radius: "50%",
+          silent: true,
+          clockwise: true,
+          data: pieData,
+          labelLine: {
+            show: false
+          },
+
+          label: {
+            show: false
+          }
+        }
+      ]
+    };
+    series = [
+      {
+        name: "正向有功尖电量",
+        type: "line",
+        smooth: 0.6,
+        stack: "Total",
+        data: data.Epijlist.map(({ fEpij }) => Number(fEpij))
+      },
+      {
+        name: "正向有功峰电量",
+        type: "line",
+        smooth: 0.6,
+        stack: "Total",
+        data: data.Epiflist.map(({ fEpif }) => Number(fEpif))
+      },
+      {
+        name: "正向有功平电量",
+        type: "line",
+        smooth: 0.6,
+        stack: "Total",
+        data: data.Epiplist.map(({ fEpip }) => Number(fEpip))
+      },
+      {
+        name: "正向有功谷电量",
+        type: "line",
+        smooth: 0.6,
+        stack: "Total",
+        data: data.Epiglist.map(({ fEpig }) => Number(fEpig))
+      }
+    ];
+    xAxisData = data.Epijlist.map(({ collecttime }) => moment(collecttime).format("MM-DD"));
+    legend = ["正向有功尖电量", "正向有功峰电量", "正向有功平电量", "正向有功谷电量"];
+    option.value = {
+      tooltip: {
+        trigger: "axis"
+      },
+      legend: {
+        data: legend
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none"
+          },
+          dataView: { readOnly: false },
+          magicType: { type: ["line", "bar"] },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: xAxisData
+      },
+      yAxis: {
+        type: "value"
+      },
+      series
+    };
+  }
+  if (type === "day") {
+    series = [
+      {
+        name: "今日",
+        smooth: 0.6,
+        type: "line",
+        stack: "Total",
+        data: SubstationStatus.value.EHCAndES.EnergyHourCurve.resToday.map(({ value }) => Number(value))
+      },
+      {
+        name: "昨日",
+        smooth: 0.6,
+        type: "line",
+        stack: "Total",
+        data: SubstationStatus.value.EHCAndES.EnergyHourCurve.resYesterday.map(({ value }) => Number(value))
+      }
+    ];
+    xAxisData = SubstationStatus.value.EHCAndES.EnergyHourCurve.resToday.map(({ collecttime }) => collecttime);
+    legend = ["昨日", "今日"];
+    totalOption.value = {
+      tooltip: {
+        trigger: "axis"
+      },
+      legend: {
+        data: legend
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none"
+          },
+          dataView: { readOnly: false },
+          magicType: { type: ["line", "bar"] },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: xAxisData
+      },
+      yAxis: {
+        type: "value"
+      },
+      series
+    };
+  }
+
+  console.log("GetMothJFPG", data);
+};
+
+const changeScheme = e => {
+  GetNowAndLastEnergyTotalValue(e.target.value);
+};
+const changeType = e => {
+  GetMothJFPG(e.target.value);
+};
+// changeType
 </script>
 
 <style scoped lang="scss">
