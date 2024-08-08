@@ -294,7 +294,7 @@
       </el-row>
     </div>
     <el-dialog v-model="dialogVisible" :title="title" width="800">
-      <div class="chart-box">
+      <div class="chart-box" style="height: 600px">
         <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
       </div>
     </el-dialog>

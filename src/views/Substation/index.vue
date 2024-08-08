@@ -6,22 +6,30 @@
         <div class="action-box">
           <el-form :inline="true" :model="formInline" class="table-form-inline">
             <el-form-item label="关键字">
-              <el-input v-model="formInline.user" placeholder="请输入站点名称或编号" clearable />
+              <el-input v-model="formInline.user" placeholder="请输入站点名称或编号" clearable>
+                <template #append>
+                  <el-button :icon="Search" />
+                </template>
+              </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button @click="onSubmit">查询</el-button>
-              <el-button @click="onSubmit">电价设置</el-button>
-              <el-button @click="onSubmit">巡检配置</el-button>
+              <el-button type="primary" @click="onSubmit">电价设置</el-button>
+              <!-- <el-button @click="onSubmit">巡检配置</el-button>
               <el-button @click="onSubmit">现场图片</el-button>
-              <el-button @click="onSubmit">读取工程</el-button>
+              <el-button @click="onSubmit">读取工程</el-button> -->
             </el-form-item>
           </el-form>
           <el-button type="primary" @click="formVisible = true">新增变配电站</el-button>
         </div>
 
         <PaginationTable :columns="columns" :fetch-data="fetchData">
+          <template #voltagelevel="{ row }">
+            <span>{{ row.voltagelevel }}kV</span>
+          </template>
+          <template #voltageoftrans="{ row }">
+            <span>{{ row.voltageoftrans }}kV</span>
+          </template>
           <template #actions="">
-            <el-button type="text" size="mini">配置菜单权限</el-button>
             <el-button type="text" size="mini">修改</el-button>
             <el-button type="text" size="mini">删除</el-button>
           </template>
@@ -79,15 +87,15 @@
 
 <script setup lang="tsx" name="Substation">
 import { reactive, ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { getSubstationPageInfo } from "@/api/modules/meter";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const formLabelWidth = "90px";
 
 const formVisible = ref(false);
 const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+  search: ""
 });
 const form = reactive({
   name: "",
@@ -101,33 +109,31 @@ const form = reactive({
 });
 
 const columns = [
-  { prop: "stationname", label: "变配电站编号" },
+  { prop: "stationid", label: "变配电站编号" },
   { prop: "stationname", label: "变配电站名称" },
-  { prop: "stationname", label: "组织机构" },
-  { prop: "stationname", label: "区域" },
-  { prop: "stationname", label: "供电电压等级" },
-  { prop: "stationname", label: "变电电压等级" },
-  { prop: "stationname", label: "经度" },
-  { prop: "stationname", label: "纬度" },
-  { prop: "stationname", label: "地址" },
-  { prop: "stationname", label: "变压器容量" },
-  { prop: "stationname", label: "最大需量" },
-  { prop: "stationname", label: "变压器数量" },
-  { prop: "stationname", label: "负责人" },
-  { prop: "stationname", label: "负责人手机号" },
+  { prop: "deptname", label: "组织机构" },
+  { prop: "regionname", label: "区域" },
+  { prop: "customDom", slotName: "voltagelevel", label: "供电电压等级" },
+  { prop: "customDom", slotName: "voltageoftrans", label: "变电电压等级" },
+  { prop: "longitude", label: "经度" },
+  { prop: "latitude", label: "纬度" },
+  { prop: "address", label: "地址" },
+  { prop: "installedcapacity", label: "变压器容量" },
+  { prop: "voltagestep", label: "最大需量" },
+  { prop: "transformernum", label: "变压器数量" },
+  { prop: "head", label: "负责人" },
+  { prop: "telephone", label: "负责人手机号" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
-const fetchData = async (): Promise<any> => {
+const fetchData = async ({ pageNum, pageSize }): Promise<any> => {
   return new Promise(async resolve => {
-    // const { data } = await EnergyReportNoHjPageInfo({
-    //   pageNum,
-    //   pageSize,
-    //   startTime: "2024-06-01",
-    //   endTime: "2024-06-23"
-    // });
-    // console.log("fetchData", data.list);
-    resolve({ total: 0, list: [] });
+    const { data } = await getSubstationPageInfo({
+      pageNum,
+      pageSize
+      // deptid  或 regionid
+    });
+    resolve({ total: data.total, list: data.list });
   });
 };
 

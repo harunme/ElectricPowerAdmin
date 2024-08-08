@@ -56,6 +56,7 @@ export namespace Meter {
   export interface ReqGetSubstationPageInfo extends ReqPage {
     deptid?: string;
     regionid?: string;
+    search?: string;
   }
   export interface ResGetSubstationPageInfo
     extends ResPage<{
