@@ -2,78 +2,228 @@
   <div class="Meter">
     <TransformerSelect />
     <div class="card content">
-      <div class="action-box">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="关键字">
-            <el-input placeholder="请输入仪表编号或名称" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <div>
-          <el-button type="primary" @click="onSubmit">Excel</el-button>
-          <el-button type="primary" @click="onSubmit">批量修改</el-button>
-          <el-button type="primary" @click="onSubmit">新增仪表</el-button>
-        </div>
-      </div>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button type="primary" @click="addMeter">新增仪表</el-button>
+          <el-button @click="addMeter">批量修改</el-button>
+        </el-form-item>
+      </el-form>
       <div class="table-box">
-        <PaginationTable :columns="columns" :fetch-data="fetchData">
-          <template #actions="{}">
-            <el-button type="text" size="mini">修改</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+          <template #useflag="{ row }">
+            <span>{{ meterStateList.find(type => type.state === String(row.useflag))?.stateexplain }}</span>
+          </template>
+          <template #actions="{ row }">
+            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <el-popconfirm title="确认删除?" @confirm="deleteMeter(row.transformerid)">
+              <template #reference>
+                <a class="mini-btn">删除</a>
+              </template>
+            </el-popconfirm>
           </template>
         </PaginationTable>
       </div>
     </div>
+    <el-dialog v-model="formVisible" :title="isEdit ? '修改仪表' : '新增仪表'" width="500">
+      <el-form
+        ref="meterFormRef"
+        :model="form"
+        label-position="right"
+        :rules="rules"
+        label-width="auto"
+        style="padding: 16px 32px"
+        :validate-on-rule-change="false"
+      >
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="变配电站名称" prop="stationname">
+              <span>TEST</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表名称" prop="meterdesc">
+              <el-input v-model="form.meterdesc" placeholder="最大10个中英文字符" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表类型" prop="metertype">
+              <el-select v-model="form.metertype" placeholder="请选择仪表类型" style="width: 100%">
+                <el-option
+                  v-for="item in meterTypeList"
+                  :key="item.metertypecode"
+                  :label="item.metertypename"
+                  :value="item.metertypecode"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="通道" prop="channelid">
+              <el-select v-model="form.channelid" placeholder="请选择通道" style="width: 100%">
+                <el-option v-for="item in gatewayList" :key="item.name" :label="item.describe" :value="item.name" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表地址" prop="meteraddr">
+              <el-input v-model="form.meteraddr" placeholder="1-6位整数类型" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表状态" prop="useflag">
+              <el-select v-model="form.useflag" placeholder="请选择仪表状态" style="width: 100%">
+                <el-option v-for="item in meterStateList" :key="item.state" :label="item.stateexplain" :value="item.state" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="formVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm(meterFormRef)">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="tsx" name="Meter">
-import { reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { ReqPage } from "@/api/interface";
-import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
+import { ElMessage } from "element-plus";
+import type { FormRules, FormInstance } from "element-plus";
+import { Meter } from "@/api/interface/index";
+import {
+  getMeterUseInfoList,
+  getMeterStateList,
+  getMeterTypeList,
+  getGatewayInfo,
+  deleteMeterUseInfo,
+  insertMeterUseInfo
+} from "@/api/modules/meter";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
-const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+const defaultForm = {
+  meterdesc: "",
+  metertype: "",
+  meteraddr: "",
+  channelid: "",
+  useflag: ""
+};
+
+const meterStateList = ref<any>([]);
+const meterTypeList = ref<any>([]);
+const gatewayList = ref<any>([]);
+
+const formVisible = ref(false);
+const tableRef = ref<any>(null);
+const isEdit = ref(false);
+const meterFormRef = ref<FormInstance>();
+const form = ref<any>(defaultForm);
+
+const rules = reactive<FormRules<Meter.ReqInsertMeterUseInfo>>({
+  meterdesc: [
+    { required: true, message: "请输入仪表名称" },
+    { max: 10, message: "长度不超过 10 个字符" }
+  ],
+  metertype: [{ required: true, message: "请选择仪表类型" }],
+  meteraddr: [{ required: true, message: "请输入仪表地址" }],
+  channelid: [{ required: true, message: "请选择通道" }],
+  useflag: [{ required: true, message: "请选择状态" }]
 });
 
-const onSubmit = () => {
-  console.log("submit!");
+const addMeter = () => {
+  formVisible.value = true;
+  meterFormRef.value?.resetFields();
+  setTimeout(() => meterFormRef.value?.clearValidate());
 };
 
 const columns: any = [
   { prop: "stationname", label: "变配电站名称" },
-  { prop: "stationid", label: "仪表编号" },
-  { prop: "voltagestep", label: "仪表名称" },
-  { prop: "voltagestep", label: "网关" },
-  { prop: "voltagestep", label: "串口号" },
-  { prop: "voltagestep", label: "仪表类型" },
-  { prop: "voltagestep", label: "仪表地址" },
-  { prop: "voltagestep", label: "仪表状态" },
-  { prop: "voltagestep", label: "设备" },
-  { prop: "voltagestep", label: "灭火器装置" },
+  { prop: "metercode", label: "仪表编号" },
+  { prop: "meterdesc", label: "仪表名称" },
+  { prop: "channelid", label: "通道" },
+  { prop: "metertype", label: "仪表类型" },
+  { prop: "meteraddr", label: "仪表地址" },
+  { prop: "customDom", slotName: "useflag", label: "仪表状态" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await EnergyReportNoHjPageInfo({
+    const { data } = await getMeterUseInfoList({
       pageNum,
       pageSize,
-      startTime: "2024-06-01",
-      endTime: "2024-06-23"
+      stationid: "000"
     });
-    console.log("fetchData", data.list);
     resolve(data);
   });
 };
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      const params = form.value;
+      // params.meter = meter.join(",");
+      if (isEdit.value) {
+        // const res = await updateTransformerInfoById({ ...params, stationid: "000" });
+        // if (res.code === 1) {
+        //   ElMessage.success({ message: res.msg });
+        //   tableRef?.value?.resetData();
+        // } else {
+        //   ElMessage.error({ message: res.msg });
+        // }
+        // formVisible.value = false;
+      } else {
+        const res = await insertMeterUseInfo({ ...params, stationid: "000" });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
+      }
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
+};
+
+const updateTransformer = async row => {
+  isEdit.value = true;
+  formVisible.value = true;
+  form.value = { ...row, meter: row.meter.split(",") };
+  setTimeout(() => meterFormRef.value?.clearValidate());
+};
+
+const deleteMeter = async (metercode: string) => {
+  const res = await deleteMeterUseInfo({ metercode });
+  if (res.code === 1) {
+    tableRef?.value?.resetData();
+    ElMessage.success({ message: res.msg });
+  } else {
+    ElMessage.error({ message: res.msg });
+  }
+};
+
+onMounted(async () => {
+  const state = await getMeterStateList();
+  meterStateList.value = state.data;
+
+  const type = await getMeterTypeList();
+  meterTypeList.value = type.data;
+
+  const gateway = await getGatewayInfo({
+    stationid: "000"
+  });
+  gatewayList.value = gateway.data;
+});
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

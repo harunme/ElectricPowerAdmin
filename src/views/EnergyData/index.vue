@@ -2,17 +2,7 @@
   <div class="EnergyData flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box">
-        <el-tree
-          default-expand-all
-          style="max-width: 600px"
-          :data="tree"
-          show-checkbox
-          node-key="regionid"
-          :default-checked-keys="[100]"
-          :props="props"
-        />
-      </div>
+      <CollapseBox />
       <div class="card content-box">
         <el-tabs v-model="activeTab" @tab-click="tabClick">
           <el-tab-pane label="日报" name="D"> </el-tab-pane>
@@ -110,17 +100,18 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import moment from "moment";
 import { ElectricityFeesNoHj } from "@/api/modules/main";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 
-const tree = ref([] as any);
+// const tree = ref([] as any);
 const option = ref<any>(null);
 const tableRef = ref<any>(null);
 const dialogVisible = ref(false);
 const ElectricityFeesNoHjResponse = ref<any>(null);
 const activeTab = ref<"D" | "M" | "Y">("D");
-const props = { children: "children", label: "circuitname" };
+// const props = { children: "children", label: "circuitname" };
 
 const lineForm = reactive({
   date: "2024-06-30",
@@ -285,5 +276,5 @@ const onSubmit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

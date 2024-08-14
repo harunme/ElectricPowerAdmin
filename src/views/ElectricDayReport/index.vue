@@ -2,7 +2,7 @@
   <div class="flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -47,6 +47,7 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import { ElectricReportNew } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 // import data from "./data.json";
 
@@ -159,5 +160,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

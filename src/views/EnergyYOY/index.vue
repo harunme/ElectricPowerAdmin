@@ -2,7 +2,7 @@
   <div class="EnergyYOY flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -40,6 +40,7 @@ import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { getMonthMom } from "@/api/modules/main";
 import ECharts from "@/components/Charts/echarts.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 
 const tableRef = ref<any>(null);
 const option = ref<any>(null);
@@ -137,5 +138,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

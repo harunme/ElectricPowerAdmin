@@ -2,17 +2,7 @@
   <div class="HarmonicData flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box">
-        <el-tree
-          default-expand-all
-          style="max-width: 600px"
-          :data="tree"
-          show-checkbox
-          node-key="regionid"
-          :default-checked-keys="[100]"
-          :props="props"
-        />
-      </div>
+      <CollapseBox />
       <div class="card content-box">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="时间范围">
@@ -60,12 +50,13 @@ import { getCircuitInfoTree } from "@/api/modules/sys";
 import { ReqPage } from "@/api/interface/index";
 import { summary } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 
 const tree = ref([] as any);
-const props = { children: "children", label: "circuitname" };
+// const props = { children: "children", label: "circuitname" };
 
 const size = ref<"default" | "large" | "small">("default");
 const columns = [
@@ -173,5 +164,5 @@ const onSubmit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

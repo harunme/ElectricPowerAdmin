@@ -2,7 +2,7 @@
   <div class="EnergyMOM flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card content-box">
         <el-tabs>
           <el-tab-pane lazy label="按日" class="table-box">
@@ -53,8 +53,8 @@
         </el-tabs>
       </div>
     </div>
-    <el-dialog v-model="dialogVisible" :title="row?.circuitname" width="500">
-      <span class="chart-text">增长值：{{ row.diffvalue }}kW·h 增长率：{{ row.momvalue }}%</span>
+    <el-dialog v-model="dialogVisible" :title="currentRow?.circuitname" width="500">
+      <span class="chart-text">增长值：{{ currentRow.diffvalue }}kW·h 增长率：{{ currentRow.momvalue }}%</span>
       <div class="chart-box">
         <ECharts v-if="option !== null" :option="option" />
       </div>
@@ -67,12 +67,13 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import { energyReportMOM } from "@/api/modules/main";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 
 const tableRef = ref<any>(null);
 const dialogVisible = ref(false);
-const row = ref<any>(null);
+const currentRow = ref<any>(null);
 
 const option = ref<any>(null);
 
@@ -199,5 +200,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

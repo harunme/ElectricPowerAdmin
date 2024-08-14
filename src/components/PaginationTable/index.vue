@@ -7,6 +7,7 @@
       @selection-change="selectionChange"
       :data="tableData"
       style="width: 100%"
+      :row-key="rowKey"
     >
       <el-table-column v-if="tableData.length !== 0 && selectionChange" type="selection" width="55"></el-table-column>
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
@@ -65,6 +66,7 @@ const props = defineProps<{
   columns: any;
   fetchData: any;
   selectionChange?: (param: any[]) => void;
+  rowKey?: any;
   // fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
 }>();
 
@@ -113,5 +115,5 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

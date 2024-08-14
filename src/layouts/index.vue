@@ -19,6 +19,6 @@ const layout = computed(() => globalStore.layout);
 
 <style scoped lang="scss">
 .layout {
-  min-width: 600px;
+  min-width: 800px;
 }
 </style>

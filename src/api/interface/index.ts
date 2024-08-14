@@ -1,7 +1,7 @@
 // 请求响应参数（不包含data）
 export interface Result<T = any> {
   data: T;
-  code: string;
+  code: number;
   msg: string;
 }
 
@@ -63,8 +63,8 @@ export namespace Meter {
       stationid: string;
       stationname: string;
       deptname: string;
-      deptid: string;
-      regionid: string;
+      deptid: number;
+      regionid: number;
       regionname: string;
       head: string;
       telephone: string;
@@ -80,24 +80,24 @@ export namespace Meter {
     }> {}
 
   export interface ReqInsertSubstationInfo {
-    stationid: string;
     stationname: string;
-    deptid: string;
-    regionid: string;
-    type: string;
-    installedcapacity: string;
-    voltagestep: string;
+    deptid: number | undefined;
+    regionid: number | undefined;
+    installedcapacity: number;
+    voltagestep: number;
     head: string;
     telephone: string;
     headphone: string;
-    voltagelevel: number;
-    voltageoftrans: number;
+    voltagelevel: string;
+    voltageoftrans: string;
     address: string;
-    longitude: string;
-    latitude: string;
-    transformernum: string;
-    startno: string;
-    order: string;
+    transformernum: number;
+    epijprice: number;
+    epifprice: number;
+    epipprice: number;
+    epigprice: number;
+    epi5price: number;
+    episingleprice: number;
   }
 
   export interface ResInsertSubstationInfo {
@@ -124,24 +124,160 @@ export namespace Meter {
     stationid: string;
   }
 
-  export interface ResDeleteSubstationInfoById {
+  export interface ResDeleteSubstationInfoById {}
+  export interface ReqGetTransformerInfo {
+    stationid: string;
+  }
+  export interface ResGetTransformerInfo {
     stationid: string;
     stationname: string;
-    deptname: string;
-    deptid: string;
+    transformerid: string;
+    transformername: string;
     regionid: string;
     regionname: string;
-    head: string;
-    telephone: string;
-    address: string;
+    current: string;
+    meter: string;
+    firstmeterno: string;
+  }
+
+  export interface ReqInsertTransformerInfo {
+    stationid?: string;
+    transformerid: string;
+    transformername: string;
+    type: "1" | "2";
     voltagestep: number;
-    sxtsumP: string;
-    sxtsumQ: string;
-    transformernum: number;
-    type: number;
-    order: number;
-    level: number;
-    startno: number;
+    current: number;
+    meter: string;
+  }
+
+  export interface ResInsertTransformerInfo {}
+  export interface ReqUpdateTransformerInfoById {
+    stationid: string;
+    transformerid: string;
+    transformername: string;
+    type: "1" | "2";
+    voltagestep: string;
+    current: string;
+    meter: string;
+  }
+  export interface ResUpdateTransformerInfoById {}
+  export interface ReqDeleteTransformerInfoById {
+    transformerid: string;
+  }
+  export interface ResDeleteTransformerInfoById {}
+  export interface ReqPdateByPrimaryKeySelectiveBatchByfSubid {}
+  export interface ResPdateByPrimaryKeySelectiveBatchByfSubid {}
+  export interface ReqUpdateSubstationInfoById {}
+  export interface ResUpdateSubstationInfoById {}
+  export interface ReqUploadSvgMultiFile {}
+  export interface ResUploadSvgMultiFile {}
+
+  export interface ResGetMeterTypeList {
+    metertypecode: string;
+    metertypename: string;
+  }
+
+  // export interface ReqGetMeterStateList {}
+  export interface ResGetMeterStateList {
+    state: string;
+    stateexplain: string;
+  }
+  export interface ReqGetMeterUseInfoList extends ReqPage {
+    stationid: string;
+  }
+
+  export interface ResGetMeterUseInfoList
+    extends ResPage<{
+      stationid: string;
+      metercode: string;
+      meterdesc: string;
+      channelid: string;
+      metertype: string;
+      meteraddr: string;
+      useflag: string;
+      meterorder: string;
+    }> {}
+  export interface ReqInsertMeterUseInfo {
+    stationid: string;
+    metercode: string;
+    meterdesc: string;
+    metertype: string;
+    meteraddr: string;
+    channelid: string;
+    useflag: any;
+  }
+  export interface ResInsertMeterUseInfo {}
+  export interface ReqUpdateMeterUseInfo {}
+  export interface ResUpdateMeterUseInfo {}
+  export interface ReqDeleteMeterUseInfo {
+    metercode: string;
+  }
+  export interface ResDeleteMeterUseInfo {}
+  export interface ReqUpdatetMultiMeterStatus {}
+  export interface ResUpdatetMultiMeterStatus {}
+  export interface ReqGetGatewayInfo {
+    stationid: string;
+  }
+  export interface ResGetGatewayInfo {
+    name: string;
+    comdev: number;
+    describe: string;
+    devname1: string;
+    useflag: number;
+    stationid: string;
+  }
+  export interface ReqInsertGatewayInfo {}
+  export interface ResInsertGatewayInfo {}
+  export interface ReqDeleteGatewayInfo {}
+  export interface ResDeleteGatewayInfo {}
+  export interface ReqUpdateGatewayInfo {}
+  export interface ResUpdateGatewayInfo {}
+  export interface ReqGetCircuitInfoTree {}
+  export interface ResGetCircuitInfoTree {}
+  export interface ReqInsertCircuitInfo {}
+  export interface ResInsertCircuitInfo {}
+  export interface ReqDeleteCircuitById {}
+  export interface ResDeleteCircuitById {}
+  export interface ReqUpdateCircuitById {}
+  export interface ResUpdateCircuitById {}
+  export interface ReqRandomCircuitId {}
+  export interface ResRandomCircuitId {}
+  export interface ReqGetCompanyTree {}
+  export interface ResGetCompanyTree {}
+  export interface ReqInsertDeptInfo {}
+  export interface ResInsertDeptInfo {}
+  export interface ReqDeleteDeptById {}
+  export interface ResDeleteDeptById {}
+  export interface ReqUpdateDeptById {}
+  export interface ResUpdateDeptById {}
+  export interface ReqGetProjectRoleMenuSelected {}
+  export interface ResGetProjectRoleMenuSelected {}
+  export interface ReqGetSubGroupTree {}
+  export interface ResGetSubGroupTree {}
+  export interface ReqInsertRegionInfo {}
+  export interface ResInsertRegionInfo {}
+  export interface ReqGeleteRegionById {}
+  export interface ResGeleteRegionById {}
+  export interface ReqUpdateRegionById {}
+  export interface ResUpdateRegionById {}
+  export interface ReqGetMeterListByStationId {
+    stationid: string;
+    search?: string;
+  }
+
+  export interface ResGetMeterListByStationId {
+    metercode: string;
+    meterdesc: string;
+    stationid: string;
+    metertype: any;
+    metertypename: string;
+  }
+
+  export interface ReqRandomTransformerId {
+    stationid: string;
+  }
+  export interface ResRandomTransformerId {
+    transformerid: string;
   }
 }
 

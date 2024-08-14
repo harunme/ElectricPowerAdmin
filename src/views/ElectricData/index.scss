@@ -1,8 +1,12 @@
 .ElectricData {
   height: 100%;
   .content-box {
+    flex: 1;
+    overflow: hidden;
     .flex-column {
+      width: 100%;
       height: calc(100% - 54px);
+      padding-top: 6px;
 
       // border: 1px solid;
       .el-tabs {
@@ -25,8 +29,5 @@
         }
       }
     }
-
-    width: 100%;
-    padding-top: 6px;
   }
 }

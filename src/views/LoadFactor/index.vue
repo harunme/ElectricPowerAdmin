@@ -2,7 +2,7 @@
   <div class="LoadFactor flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
@@ -53,6 +53,7 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { GetCirLoadRate } from "@/api/modules/main";
 
@@ -172,5 +173,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

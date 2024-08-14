@@ -2,7 +2,7 @@
   <div class="ElectricData flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card content-box">
         <el-tabs v-model="activeTab">
           <el-tab-pane label="日原始数据" :name="0"> </el-tab-pane>
@@ -58,6 +58,7 @@
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { ElectricDataMonth, ElectricDataPaging } from "@/api/modules/main";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ReqPage } from "@/api/interface/index";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ECOption } from "@/components/Charts/config";
@@ -216,5 +217,5 @@ const onSubmit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

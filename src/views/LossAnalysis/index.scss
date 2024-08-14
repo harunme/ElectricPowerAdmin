@@ -9,4 +9,7 @@
       height: calc(100% - 50px);
     }
   }
+  :deep(.el-table .el-table__body td .cell > span:empty::after) {
+    content: "" !important;
+  }
 }

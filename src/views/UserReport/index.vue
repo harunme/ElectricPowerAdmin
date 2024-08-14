@@ -2,17 +2,7 @@
   <div class="UserReport flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box">
-        <el-tree
-          default-expand-all
-          style="max-width: 600px"
-          :data="tree"
-          show-checkbox
-          node-key="regionid"
-          :default-checked-keys="[100]"
-          :props="props"
-        />
-      </div>
+      <CollapseBox />
       <div class="card content-box">
         <el-tabs>
           <el-tab-pane label="日报" class="table-box">
@@ -157,10 +147,11 @@ import type { VNode } from "vue";
 import type { TableColumnCtx } from "element-plus";
 import { getCircuitInfoTree } from "@/api/modules/sys";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const tree = ref([] as any);
-const props = { children: "children", label: "circuitname" };
+// const props = { children: "children", label: "circuitname" };
 
 const dayColumns = [
   { prop: "stationname", label: "汇总项" },
@@ -243,5 +234,5 @@ const onSubmit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

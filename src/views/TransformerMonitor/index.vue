@@ -2,7 +2,7 @@
   <div class="TransformerMonitor">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="right-box">
         <div class="card top-box">
           <p>
@@ -105,6 +105,7 @@
 <script setup lang="tsx" name="TransformerMonitor">
 import { ref, reactive, onMounted } from "vue";
 import { getCurveDataOfPowerAndTempABCNew, TransformerMonitor } from "@/api/modules/main";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
@@ -369,5 +370,5 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

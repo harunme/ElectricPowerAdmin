@@ -2,7 +2,7 @@
   <div class="flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
@@ -99,6 +99,7 @@
 import { ref, reactive } from "vue";
 import moment from "moment";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ElecMaxMinAvgValue } from "@/api/modules/main";
 import columnsConfig from "./config";
@@ -169,5 +170,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

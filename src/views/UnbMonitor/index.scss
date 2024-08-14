@@ -1,6 +1,8 @@
 .UnbMonitor {
   height: 100%;
   .content-box {
+    width: 100%;
+    padding-top: 6px;
     .el-tabs {
       display: flex;
       flex-direction: column;
@@ -15,8 +17,5 @@
         }
       }
     }
-
-    width: 100%;
-    padding-top: 6px;
   }
 }

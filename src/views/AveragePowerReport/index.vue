@@ -2,7 +2,7 @@
   <div class="AveragePowerReport flex-column">
     <TransformerSelect />
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
@@ -53,6 +53,7 @@ import moment from "moment";
 import { AveragePowerReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 // import { ECOption } from "@/components/Charts/config";
 import ECharts from "@/components/Charts/echarts.vue";
 // import data from "./data.json";
@@ -234,5 +235,5 @@ const fetchData = async (): Promise<any> => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>
