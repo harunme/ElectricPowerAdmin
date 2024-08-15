@@ -5,17 +5,23 @@
       <el-form :inline="true">
         <el-form-item>
           <el-button type="primary" @click="addMeter">新增仪表</el-button>
-          <el-button @click="addMeter">批量修改</el-button>
+          <el-button @click="updateMeters">批量修改</el-button>
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
           <template #useflag="{ row }">
-            <span>{{ meterStateList.find(type => type.state === String(row.useflag))?.stateexplain }}</span>
+            <span>{{ meterStateList.find(item => item.state === row.useflag)?.stateexplain }}</span>
+          </template>
+          <template #metertype="{ row }">
+            <span>{{ meterTypeList.find(item => item.metertypecode === row.metertype)?.metertypename }}</span>
+          </template>
+          <template #channelname="{ row }">
+            <span>{{ row.channelname ? `${row.channelname}(${row.channelid})` : "-" }}</span>
           </template>
           <template #actions="{ row }">
             <a class="mini-btn" @click="updateTransformer(row)">修改</a>
-            <el-popconfirm title="确认删除?" @confirm="deleteMeter(row.transformerid)">
+            <el-popconfirm title="确认删除?" @confirm="deleteMeter(row.metercode)">
               <template #reference>
                 <a class="mini-btn">删除</a>
               </template>
@@ -38,6 +44,15 @@
           <el-col :span="24">
             <el-form-item label="变配电站名称" prop="stationname">
               <span>TEST</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表编号" prop="metercode">
+              <el-input v-model="form.metercode" placeholder="变配电站代码+2位序列号">
+                <template #append>
+                  <a class="mini-btn" @click="randomId">自动生成</a>
+                </template>
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -85,6 +100,33 @@
         </div>
       </template>
     </el-dialog>
+    <el-dialog v-model="statusFormVisible" title="批量修改仪表状态" width="500">
+      <el-form
+        ref="meterStatusFormRef"
+        :model="statusForm"
+        label-position="right"
+        :rules="statusRules"
+        label-width="auto"
+        style="padding: 16px 32px"
+        :validate-on-rule-change="false"
+      >
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item required label="仪表状态" prop="useflag">
+              <el-select v-model="statusForm.useflag" placeholder="请选择仪表状态" style="width: 100%">
+                <el-option v-for="item in meterStateList" :key="item.state" :label="item.stateexplain" :value="item.state" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="statusFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitStatusForm(meterStatusFormRef)">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,7 +142,10 @@ import {
   getMeterTypeList,
   getGatewayInfo,
   deleteMeterUseInfo,
-  insertMeterUseInfo
+  randomMeterId,
+  insertMeterUseInfo,
+  updateMeterUseInfo,
+  updateMultiMeterStatus
 } from "@/api/modules/meter";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
@@ -110,24 +155,37 @@ const defaultForm = {
   metertype: "",
   meteraddr: "",
   channelid: "",
-  useflag: ""
+  useflag: "",
+  metercode: ""
 };
 
 const meterStateList = ref<any>([]);
 const meterTypeList = ref<any>([]);
 const gatewayList = ref<any>([]);
+const selectedRows = ref<any>([]);
 
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
+
 const isEdit = ref(false);
 const meterFormRef = ref<FormInstance>();
 const form = ref<any>(defaultForm);
+
+const meterStatusFormRef = ref<FormInstance>();
+const statusForm = ref<any>({
+  useflag: ""
+});
+const statusFormVisible = ref(false);
+const statusRules = reactive<any>({
+  useflag: [{ required: true, message: "请选择状态" }]
+});
 
 const rules = reactive<FormRules<Meter.ReqInsertMeterUseInfo>>({
   meterdesc: [
     { required: true, message: "请输入仪表名称" },
     { max: 10, message: "长度不超过 10 个字符" }
   ],
+  metercode: [{ required: true, message: "请输入仪表编号" }],
   metertype: [{ required: true, message: "请选择仪表类型" }],
   meteraddr: [{ required: true, message: "请输入仪表地址" }],
   channelid: [{ required: true, message: "请选择通道" }],
@@ -144,8 +202,8 @@ const columns: any = [
   { prop: "stationname", label: "变配电站名称" },
   { prop: "metercode", label: "仪表编号" },
   { prop: "meterdesc", label: "仪表名称" },
-  { prop: "channelid", label: "通道" },
-  { prop: "metertype", label: "仪表类型" },
+  { prop: "customDom", slotName: "channelname", label: "通道" },
+  { prop: "customDom", slotName: "metertype", label: "仪表类型" },
   { prop: "meteraddr", label: "仪表地址" },
   { prop: "customDom", slotName: "useflag", label: "仪表状态" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
@@ -162,21 +220,25 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   });
 };
 
+const randomId = async () => {
+  const { data } = await randomMeterId({ stationid: "000" });
+  form.value.metercode = data.metercode;
+};
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const params = form.value;
-      // params.meter = meter.join(",");
       if (isEdit.value) {
-        // const res = await updateTransformerInfoById({ ...params, stationid: "000" });
-        // if (res.code === 1) {
-        //   ElMessage.success({ message: res.msg });
-        //   tableRef?.value?.resetData();
-        // } else {
-        //   ElMessage.error({ message: res.msg });
-        // }
-        // formVisible.value = false;
+        const res = await updateMeterUseInfo({ ...params, stationid: "000" });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
       } else {
         const res = await insertMeterUseInfo({ ...params, stationid: "000" });
         if (res.code === 1) {
@@ -193,10 +255,32 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   });
 };
 
+const submitStatusForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      console.log("selectedRows.value", selectedRows.value);
+      const res = await updateMultiMeterStatus({
+        metercode: selectedRows.value.map(({ metercode }) => metercode).join(";"),
+        useflag: statusForm.value.useflag
+      });
+      if (res.code === 1) {
+        ElMessage.success({ message: res.msg });
+        tableRef?.value?.resetData();
+      } else {
+        ElMessage.error({ message: res.msg });
+      }
+      statusFormVisible.value = false;
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
+};
+
 const updateTransformer = async row => {
   isEdit.value = true;
   formVisible.value = true;
-  form.value = { ...row, meter: row.meter.split(",") };
+  form.value = { ...row };
   setTimeout(() => meterFormRef.value?.clearValidate());
 };
 
@@ -222,6 +306,18 @@ onMounted(async () => {
   });
   gatewayList.value = gateway.data;
 });
+
+const handleSelectionChange = rows => {
+  selectedRows.value = rows;
+};
+
+const updateMeters = () => {
+  if (selectedRows.value.length < 2) {
+    return ElMessage.info({ message: "请至少选择两个仪表" });
+  }
+  statusFormVisible.value = true;
+  setTimeout(() => meterStatusFormRef.value?.resetFields());
+};
 </script>
 
 <style scoped lang="scss">

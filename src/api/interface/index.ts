@@ -213,8 +213,11 @@ export namespace Meter {
     metercode: string;
   }
   export interface ResDeleteMeterUseInfo {}
-  export interface ReqUpdatetMultiMeterStatus {}
-  export interface ResUpdatetMultiMeterStatus {}
+  export interface ReqUpdateMultiMeterStatus {
+    metercode: "";
+    useflag: any;
+  }
+  export interface ResUpdateMultiMeterStatus {}
   export interface ReqGetGatewayInfo {
     stationid: string;
   }
@@ -278,6 +281,13 @@ export namespace Meter {
   }
   export interface ResRandomTransformerId {
     transformerid: string;
+  }
+
+  export interface ReqRandomMeterId {
+    stationid: string;
+  }
+  export interface ResRandomMeterId {
+    metercode: string;
   }
 }
 

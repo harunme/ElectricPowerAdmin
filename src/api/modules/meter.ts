@@ -101,8 +101,13 @@ export const deleteMeterUseInfo = (params: Meter.ReqDeleteMeterUseInfo) => {
   return http.postForm<Meter.ResDeleteMeterUseInfo>(`/meter/deleteMeterUseInfo`, params);
 };
 // 系统设置-仪表 接口7  批量修改一个变电站的仪表状态
-export const updatetMultiMeterStatus = (params: Meter.ReqUpdatetMultiMeterStatus) => {
-  return http.postForm<Meter.ResUpdatetMultiMeterStatus>(`/meter/updatetMultiMeterStatus`, params);
+export const updateMultiMeterStatus = (params: Meter.ReqUpdateMultiMeterStatus) => {
+  return http.postForm<Meter.ResUpdateMultiMeterStatus>(`/meter/updateMultiMeterStatus`, params);
+};
+
+// 系统设置-变压器接口8  自动生成仪表编号
+export const randomMeterId = (params: Meter.ReqRandomMeterId) => {
+  return http.postForm<Meter.ResRandomMeterId>(`/meter/randomMeterId`, params);
 };
 
 /** 通道（网关） */
