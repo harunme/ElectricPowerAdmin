@@ -130,6 +130,17 @@ export const deleteGatewayInfo = (params: Meter.ReqDeleteGatewayInfo) => {
 export const updateGatewayInfo = (params: Meter.ReqUpdateGatewayInfo) => {
   return http.postForm<Meter.ResUpdateGatewayInfo>(`/meter/updateGatewayInfo`, params);
 };
+
+// 系统设置-通道 接口5 自动生成通道编号
+export const randomChannelId = (params: Meter.ReqRandomChannelId) => {
+  return http.postForm<Meter.ResRandomChannelId>(`/meter/randomChannelId`, params);
+};
+
+// 系统设置-通道 接口6 查询通道的通讯设备
+export const getGatewayDev = () => {
+  return http.postForm<Meter.ResGetGatewayDev[]>(`/meter/getGatewayDev`);
+};
+
 // 测量回路 接口1 得到所有回路树
 export const getCircuitInfoTree = (params: Meter.ReqGetCircuitInfoTree) => {
   return http.postForm<Meter.ResGetCircuitInfoTree>(`/meter/getCircuitInfoTree`, params);

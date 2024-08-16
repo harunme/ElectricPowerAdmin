@@ -229,9 +229,19 @@ export namespace Meter {
     useflag: number;
     stationid: string;
   }
-  export interface ReqInsertGatewayInfo {}
+  export interface ReqInsertGatewayInfo {
+    stationid: string;
+    describe: string;
+    comdev: number;
+    devname1: string;
+    useflag: number;
+    name: string;
+  }
   export interface ResInsertGatewayInfo {}
-  export interface ReqDeleteGatewayInfo {}
+  export interface ReqDeleteGatewayInfo {
+    stationid: string;
+    name: string;
+  }
   export interface ResDeleteGatewayInfo {}
   export interface ReqUpdateGatewayInfo {}
   export interface ResUpdateGatewayInfo {}
@@ -276,11 +286,23 @@ export namespace Meter {
     metertypename: string;
   }
 
+  export interface ResGetGatewayDev {
+    comdev: number;
+    devexplain: string;
+  }
+
   export interface ReqRandomTransformerId {
     stationid: string;
   }
   export interface ResRandomTransformerId {
     transformerid: string;
+  }
+
+  export interface ReqRandomChannelId {
+    stationid: string;
+  }
+  export interface ResRandomChannelId {
+    name: string;
   }
 
   export interface ReqRandomMeterId {

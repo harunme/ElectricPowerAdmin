@@ -611,7 +611,7 @@ const Menu = [
         name: "Gateway",
         component: "/Gateway/index",
         meta: {
-          title: "网关",
+          title: "通道",
           isLink: "",
           isHide: false,
           isFull: false,
