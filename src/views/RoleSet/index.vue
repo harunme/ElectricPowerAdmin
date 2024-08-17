@@ -1,121 +1,201 @@
 <template>
-  <div class="flex-column">
-    <div class="main-box">
-      <div class="card left-box"></div>
-      <div class="card table-box flex-column">
-        <el-form :inline="true" :model="formInline" class="table-form-inline">
-          <el-form-item label="关键字">
-            <el-input v-model="formInline.user" placeholder="请输入角色名称或描述" clearable />
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="onSubmit">查询</el-button>
-            <el-button type="primary" @click="formVisible = true">新增角色</el-button>
-          </el-form-item>
-        </el-form>
-        <PaginationTable :columns="columns" :fetch-data="fetchData">
-          <template #actions="">
-            <el-button type="text" size="mini">配置菜单权限</el-button>
-            <el-button type="text" size="mini">修改</el-button>
-            <el-button type="text" size="mini">删除</el-button>
-          </template>
-        </PaginationTable>
-      </div>
-    </div>
-    <el-dialog v-model="formVisible" title="新增用户信息" width="500">
-      <el-form :model="form" label-position="left">
-        <el-form-item required label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="用户名仅支持英文和数字(最多20位)" />
-        </el-form-item>
-        <el-form-item required label="姓名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请填写真实姓名" />
-        </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="密码必须包含大小写字母，数字及特殊符号" />
-        </el-form-item>
-        <el-form-item label="密码确认" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请再次输入密码" />
-        </el-form-item>
-        <el-form-item label="组织机构" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请选择组织机构" />
-        </el-form-item>
-        <el-form-item label="角色" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择角色">
-            <el-option label="Zone No.1" value="shanghai" />
-            <el-option label="Zone No.2" value="beijing" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="用户组" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择用户组">
-            <el-option label="Zone No.1" value="shanghai" />
-            <el-option label="Zone No.2" value="beijing" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="用户手机号" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请填写11位手机号" />
-        </el-form-item>
-        <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请填写邮箱" />
-        </el-form-item>
-        <el-form-item label="标题" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" placeholder="请输入平台名称" />
+  <div class="RoleSet">
+    <CollapseBox />
+    <div class="card">
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button type="primary" @click="addUserRole">新增角色</el-button>
         </el-form-item>
       </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="formVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="formVisible = false"> Confirm </el-button>
-        </div>
-      </template>
-    </el-dialog>
+      <div class="table-box">
+        <PaginationTable ref="tableRef" :columns="columns" row-key="roleid" :fetch-data="fetchData">
+          <template #actions="{ row }">
+            <a class="mini-btn" @click="updateUserRole(row)">修改</a>
+            <el-popconfirm title="确认删除?" @confirm="deleteUserRole(row.roleid)">
+              <template #reference>
+                <a class="mini-btn">删除</a>
+              </template>
+            </el-popconfirm>
+          </template>
+        </PaginationTable>
+        <el-dialog v-model="formVisible" :title="isEdit ? '修改角色' : '新增角色'" width="500">
+          <el-form
+            ref="roleFormRef"
+            :model="form"
+            label-position="right"
+            :rules="rules"
+            label-width="auto"
+            style="padding: 16px 32px"
+            :validate-on-rule-change="false"
+          >
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item required label="角色名称" prop="rolename">
+                  <el-input v-model="form.rolename" placeholder="最大10个中英文字符" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item required label="上级角色" prop="parentid">
+                  <el-cascader
+                    v-model="form.parentid"
+                    style="width: 100%"
+                    :options="userRoleTree"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'roleid',
+                      label: 'rolename',
+                      emitPath: false
+                    }"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item required label="组织机构" prop="deptid">
+                  <el-cascader
+                    v-model="form.deptid"
+                    style="width: 100%"
+                    :options="deptTree"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'deptid',
+                      label: 'deptname',
+                      emitPath: false
+                    }"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="角色说明" prop="roledesc">
+                  <el-input v-model="form.roledesc" placeholder="最大30个字符" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="formVisible = false">取消</el-button>
+              <el-button type="primary" @click="submitForm(roleFormRef)">确定</el-button>
+            </div>
+          </template>
+        </el-dialog>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="tsx" name="RoleSet">
-import { reactive, ref } from "vue";
+<script setup lang="tsx" name="UserGroup">
+import { ref, reactive, onMounted } from "vue";
+import { ElMessage } from "element-plus";
+import type { FormRules, FormInstance } from "element-plus";
+import { Org } from "@/api/interface/index";
+import { getRolesListTree, insertRole, deleteRole, updateRole, getCompanyTree } from "@/api/modules/org";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 
-const formLabelWidth = "90px";
+const defaultForm = {
+  rolename: "",
+  parentid: undefined,
+  deptid: undefined,
+  roledesc: ""
+};
 
 const formVisible = ref(false);
-const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
-});
-const form = reactive({
-  name: "",
-  region: "",
-  date1: "",
-  date2: "",
-  delivery: false,
-  type: [],
-  resource: "",
-  desc: ""
+const tableRef = ref<any>(null);
+const deptTree = ref<any>([]);
+const userRoleTree = ref<any>([]);
+
+const isEdit = ref(false);
+const roleFormRef = ref<FormInstance>();
+const form = ref<any>(defaultForm);
+
+const rules = reactive<FormRules<Org.ReqInsertDeptInfo>>({
+  rolename: [
+    { required: true, message: "请输入角色名称" },
+    { max: 30, message: "长度不超过 30 个字符" }
+  ],
+  parentid: [{ required: true, message: "请选择上级角色" }],
+  deptid: [{ required: true, message: "请选择组织机构" }]
 });
 
-const columns = [
-  { prop: "stationname", label: "角色名称" },
-  { prop: "stationname", label: "组织机构" },
-  { prop: "stationname", label: "描述" },
+const addUserRole = () => {
+  isEdit.value = false;
+  formVisible.value = true;
+  roleFormRef.value?.resetFields();
+  setTimeout(() => roleFormRef.value?.clearValidate());
+};
+
+const columns: any = [
+  { prop: "rolename", label: "角色名称" },
+  { prop: "deptname", label: "组织机构" },
+  { prop: "roledesc", label: "角色说明" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    // const { data } = await EnergyReportNoHjPageInfo({
-    //   pageNum,
-    //   pageSize,
-    //   startTime: "2024-06-01",
-    //   endTime: "2024-06-23"
-    // });
-    // console.log("fetchData", data.list);
-    resolve({ total: 0, list: [] });
+    const { data } = await getRolesListTree({
+      deptid: 100
+    });
+    userRoleTree.value = [{ rolename: "无", roleid: -1 } as any].concat(data);
+    resolve({ list: data });
   });
 };
 
-const onSubmit = () => {
-  console.log("submit!");
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      const params = { ...form.value };
+      if (params.parentid === -1) params.parentid = 0;
+
+      if (isEdit.value) {
+        const res = await updateRole({ ...params });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
+      } else {
+        const res = await insertRole({ ...params });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
+      }
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
 };
+
+const updateUserRole = async row => {
+  isEdit.value = true;
+  formVisible.value = true;
+  form.value = { ...row, parentid: String(row.parentid) === "0" ? -1 : row.parentid };
+  setTimeout(() => roleFormRef.value?.clearValidate());
+};
+
+const deleteUserRole = async (roleid: string) => {
+  const res = await deleteRole({ roleid });
+  if (res.code === 1) {
+    tableRef?.value?.resetData();
+    ElMessage.success({ message: res.msg });
+  } else {
+    ElMessage.error({ message: res.msg });
+  }
+};
+
+onMounted(async () => {
+  const { data } = await getCompanyTree();
+  deptTree.value = data;
+});
 </script>
 
 <style scoped lang="scss">
