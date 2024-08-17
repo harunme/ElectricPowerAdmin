@@ -8,6 +8,7 @@
       :data="tableData"
       style="width: 100%"
       :row-key="rowKey"
+      v-loading="loading"
     >
       <el-table-column v-if="tableData.length !== 0 && selectionChange" type="selection" width="55"></el-table-column>
       <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
@@ -40,7 +41,7 @@ import type { TableColumnCtx } from "element-plus";
 
 const slots = useSlots();
 
-console.log(" $slots", slots.value);
+const loading = ref<boolean>(false);
 
 export interface SpanMethodProps {
   row: any;
@@ -89,12 +90,14 @@ const handleCurrentChange = (val: number) => {
 
 // 刷新数据
 const refreshData = async () => {
+  loading.value = true;
   const res = await props.fetchData({
     pageSize: pageSize.value,
     pageNum: currentPage.value
   });
   tableData.value = res.list || [];
   total.value = res.total;
+  loading.value = false;
 };
 
 // 重置表格数据
