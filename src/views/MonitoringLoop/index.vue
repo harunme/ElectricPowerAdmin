@@ -2,70 +2,228 @@
   <div class="MonitoringLoop">
     <TransformerSelect />
     <div class="card content">
-      <div class="action-box">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="关键字">
-            <el-input placeholder="请输入回路编号或名称" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-button type="primary" @click="onSubmit">新建监测回路</el-button>
-      </div>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-button type="primary" @click="addCircuit">新增回路</el-button>
+        </el-form-item>
+      </el-form>
       <div class="table-box">
-        <PaginationTable :columns="columns" :fetch-data="fetchData">
-          <template #actions="">
-            <el-button type="text" size="mini">修改</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+        <PaginationTable
+          ref="tableRef"
+          :columns="columns"
+          row-key="circuitid"
+          :fetch-data="fetchData"
+          :selection-change="handleSelectionChange"
+        >
+          <template #isincoming="{ row }">
+            <span>{{ row.isincoming ? "是" : "否" }}</span>
+          </template>
+          <template #actions="{ row }">
+            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <el-popconfirm title="确认删除?" @confirm="deleteCircuit(row.circuitid)">
+              <template #reference>
+                <a class="mini-btn">删除</a>
+              </template>
+            </el-popconfirm>
           </template>
         </PaginationTable>
       </div>
     </div>
+    <el-dialog v-model="formVisible" :title="isEdit ? '修改回路' : '新增回路'" width="500">
+      <el-form
+        ref="gatewayFormRef"
+        :model="form"
+        label-position="right"
+        :rules="rules"
+        label-width="auto"
+        style="padding: 16px 32px"
+        :validate-on-rule-change="false"
+      >
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="变配电站名称" prop="stationname">
+              <span>TEST</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="回路编号" prop="circuitid">
+              <el-input v-model="form.circuitid" :disabled="isEdit" placeholder="变配电站代码+2位序列号">
+                <template #append v-if="!isEdit">
+                  <a class="mini-btn" @click="randomId">自动生成</a>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="回路名称" prop="circuitname">
+              <el-input v-model="form.circuitname" placeholder="最大10个中英文字符" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="上级回路" prop="parentid">
+              <el-cascader
+                v-model="form.parentid"
+                style="width: 100%"
+                :options="circuitInfoTree"
+                :props="{
+                  checkStrictly: true,
+                  value: 'circuitid',
+                  label: 'circuitname',
+                  emitPath: false
+                }"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="是否进线" prop="isincoming">
+              <el-switch v-model="form.isincoming" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item required label="仪表编号" prop="meter">
+              <el-input v-model="form.meter" placeholder="关联仪表编号，最多15位字符" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="formVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm(gatewayFormRef)">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="tsx" name="MonitoringLoop">
-import { reactive } from "vue";
-import { ReqPage } from "@/api/interface";
-import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
+import { ref, reactive } from "vue";
+import { ElMessage } from "element-plus";
+import type { FormRules, FormInstance } from "element-plus";
+import { Sys } from "@/api/interface/index";
+import { updateGatewayInfo } from "@/api/modules/meter";
+import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById } from "@/api/modules/sys";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
-const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+const defaultForm = {
+  stationid: "",
+  circuitid: "",
+  circuitname: "",
+  parentid: undefined,
+  isincoming: 0,
+  meter: ""
+};
+
+const selectedRows = ref<any>([]);
+
+const formVisible = ref(false);
+const tableRef = ref<any>(null);
+const circuitInfoTree = ref<any>([]);
+
+const isEdit = ref(false);
+const gatewayFormRef = ref<FormInstance>();
+const form = ref<any>(defaultForm);
+
+const rules = reactive<FormRules<Sys.ReqInsertCircuitInfo>>({
+  circuitid: [{ required: true, message: "请输入回路编号" }],
+  circuitname: [
+    { required: true, message: "请输入回路名称" },
+    { max: 10, message: "长度不超过 10 个字符" }
+  ],
+  parentid: [{ required: true, message: "请选择上级回路" }],
+  meter: [{ required: true, message: "请输入关联的仪表" }]
 });
 
-const onSubmit = () => {
-  console.log("submit!");
+const addCircuit = () => {
+  isEdit.value = false;
+  formVisible.value = true;
+  gatewayFormRef.value?.resetFields();
+  setTimeout(() => gatewayFormRef.value?.clearValidate());
 };
 
 const columns: any = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "stationid", label: "回路编号" },
-  { prop: "voltagestep", label: "上级回路" },
-  { prop: "voltagestep", label: "是否进线" },
-  { prop: "voltagestep", label: "仪表编号" },
-  { prop: "voltagestep", label: "状态" },
+  { prop: "circuitname", label: "回路名称" },
+  { prop: "circuitid", label: "回路编号" },
+  { prop: "parentname", label: "上级回路" },
+  { prop: "customDom", slotName: "isincoming", label: "是否进线" },
+  { prop: "meter", label: "仪表编号" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
-const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
+const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await EnergyReportNoHjPageInfo({
-      pageNum,
-      pageSize,
-      startTime: "2024-06-01",
-      endTime: "2024-06-23"
+    const { data } = await getCircuitInfoTree({
+      stationid: "000"
     });
-    console.log("fetchData", data.list);
-    resolve(data);
+    circuitInfoTree.value = [{ circuitname: "无", circuitid: -1 } as any].concat(data);
+    resolve({ list: data });
   });
+};
+
+const randomId = async () => {
+  const { data } = await randomCircuitId({ stationid: "000" });
+  form.value.circuitid = data.circuitid;
+};
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      const params = { ...form.value };
+      if (params.parentid === -1) params.parentid = 0;
+      if (params.isincoming) params.isincoming = 1;
+      else params.isincoming = 0;
+
+      if (isEdit.value) {
+        const res = await updateGatewayInfo({ ...params, stationid: "000" });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
+      } else {
+        const res = await insertCircuitInfo({ ...params, stationid: "000" });
+        if (res.code === 1) {
+          ElMessage.success({ message: res.msg });
+          tableRef?.value?.resetData();
+        } else {
+          ElMessage.error({ message: res.msg });
+        }
+        formVisible.value = false;
+      }
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
+};
+
+const updateTransformer = async row => {
+  console.log(row);
+  isEdit.value = true;
+  formVisible.value = true;
+  form.value = { ...row, isincoming: row.isincoming ? true : false, parentid: row.parentid === "0" ? -1 : row.parentid };
+  setTimeout(() => gatewayFormRef.value?.clearValidate());
+};
+
+const deleteCircuit = async (circuitid: string) => {
+  const res = await deleteCircuitById({ circuitid, stationid: "000" });
+  if (res.code === 1) {
+    tableRef?.value?.resetData();
+    ElMessage.success({ message: res.msg });
+  } else {
+    ElMessage.error({ message: res.msg });
+  }
+};
+
+const handleSelectionChange = rows => {
+  selectedRows.value = rows;
 };
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

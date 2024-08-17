@@ -43,6 +43,30 @@ export namespace Login {
   }
 }
 
+export namespace Sys {
+  export interface ReqGetCircuitInfoTree {}
+  export interface ResGetCircuitInfoTree {}
+  export interface ReqInsertCircuitInfo {
+    stationid: string;
+    circuitid: string;
+    circuitname: string;
+    parentid: string;
+    isincoming: 0 | 1;
+    meter: string;
+  }
+  export interface ResInsertCircuitInfo {}
+  export interface ReqDeleteCircuitById {}
+  export interface ResDeleteCircuitById {}
+  export interface ReqUpdateCircuitById {}
+  export interface ResUpdateCircuitById {}
+  export interface ReqRandomCircuitId {
+    stationid: string;
+  }
+  export interface ResRandomCircuitId {
+    circuitid: string;
+  }
+}
+
 // 变电站模块
 export namespace Meter {
   export interface Station {
@@ -245,16 +269,7 @@ export namespace Meter {
   export interface ResDeleteGatewayInfo {}
   export interface ReqUpdateGatewayInfo {}
   export interface ResUpdateGatewayInfo {}
-  export interface ReqGetCircuitInfoTree {}
-  export interface ResGetCircuitInfoTree {}
-  export interface ReqInsertCircuitInfo {}
-  export interface ResInsertCircuitInfo {}
-  export interface ReqDeleteCircuitById {}
-  export interface ResDeleteCircuitById {}
-  export interface ReqUpdateCircuitById {}
-  export interface ResUpdateCircuitById {}
-  export interface ReqRandomCircuitId {}
-  export interface ResRandomCircuitId {}
+
   export interface ReqGetCompanyTree {}
   export interface ResGetCompanyTree {}
   export interface ReqInsertDeptInfo {}

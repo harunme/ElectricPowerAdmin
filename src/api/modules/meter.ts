@@ -141,26 +141,6 @@ export const getGatewayDev = () => {
   return http.postForm<Meter.ResGetGatewayDev[]>(`/meter/getGatewayDev`);
 };
 
-// 测量回路 接口1 得到所有回路树
-export const getCircuitInfoTree = (params: Meter.ReqGetCircuitInfoTree) => {
-  return http.postForm<Meter.ResGetCircuitInfoTree>(`/meter/getCircuitInfoTree`, params);
-};
-// 测量回路 接口2 新增一个回路
-export const insertCircuitInfo = (params: Meter.ReqInsertCircuitInfo) => {
-  return http.postForm<Meter.ResInsertCircuitInfo>(`/meter/insertCircuitInfo`, params);
-};
-// 测量回路 接口3 删除一个回路
-export const deleteCircuitById = (params: Meter.ReqDeleteCircuitById) => {
-  return http.postForm<Meter.ResDeleteCircuitById>(`/meter/deleteCircuitById`, params);
-};
-// 测量回路 接口4 修改一个回路
-export const updateCircuitById = (params: Meter.ReqUpdateCircuitById) => {
-  return http.postForm<Meter.ResUpdateCircuitById>(`/meter/updateCircuitById`, params);
-};
-// 监测回路 接口5  自动生成回路编号
-export const randomCircuitId = (params: Meter.ReqRandomCircuitId) => {
-  return http.postForm<Meter.ResRandomCircuitId>(`/meter/randomCircuitId`, params);
-};
 // 组织机构 接口1 查询组织机构
 export const getCompanyTree = (params: Meter.ReqGetCompanyTree) => {
   return http.postForm<Meter.ResGetCompanyTree>(`/meter/getCompanyTree`, params);
