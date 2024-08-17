@@ -516,6 +516,32 @@ const Menu = [
         }
       },
       {
+        path: "/UserGroup",
+        name: "UserGroup",
+        component: "/UserGroup/index",
+        meta: {
+          title: "用户组管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
+        path: "/RoleSet",
+        name: "RoleSet",
+        component: "/RoleSet/index",
+        meta: {
+          title: "角色管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: true
+        }
+      },
+      {
         path: "/SubGroup",
         name: "SubGroup",
         component: "/SubGroup/index",
@@ -541,19 +567,7 @@ const Menu = [
           isKeepAlive: true
         }
       },
-      {
-        path: "/RoleSet",
-        name: "RoleSet",
-        component: "/RoleSet/index",
-        meta: {
-          title: "角色管理",
-          isLink: "",
-          isHide: false,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: true
-        }
-      },
+
       {
         path: "/Substation",
         name: "Substation",
@@ -572,7 +586,7 @@ const Menu = [
         name: "Meter",
         component: "/Meter/index",
         meta: {
-          title: "仪表",
+          title: "仪表管理",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -585,7 +599,7 @@ const Menu = [
         name: "Transformer",
         component: "/Transformer/index",
         meta: {
-          title: "变压器",
+          title: "变压器管理",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -598,7 +612,7 @@ const Menu = [
         name: "MonitoringLoop",
         component: "/MonitoringLoop/index",
         meta: {
-          title: "监测回路",
+          title: "监测回路管理",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -611,7 +625,7 @@ const Menu = [
         name: "Gateway",
         component: "/Gateway/index",
         meta: {
-          title: "通道",
+          title: "通道管理",
           isLink: "",
           isHide: false,
           isFull: false,

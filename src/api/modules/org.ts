@@ -38,3 +38,45 @@ export const deleteRegionById = (params: Org.ReqGeleteRegionById) => {
 export const updateRegionById = (params: Org.ReqUpdateRegionById) => {
   return http.postForm<Org.ResUpdateRegionById>(`/org/updateRegionById`, params);
 };
+
+// 用户组 接口1 根据组织机构ID查询用户组
+export const selectUserGroupTree = (params: Org.ReqSelectUserGroupTree) => {
+  return http.postForm<Org.ResSelectUserGroupTree>(`/org/selectUserGroupTree`, params);
+};
+// 用户组 接口2 新增用户组
+export const insertUserGroup = (params: Org.ReqInsertUserGroup) => {
+  return http.postForm<Org.ResInsertUserGroup>(`/org/insertUserGroup`, params);
+};
+// 用户组 接口3 删除一个用户组
+export const deleteUserGroup = (params: Org.ReqDeleteUserGroup) => {
+  return http.postForm<Org.ResDeleteUserGroup>(`/org/deleteUserGroup`, params);
+};
+// 用户组 接口4 修改用户组
+export const updateUserGroup = (params: Org.ReqUpdateUserGroup) => {
+  return http.postForm<Org.ResUpdateUserGroup>(`/org/updateUserGroup`, params);
+};
+
+// 角色 接口1 根据组织机构ID查询角色
+export const getRolesListTree = (params: Org.ReqGetRolesListTree) => {
+  return http.postForm<Org.ResGetRolesListTree>(`/org/getRolesListTree`, params);
+};
+// 角色 接口2 新增角色
+export const insertRole = (params: Org.ReqInsertRole) => {
+  return http.postForm<Org.ResInsertRole>(`/org/insertRole`, params);
+};
+// 角色 接口3 删除角色
+export const deleteRole = (params: Org.ReqDeleteRole) => {
+  return http.postForm<Org.ResDeleteRole>(`/org/deleteRole`, params);
+};
+// 角色 接口4 修改角色
+export const updateRole = (params: Org.ReqUpdateRole) => {
+  return http.postForm<Org.ResUpdateRole>(`/org/updateRole`, params);
+};
+// 角色 接口5 根据角色ID得到所有WEB菜单及选中项
+export const selectProjectRoleById = (params: Org.ReqSelectProjectRoleById) => {
+  return http.postForm<Org.ResSelectProjectRoleById>(`/org/selectProjectRoleById`, params);
+};
+// 角色 接口6 根据角色ID得到所有APP菜单及选中项
+export const listProjectRoleAppMenu = (params: Org.ReqListProjectRoleAppMenu) => {
+  return http.postForm<Org.ResListProjectRoleAppMenu>(`/org/listProjectRoleAppMenu`, params);
+};

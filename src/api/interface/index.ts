@@ -91,6 +91,29 @@ export namespace Org {
   export interface ResUpdateDeptById {}
   export interface ReqGetProjectRoleMenuSelected {}
   export interface ResGetProjectRoleMenuSelected {}
+  export interface ReqSelectUserGroupTree {}
+  export interface ResSelectUserGroupTree {}
+  export interface ReqInsertUserGroup {}
+  export interface ResInsertUserGroup {}
+  export interface ReqDeleteUserGroup {
+    groupid: string;
+  }
+  export interface ResDeleteUserGroup {}
+  export interface ReqUpdateUserGroup {}
+  export interface ResUpdateUserGroup {}
+  export interface ReqGetRolesListTree {}
+  export interface ResGetRolesListTree {}
+  export interface ReqInsertRole {}
+
+  export interface ResInsertRole {}
+  export interface ReqDeleteRole {}
+  export interface ResDeleteRole {}
+  export interface ReqUpdateRole {}
+  export interface ResUpdateRole {}
+  export interface ReqSelectProjectRoleById {}
+  export interface ResSelectProjectRoleById {}
+  export interface ReqListProjectRoleAppMenu {}
+  export interface ResListProjectRoleAppMenu {}
 }
 
 // 变电站模块

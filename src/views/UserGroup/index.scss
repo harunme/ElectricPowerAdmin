@@ -1,0 +1,14 @@
+.UserGroup {
+  display: flex;
+  height: 100%;
+  .table-box {
+    height: 100%;
+    :deep(.el-table .el-table__body td .cell > span:empty::after) {
+      content: "" !important;
+    }
+  }
+  .card {
+    width: 100%;
+    overflow: hidden;
+  }
+}

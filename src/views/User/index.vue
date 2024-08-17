@@ -1,7 +1,7 @@
 <template>
   <div class="flex-column">
     <div class="main-box">
-      <div class="card left-box"></div>
+      <CollapseBox />
       <div class="card table-box">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="用户名">
@@ -89,6 +89,7 @@
 
 <script setup lang="tsx" name="bing">
 import { reactive, ref } from "vue";
+import CollapseBox from "@/components/CollapseBox/index.vue";
 
 const formLabelWidth = "90px";
 
