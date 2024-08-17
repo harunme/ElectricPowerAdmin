@@ -67,6 +67,19 @@ export namespace Sys {
   }
 }
 
+export namespace Org {
+  export interface ResGetSubGroupTree {}
+
+  export interface ReqInsertRegionInfo {}
+  export interface ResInsertRegionInfo {}
+  export interface ReqGeleteRegionById {
+    regionid: string;
+  }
+  export interface ResGeleteRegionById {}
+  export interface ReqUpdateRegionById {}
+  export interface ResUpdateRegionById {}
+}
+
 // 变电站模块
 export namespace Meter {
   export interface Station {
@@ -280,14 +293,7 @@ export namespace Meter {
   export interface ResUpdateDeptById {}
   export interface ReqGetProjectRoleMenuSelected {}
   export interface ResGetProjectRoleMenuSelected {}
-  export interface ReqGetSubGroupTree {}
-  export interface ResGetSubGroupTree {}
-  export interface ReqInsertRegionInfo {}
-  export interface ResInsertRegionInfo {}
-  export interface ReqGeleteRegionById {}
-  export interface ResGeleteRegionById {}
-  export interface ReqUpdateRegionById {}
-  export interface ResUpdateRegionById {}
+
   export interface ReqGetMeterListByStationId {
     stationid: string;
     search?: string;

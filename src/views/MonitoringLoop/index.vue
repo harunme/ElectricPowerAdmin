@@ -8,18 +8,12 @@
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable
-          ref="tableRef"
-          :columns="columns"
-          row-key="circuitid"
-          :fetch-data="fetchData"
-          :selection-change="handleSelectionChange"
-        >
+        <PaginationTable ref="tableRef" :columns="columns" row-key="circuitid" :fetch-data="fetchData">
           <template #isincoming="{ row }">
             <span>{{ row.isincoming ? "是" : "否" }}</span>
           </template>
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <a class="mini-btn" @click="updateCircuit(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteCircuit(row.circuitid)">
               <template #reference>
                 <a class="mini-btn">删除</a>
@@ -31,7 +25,7 @@
     </div>
     <el-dialog v-model="formVisible" :title="isEdit ? '修改回路' : '新增回路'" width="500">
       <el-form
-        ref="gatewayFormRef"
+        ref="circuitFormRef"
         :model="form"
         label-position="right"
         :rules="rules"
@@ -90,7 +84,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="formVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm(gatewayFormRef)">确定</el-button>
+          <el-button type="primary" @click="submitForm(circuitFormRef)">确定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -102,8 +96,7 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Sys } from "@/api/interface/index";
-import { updateGatewayInfo } from "@/api/modules/meter";
-import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById } from "@/api/modules/sys";
+import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById, updateCircuitById } from "@/api/modules/sys";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
@@ -116,14 +109,12 @@ const defaultForm = {
   meter: ""
 };
 
-const selectedRows = ref<any>([]);
-
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const circuitInfoTree = ref<any>([]);
 
 const isEdit = ref(false);
-const gatewayFormRef = ref<FormInstance>();
+const circuitFormRef = ref<FormInstance>();
 const form = ref<any>(defaultForm);
 
 const rules = reactive<FormRules<Sys.ReqInsertCircuitInfo>>({
@@ -139,8 +130,8 @@ const rules = reactive<FormRules<Sys.ReqInsertCircuitInfo>>({
 const addCircuit = () => {
   isEdit.value = false;
   formVisible.value = true;
-  gatewayFormRef.value?.resetFields();
-  setTimeout(() => gatewayFormRef.value?.clearValidate());
+  circuitFormRef.value?.resetFields();
+  setTimeout(() => circuitFormRef.value?.clearValidate());
 };
 
 const columns: any = [
@@ -177,7 +168,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       else params.isincoming = 0;
 
       if (isEdit.value) {
-        const res = await updateGatewayInfo({ ...params, stationid: "000" });
+        const res = await updateCircuitById({ ...params, stationid: "000" });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -201,12 +192,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   });
 };
 
-const updateTransformer = async row => {
+const updateCircuit = async row => {
   console.log(row);
   isEdit.value = true;
   formVisible.value = true;
   form.value = { ...row, isincoming: row.isincoming ? true : false, parentid: row.parentid === "0" ? -1 : row.parentid };
-  setTimeout(() => gatewayFormRef.value?.clearValidate());
+  setTimeout(() => circuitFormRef.value?.clearValidate());
 };
 
 const deleteCircuit = async (circuitid: string) => {
@@ -217,10 +208,6 @@ const deleteCircuit = async (circuitid: string) => {
   } else {
     ElMessage.error({ message: res.msg });
   }
-};
-
-const handleSelectionChange = rows => {
-  selectedRows.value = rows;
 };
 </script>
 

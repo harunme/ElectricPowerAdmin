@@ -161,19 +161,3 @@ export const updateDeptById = (params: Meter.ReqUpdateDeptById) => {
 export const getProjectRoleMenuSelected = (params: Meter.ReqGetProjectRoleMenuSelected) => {
   return http.postForm<Meter.ResGetProjectRoleMenuSelected>(`/meter/getProjectRoleMenuSelected`, params);
 };
-// 区域 接口1 查询区域
-export const getSubGroupTree = (params: Meter.ReqGetSubGroupTree) => {
-  return http.postForm<Meter.ResGetSubGroupTree>(`/meter/getSubGroupTree`, params);
-};
-// 区域 接口2 新增一个区域
-export const insertRegionInfo = (params: Meter.ReqInsertRegionInfo) => {
-  return http.postForm<Meter.ResInsertRegionInfo>(`/meter/insertRegionInfo`, params);
-};
-// 区域 接口3 删除一个区域
-export const deleteRegionById = (params: Meter.ReqGeleteRegionById) => {
-  return http.postForm<Meter.ResGeleteRegionById>(`/meter/deleteRegionById`, params);
-};
-// 区域 接口4 修改一个区域
-export const updateRegionById = (params: Meter.ReqUpdateRegionById) => {
-  return http.postForm<Meter.ResUpdateRegionById>(`/meter/updateRegionById`, params);
-};
