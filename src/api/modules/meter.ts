@@ -140,24 +140,3 @@ export const randomChannelId = (params: Meter.ReqRandomChannelId) => {
 export const getGatewayDev = () => {
   return http.postForm<Meter.ResGetGatewayDev[]>(`/meter/getGatewayDev`);
 };
-
-// 组织机构 接口1 查询组织机构
-export const getCompanyTree = (params: Meter.ReqGetCompanyTree) => {
-  return http.postForm<Meter.ResGetCompanyTree>(`/meter/getCompanyTree`, params);
-};
-// 组织机构 接口2 新增一个组织
-export const insertDeptInfo = (params: Meter.ReqInsertDeptInfo) => {
-  return http.postForm<Meter.ResInsertDeptInfo>(`/meter/insertDeptInfo`, params);
-};
-// 组织机构 接口3 删除一个组织
-export const deleteDeptById = (params: Meter.ReqDeleteDeptById) => {
-  return http.postForm<Meter.ResDeleteDeptById>(`/meter/deleteDeptById`, params);
-};
-// 组织机构 接口4 修改一个组织
-export const updateDeptById = (params: Meter.ReqUpdateDeptById) => {
-  return http.postForm<Meter.ResUpdateDeptById>(`/meter/updateDeptById`, params);
-};
-// 组织机构 接口5 根据组织机构ID得到菜单
-export const getProjectRoleMenuSelected = (params: Meter.ReqGetProjectRoleMenuSelected) => {
-  return http.postForm<Meter.ResGetProjectRoleMenuSelected>(`/meter/getProjectRoleMenuSelected`, params);
-};

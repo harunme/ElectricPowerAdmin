@@ -78,6 +78,19 @@ export namespace Org {
   export interface ResGeleteRegionById {}
   export interface ReqUpdateRegionById {}
   export interface ResUpdateRegionById {}
+
+  export interface ReqGetCompanyTree {}
+  export interface ResGetCompanyTree {}
+  export interface ReqInsertDeptInfo {}
+  export interface ResInsertDeptInfo {}
+  export interface ReqDeleteDeptById {
+    deptid: string;
+  }
+  export interface ResDeleteDeptById {}
+  export interface ReqUpdateDeptById {}
+  export interface ResUpdateDeptById {}
+  export interface ReqGetProjectRoleMenuSelected {}
+  export interface ResGetProjectRoleMenuSelected {}
 }
 
 // 变电站模块
@@ -282,17 +295,6 @@ export namespace Meter {
   export interface ResDeleteGatewayInfo {}
   export interface ReqUpdateGatewayInfo {}
   export interface ResUpdateGatewayInfo {}
-
-  export interface ReqGetCompanyTree {}
-  export interface ResGetCompanyTree {}
-  export interface ReqInsertDeptInfo {}
-  export interface ResInsertDeptInfo {}
-  export interface ReqDeleteDeptById {}
-  export interface ResDeleteDeptById {}
-  export interface ReqUpdateDeptById {}
-  export interface ResUpdateDeptById {}
-  export interface ReqGetProjectRoleMenuSelected {}
-  export interface ResGetProjectRoleMenuSelected {}
 
   export interface ReqGetMeterListByStationId {
     stationid: string;
