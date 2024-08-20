@@ -3,36 +3,41 @@
     <div class="card flex-column">
       <el-form :inline="true" :model="formInline">
         <el-form-item label="开始时间">
-          <el-date-picker type="date" />
-        </el-form-item>
-        <el-form-item label="结束时间">
-          <el-date-picker type="date" />
+          <el-date-picker
+            v-model="formInline.range"
+            type="daterange"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button @click="onSubmit">导出</el-button>
+          <!-- <el-button @click="onSubmit">导出</el-button> -->
           <span>（单位：kW·h）</span>
         </el-form-item>
       </el-form>
-      <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
     </div>
   </div>
 </template>
 
 <script setup lang="tsx" name="EnergyReportOfCollection">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
+import moment from "moment";
 import { ReqPage } from "@/api/interface";
 import { EnergyReportNoHjPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
+const tableRef = ref<any>(null);
+
 const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+  range: [moment().startOf("month").format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")]
 });
 
 const onSubmit = () => {
-  console.log("submit!");
+  tableRef?.value?.resetData();
 };
 
 const columns = [
@@ -46,11 +51,10 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     const { data } = await EnergyReportNoHjPageInfo({
       pageNum,
       pageSize,
-      startTime: "2024-06-01",
-      endTime: "2024-06-23"
+      startTime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endTime: moment(formInline.range[1]).format("YYYY-MM-DD")
     });
-    console.log("fetchData", data.list);
-    resolve(data);
+    resolve({ list: data?.list || [] });
   });
 };
 </script>
