@@ -8,7 +8,7 @@ export const LOGIN_URL: string = "/login";
 
 // 默认主题颜色
 // #1677FF
-export const DEFAULT_PRIMARY: string = "#1677ff";
+export const DEFAULT_PRIMARY: string = "#01ada8";
 
 // 路由白名单地址（本地存在的路由 staticRouter.ts 中）
 export const ROUTER_WHITE_LIST: string[] = ["/500"];

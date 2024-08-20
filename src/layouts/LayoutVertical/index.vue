@@ -1,7 +1,7 @@
 <!-- 纵向布局 -->
 <template>
   <el-container class="layout">
-    <el-aside :width="isCollapse ? '65px' : '210px'">
+    <el-aside :width="isCollapse ? '62px' : '192px'">
       <div class="aside-box">
         <div class="logo flx-center">
           <div class="logo-img">
@@ -12,7 +12,7 @@
         <el-scrollbar>
           <el-menu
             :router="false"
-            :default-active="activeMenu"
+            :default-active="activeMenu.split('/')[1]"
             :collapse="isCollapse"
             :unique-opened="accordion"
             :collapse-transition="false"
@@ -50,6 +50,7 @@ const accordion = computed(() => globalStore.accordion);
 const isCollapse = computed(() => globalStore.isCollapse);
 const menuList = computed(() => authStore.showMenuListGet);
 const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu : route.path) as string);
+console.log("menuList", menuList, activeMenu);
 </script>
 
 <style scoped lang="scss">

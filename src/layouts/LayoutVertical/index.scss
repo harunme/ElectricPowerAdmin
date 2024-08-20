@@ -3,7 +3,6 @@
   height: 100%;
   background-color: rgb(248 248 248 / 40%);
   :deep(.el-aside) {
-    // width: auto;
     background-color: var(--el-menu-bg-color);
     border-right: 1px solid var(--el-aside-border-color);
     transition: width 0.3s ease;
@@ -12,26 +11,20 @@
       flex-direction: column;
       height: 100%;
       color: #ffffff;
-      background-color: #262f3e;
-
-      // background-color: var(--el-color-primary);
+      background-color: #018297;
       .el-scrollbar {
         height: calc(100% - 155px);
         .el-menu {
           width: 100%;
           overflow-x: hidden;
-          background-color: #262f3e;
-
-          // background-color: #018297;
+          background-color: #018297;
           border-right: none;
           .el-sub-menu {
             &:hover {
-              color: #bbbbbb;
-
-              // background-color: rgb(8 139 153 / 64%);
+              color: #ffffff;
             }
             .el-sub-menu__title {
-              color: #bbbbbb;
+              color: #ffffff;
               &:hover {
                 color: #ffffff !important;
               }
@@ -40,13 +33,17 @@
               }
             }
             .el-menu {
+              background-color: #069bab;
               .el-menu-item {
-                color: #bbbbbb;
+                &.is-active {
+                  color: #ffffff !important;
+                  background-color: #236d8c !important;
+                }
 
-                // background-color: #069bab;
+                color: #ffffff;
                 &:hover {
                   color: #ffffff;
-                  background-color: var(--el-color-primary);
+                  background-color: #236d8c !important;
                 }
                 > img {
                   margin-right: 8px;
@@ -71,12 +68,12 @@
           background-color: #ffffff;
           border-radius: 6px;
           img {
-            width: 36px;
+            width: 26px;
             padding-bottom: 2px;
           }
         }
         .logo-text {
-          font-size: 21.5px;
+          font-size: 20px;
           font-weight: bold;
 
           // color: #ffffff;
