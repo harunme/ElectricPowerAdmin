@@ -1,6 +1,6 @@
 <template>
   <div class="SubstationStatus">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="dataVisualize-box">
       <el-row>
         <el-col :span="8">
@@ -303,6 +303,7 @@
 
 <script setup lang="tsx" name="SubstationStatus">
 import { onMounted, ref } from "vue";
+import { getContextStationId } from "@/utils";
 import { ECOption } from "@/components/Charts/config";
 import ECharts from "@/components/Charts/echarts.vue";
 import moment from "moment";
@@ -399,15 +400,23 @@ const SubstationStatus = ref({
 });
 
 onMounted(() => {
+  if (getContextStationId()) {
+    GetSubstationStatus();
+    GetNowAndLastEnergyTotalValue();
+    GetMothJFPG();
+  }
+});
+
+const onContextStationChange = () => {
   GetSubstationStatus();
   GetNowAndLastEnergyTotalValue();
   GetMothJFPG();
-});
+};
 
 const fetchData = async ({ pageSize, pageNum }): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
-      stationid: "000",
+      stationid: getContextStationId(),
       pageNum,
       pageSize
     };
@@ -459,7 +468,7 @@ const showTable = (type: "CommunicationStatusNew" | "OverLimitEventNew" | "Energ
 
 const GetSubstationStatus = async () => {
   const { data }: any = await getSubstationStatus({
-    stationid: "000",
+    stationid: getContextStationId(),
     starttime: moment().format("YYYY-MM-DD HH:mm:ss")
   });
   SubstationStatus.value = data;
@@ -467,7 +476,7 @@ const GetSubstationStatus = async () => {
 
 const GetNowAndLastEnergyTotalValue = async (scheme: "D" | "M" | "Y" = "D") => {
   const { data }: any = await getNowAndLastEnergyTotalValue({
-    stationid: "000",
+    stationid: getContextStationId(),
     starttime: moment().format("YYYY-MM-DD HH:mm:ss"),
     scheme
   });
@@ -476,7 +485,7 @@ const GetNowAndLastEnergyTotalValue = async (scheme: "D" | "M" | "Y" = "D") => {
 
 const GetMothJFPG = async (type = "month") => {
   const { data }: any = await getMothJFPG({
-    stationid: "000"
+    stationid: getContextStationId()
   });
   let legend = [] as any;
   let xAxisData = [] as any;
