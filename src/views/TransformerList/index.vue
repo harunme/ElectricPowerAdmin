@@ -1,15 +1,15 @@
 <template>
-  <div class="flex-column">
-    <TransformerSelect :on-change="selectTransformer" />
+  <div class="flex-column TransformerList">
+    <TransformerSelect :on-change="onContextStationChange" />
     <div class="main-box">
-      <div class="card left-box">
+      <CollapseBox :width="412">
         <CirecleNumber label="高损耗运行" color="rgb(255, 86, 48)" :value="number.red" />
         <CirecleNumber label="正常运行" color="rgb(250, 175, 0)" :value="number.yellow" />
         <CirecleNumber label="经济运行" color="#00a76f" :value="number.green" />
         <div class="pie-box">
           <Pie :data="pieData" />
         </div>
-      </div>
+      </CollapseBox>
       <div class="card table-box">
         <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
       </div>
@@ -25,11 +25,11 @@ import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CirecleNumber from "@/components/Charts/components/CirecleNumber.vue";
 import Pie from "@/components/Charts/components/Pie.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import { localGet } from "@/utils";
+import CollapseBox from "@/components/CollapseBox/index.vue";
+import { getContextStationId } from "@/utils";
 
 const number = ref({ red: 0, yellow: 0, green: 0 });
 const tableRef = ref<any>(null);
-const stationId = ref(localGet("context-transformer")?.stationid);
 
 const pieData = ref([
   {
@@ -76,13 +76,16 @@ const columns = [
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await summary({
+    const params: any = {
       pageNum,
       pageSize,
-      stationid: stationId.value,
       sortParam: "station_id",
       sortTag: "ASC"
-    });
+    };
+    if (getContextStationId()) {
+      params.stationid = getContextStationId();
+    }
+    const { data } = await summary(params);
     number.value = {
       red: data.red,
       yellow: data.yellow,
@@ -95,8 +98,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   });
 };
 
-const selectTransformer = t => {
-  stationId.value = t.stationid;
+const onContextStationChange = () => {
   tableRef?.value?.resetData();
 };
 </script>
