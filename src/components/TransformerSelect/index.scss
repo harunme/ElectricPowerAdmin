@@ -20,12 +20,13 @@
     font-size: 14px;
   }
   .select-modal {
-    height: 62vh;
+    height: 64vh;
     .main {
       display: flex;
       flex-direction: column;
       padding-top: 0;
       padding-bottom: 0;
+      padding-bottom: 12px;
       .form {
         display: flex;
         justify-content: space-between;

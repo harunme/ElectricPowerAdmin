@@ -1,33 +1,40 @@
 <template>
   <div class="TransformerSelect card">
     <span class="label">当前变配电站:</span>
-    <el-tag closable round @close="onSelect" v-if="stationSelected.stationname">{{ stationSelected.stationname }}</el-tag>
+    <el-tag :closable="!disableAll" round @close="onSelect" v-if="stationSelected.stationname">{{
+      stationSelected.stationname
+    }}</el-tag>
     <span v-else class="name">全部站点</span>
     <el-button type="text" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
     <el-dialog v-model="dialogVisible" title="选择变配电站" width="1200" :before-close="handleClose">
       <el-container class="select-modal">
         <el-aside width="280px">
-          <el-tabs stretch>
-            <el-tab-pane label="组织机构">
+          <el-tabs stretch v-model="activeTab">
+            <el-tab-pane name="dept" label="组织机构">
               <el-tree
+                ref="companyTreeRef"
                 default-expand-all
                 style="max-width: 600px"
                 :data="companyTree"
-                show-checkbox
                 node-key="deptid"
-                :default-checked-keys="[100]"
                 :props="companyProps"
+                @node-click="nodeClick"
+                :highlight-current="true"
+                :expand-on-click-node="false"
+                :current-node-key="localGet('context-leftselected')?.node?.deptid"
               />
             </el-tab-pane>
-            <el-tab-pane label="区域">
+            <el-tab-pane name="region" label="区域">
               <el-tree
                 default-expand-all
                 style="max-width: 600px"
                 :data="groupTree"
-                show-checkbox
                 node-key="regionid"
-                :default-checked-keys="[100]"
                 :props="groupProps"
+                @node-click="nodeClick"
+                :highlight-current="true"
+                :expand-on-click-node="false"
+                :current-node-key="localGet('context-leftselected')?.node?.regionid"
               />
             </el-tab-pane>
           </el-tabs>
@@ -36,14 +43,14 @@
           <div class="form">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
               <el-form-item label="关键字">
-                <el-input v-model="formInline.user" placeholder="请输入站点名称或编号" clearable />
+                <el-input style="width: 300px" v-model="formInline.search" placeholder="请输入站点名称或编号" clearable />
               </el-form-item>
               <el-form-item>
-                <el-button @click="onSubmit">查询</el-button>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
               </el-form-item>
             </el-form>
           </div>
-          <PaginationTable :columns="columns" :fetch-data="fetchData">
+          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
             <template #actions="{ row }">
               <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
             </template>
@@ -59,11 +66,15 @@ import { Meter, ReqPage } from "@/api/interface/index";
 import { Search } from "@element-plus/icons-vue";
 import { getCompanyTree, getSubGroupTree } from "@/api/modules/org";
 import { getSubstationListBySubGroupId } from "@/api/modules/meter";
-import { ref, watch, reactive } from "vue";
-import { localSet, localRemove } from "@/utils";
+import { ref, watch, reactive, onMounted } from "vue";
+import { localSet, localRemove, localGet, getContextStationId } from "@/utils";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
+const tableRef = ref<any>(null);
+const companyTreeRef = ref<any>(null);
+const activeTab = ref<any>(localGet("context-leftselected") ? localGet("context-leftselected").active : "dept");
 const props = defineProps<{
+  disableAll?: boolean;
   onChange?: (param: any) => any;
 }>();
 
@@ -72,14 +83,12 @@ const companyTree = ref([] as any);
 // 区域树
 const groupTree = ref([] as any);
 // 选择的变配电站
-const stationSelected = ref({} as Meter.Station);
+const stationSelected = ref(localGet("context-station") || ({} as Meter.Station));
 // 弹框可见
-const dialogVisible = ref(false);
+const dialogVisible = ref(true);
 // 表格检索表单
 const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+  search: ""
 });
 
 const companyProps = { children: "children", label: "deptname" };
@@ -94,14 +103,36 @@ const columns = [
   { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
-const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<Meter.ResGetSubstationListBySubGroupId> => {
+const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
+  const hasSelected = localGet("context-leftselected");
+  // console.log()
+  const params: any = {
+    pageNum,
+    pageSize
+  };
+  if (hasSelected) {
+    if (hasSelected.active === "region") {
+      params.regionid = hasSelected.node.regionid;
+    }
+    if (hasSelected.active === "dept") {
+      params.deptid = hasSelected.node.deptid;
+    }
+  }
+  if (formInline.search) {
+    params.search = formInline.search;
+  }
   return new Promise(async resolve => {
-    const { data } = await getSubstationListBySubGroupId({
-      pageNum,
-      pageSize,
-      deptid: 100
-    });
-    resolve(data);
+    const { data } = await getSubstationListBySubGroupId(params);
+    if (data) {
+      if (props.disableAll && getContextStationId() === undefined) {
+        localSet("context-station", data.list[0]);
+        stationSelected.value = data.list[0];
+        if (props.onChange) props.onChange(data.list[0]);
+      }
+      resolve(data);
+    } else {
+      resolve({ list: [], total: 0 });
+    }
   });
 };
 
@@ -110,19 +141,31 @@ const handleClose = () => {
 };
 
 const onSubmit = () => {
-  console.log("submit!");
+  tableRef?.value?.resetData();
 };
 
 const onSelect = (row?: Meter.Station) => {
   if (row) {
     stationSelected.value = row;
     dialogVisible.value = false;
-    localSet("context-transformer", row);
+    localSet("context-station", row);
   } else {
     stationSelected.value = {} as any;
-    localRemove("context-transformer");
+    localRemove("context-station");
   }
-  if (props.onChange) props.onChange(row);
+  if (props.onChange) {
+    props.onChange(row);
+  }
+};
+
+const nodeClick = (node: any) => {
+  if (node.regionid) {
+    localSet("context-leftselected", { active: "region", node });
+  }
+  if (node.deptid) {
+    localSet("context-leftselected", { active: "dept", node });
+  }
+  tableRef?.value?.resetData();
 };
 
 watch(dialogVisible, async () => {
@@ -133,8 +176,14 @@ watch(dialogVisible, async () => {
     companyTree.value = getCompanyTreeRes?.data;
   }
 });
+onMounted(async () => {
+  const getCompanyTreeRes = await getCompanyTree();
+  const getSubGroupTreeRes = await getSubGroupTree();
+  groupTree.value = getSubGroupTreeRes?.data;
+  companyTree.value = getCompanyTreeRes?.data;
+});
 </script>
-
+<!-- http://111.231.24.91/meter/getSubstationListBySubGroupId -->
 <style scoped lang="scss">
 @import "./index.scss";
 </style>
