@@ -85,7 +85,7 @@ const groupTree = ref([] as any);
 // 选择的变配电站
 const stationSelected = ref(localGet("context-station") || ({} as Meter.Station));
 // 弹框可见
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 // 表格检索表单
 const formInline = reactive({
   search: ""
