@@ -124,11 +124,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
     const { data } = await getSubstationListBySubGroupId(params);
     if (data) {
-      if (props.disableAll && getContextStationId() === undefined) {
-        localSet("context-station", data.list[0]);
-        stationSelected.value = data.list[0];
-        if (props.onChange) props.onChange(data.list[0]);
-      }
+      console.log("getContextStationId", getContextStationId());
+
       resolve(data);
     } else {
       resolve({ list: [], total: 0 });
@@ -177,10 +174,19 @@ watch(dialogVisible, async () => {
   }
 });
 onMounted(async () => {
+  tableRef?.value?.resetData();
   const getCompanyTreeRes = await getCompanyTree();
   const getSubGroupTreeRes = await getSubGroupTree();
+
   groupTree.value = getSubGroupTreeRes?.data;
   companyTree.value = getCompanyTreeRes?.data;
+
+  if (props.disableAll && getContextStationId() === undefined) {
+    const { data } = await getSubstationListBySubGroupId({ pageNum: 1, pageSize: 10 });
+    localSet("context-station", data.list[0]);
+    stationSelected.value = data.list[0];
+    if (props.onChange) props.onChange(data.list[0]);
+  }
 });
 </script>
 <!-- http://111.231.24.91/meter/getSubstationListBySubGroupId -->

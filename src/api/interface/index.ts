@@ -44,8 +44,22 @@ export namespace Login {
 }
 
 export namespace Sys {
-  export interface ReqGetCircuitInfoTree {}
-  export interface ResGetCircuitInfoTree {}
+  export interface ReqGetCircuitInfoTree {
+    stationid: string;
+  }
+  export interface ResGetCircuitInfoTree {
+    circuitid: string;
+    circuitname: string;
+    parentid: string;
+    parentname: string;
+    stationid: string;
+    stationname: string;
+    isincoming: number;
+    isuse: number;
+    meter: string;
+    metername: string;
+    sortno: number;
+  }
   export interface ReqInsertCircuitInfo {
     stationid: string;
     circuitid: string;

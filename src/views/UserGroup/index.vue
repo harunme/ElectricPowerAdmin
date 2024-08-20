@@ -1,6 +1,8 @@
 <template>
   <div class="UserGroup">
-    <CollapseBox />
+    <CollapseBox>
+      <DeptTree :on-change="onDeptTreeChange" />
+    </CollapseBox>
     <div class="card">
       <el-form :inline="true">
         <el-form-item>
@@ -97,6 +99,7 @@ import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
 import { selectUserGroupTree, insertUserGroup, deleteUserGroup, updateUserGroup, getCompanyTree } from "@/api/modules/org";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import DeptTree from "@/components/DeptTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 
 const defaultForm = {
@@ -111,6 +114,7 @@ const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const deptTree = ref<any>([]);
 const userGroupTree = ref<any>([]);
+const deptid = ref<string>(null);
 
 const isEdit = ref(false);
 const userGroupFormRef = ref<FormInstance>();
@@ -142,8 +146,9 @@ const columns: any = [
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
+    if (deptid.value === null) return resolve({ list: [] });
     const { data } = await selectUserGroupTree({
-      deptid: 100
+      deptid: deptid.value
     });
     userGroupTree.value = [{ groupname: "无", groupid: -1 } as any].concat(data);
     resolve({ list: data });
@@ -203,6 +208,11 @@ onMounted(async () => {
   const { data } = await getCompanyTree();
   deptTree.value = data;
 });
+
+const onDeptTreeChange = node => {
+  deptid.value = node.deptid;
+  tableRef?.value?.resetData();
+};
 </script>
 
 <style scoped lang="scss">

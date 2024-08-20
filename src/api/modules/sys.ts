@@ -3,7 +3,7 @@ import { Sys } from "@/api/interface/index";
 
 // 测量回路 接口1 得到所有回路树
 export const getCircuitInfoTree = (params: Sys.ReqGetCircuitInfoTree) => {
-  return http.postForm<Sys.ResGetCircuitInfoTree>(`/sys/getCircuitInfoTree`, params);
+  return http.postForm<Sys.ResGetCircuitInfoTree[]>(`/sys/getCircuitInfoTree`, params);
 };
 // 测量回路 接口2 新增一个回路
 export const insertCircuitInfo = (params: Sys.ReqInsertCircuitInfo) => {

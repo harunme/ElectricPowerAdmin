@@ -5,7 +5,6 @@ import { ElMessage } from "element-plus";
 import { ResultData, Result } from "@/api/interface";
 import { ResultEnum } from "@/enums/httpEnum";
 import { checkStatus } from "./helper/checkStatus";
-import { AxiosCanceler } from "./helper/axiosCancel";
 import { useUserStore } from "@/stores/modules/user";
 import router from "@/routers";
 
@@ -23,8 +22,6 @@ const config = {
   withCredentials: true
 };
 
-const axiosCanceler = new AxiosCanceler();
-
 class RequestHttp {
   service: AxiosInstance;
   public constructor(config: AxiosRequestConfig) {
@@ -39,10 +36,6 @@ class RequestHttp {
     this.service.interceptors.request.use(
       (config: CustomAxiosRequestConfig) => {
         const userStore = useUserStore();
-        // 重复请求不需要取消，在 api 服务中通过指定的第三个参数: { cancel: false } 来控制
-        config.cancel ??= true;
-        config.cancel && axiosCanceler.addPending(config);
-        // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
         config.loading ??= false;
         config.loading && showFullScreenLoading();
         if (config.headers && typeof config.headers.set === "function") {
@@ -65,7 +58,6 @@ class RequestHttp {
         const { data, config } = response;
 
         const userStore = useUserStore();
-        axiosCanceler.removePending(config);
         config.loading && tryHideFullScreenLoading();
         // 登录失效
         if (data.code == ResultEnum.OVERDUE) {

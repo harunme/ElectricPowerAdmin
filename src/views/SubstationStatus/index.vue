@@ -498,13 +498,15 @@ const GetMothJFPG = async (type = "month") => {
       fEpigsum: "谷总电量"
     };
     let total = 0;
-    const pieData = Object.keys(data.JFPGSum).map(key => {
-      total += data.JFPGSum[key];
-      return {
-        value: data.JFPGSum[key],
-        name: NameMap[key]
-      };
-    });
+    const pieData = data
+      ? Object.keys(data?.JFPGSum).map(key => {
+          total += data?.JFPGSum[key];
+          return {
+            value: data?.JFPGSum[key],
+            name: NameMap[key]
+          };
+        })
+      : [];
 
     pieOption.value = {
       title: {
@@ -552,31 +554,31 @@ const GetMothJFPG = async (type = "month") => {
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data.Epijlist.map(({ fEpij }) => Number(fEpij))
+        data: data ? data.Epijlist.map(({ fEpij }) => Number(fEpij)) : []
       },
       {
         name: "正向有功峰电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data.Epiflist.map(({ fEpif }) => Number(fEpif))
+        data: data ? data.Epiflist.map(({ fEpif }) => Number(fEpif)) : []
       },
       {
         name: "正向有功平电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data.Epiplist.map(({ fEpip }) => Number(fEpip))
+        data: data ? data.Epiplist.map(({ fEpip }) => Number(fEpip)) : []
       },
       {
         name: "正向有功谷电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data.Epiglist.map(({ fEpig }) => Number(fEpig))
+        data: data ? data.Epiglist.map(({ fEpig }) => Number(fEpig)) : []
       }
     ];
-    xAxisData = data.Epijlist.map(({ collecttime }) => moment(collecttime).format("MM-DD"));
+    xAxisData = data ? data.Epijlist.map(({ collecttime }) => moment(collecttime).format("MM-DD")) : [];
     legend = ["正向有功尖电量", "正向有功峰电量", "正向有功平电量", "正向有功谷电量"];
     option.value = {
       tooltip: {

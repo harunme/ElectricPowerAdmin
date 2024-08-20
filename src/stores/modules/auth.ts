@@ -54,20 +54,20 @@ const Menu = [
           isAffix: false,
           isKeepAlive: true
         }
-      },
-      {
-        path: "/Dashboard",
-        name: "Dashboard",
-        component: "/dashboard/dataVisualize/index",
-        meta: {
-          title: "看板",
-          isLink: "",
-          isHide: false,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: true
-        }
       }
+      // {
+      //   path: "/Dashboard",
+      //   name: "Dashboard",
+      //   component: "/dashboard/dataVisualize/index",
+      //   meta: {
+      //     title: "看板",
+      //     isLink: "",
+      //     isHide: false,
+      //     isFull: false,
+      //     isAffix: false,
+      //     isKeepAlive: true
+      //   }
+      // }
     ]
   },
   {
