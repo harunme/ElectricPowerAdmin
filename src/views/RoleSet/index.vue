@@ -1,6 +1,8 @@
 <template>
   <div class="RoleSet">
-    <CollapseBox />
+    <CollapseBox>
+      <DeptTree :on-change="onDeptTreeChange" />
+    </CollapseBox>
     <div class="card">
       <el-form :inline="true">
         <el-form-item>
@@ -92,6 +94,7 @@ import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
 import { getRolesListTree, insertRole, deleteRole, updateRole, getCompanyTree } from "@/api/modules/org";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import DeptTree from "@/components/DeptTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 
 const defaultForm = {
@@ -105,6 +108,7 @@ const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const deptTree = ref<any>([]);
 const userRoleTree = ref<any>([]);
+const deptid = ref<string | null>(null);
 
 const isEdit = ref(false);
 const roleFormRef = ref<FormInstance>();
@@ -135,8 +139,10 @@ const columns: any = [
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
+    if (deptid.value === null) return resolve({ list: [] });
+
     const { data } = await getRolesListTree({
-      deptid: 100
+      deptid: deptid.value
     });
     userRoleTree.value = [{ rolename: "无", roleid: -1 } as any].concat(data);
     resolve({ list: data });
@@ -196,6 +202,11 @@ onMounted(async () => {
   const { data } = await getCompanyTree();
   deptTree.value = data;
 });
+
+const onDeptTreeChange = node => {
+  deptid.value = node.deptid;
+  tableRef?.value?.resetData();
+};
 </script>
 
 <style scoped lang="scss">
