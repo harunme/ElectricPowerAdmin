@@ -1,6 +1,6 @@
 <template>
   <div class="SMSLog">
-    <TransformerSelect />
+    <TransformerSelect :on-change="onContextStationChange" />
     <div class="card flex-column">
       <el-form :inline="true" :model="formInline" class="table-form-inline">
         <el-form-item label="开始时间" prop="date">
@@ -27,7 +27,7 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
       </el-form>
-      <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
     </div>
   </div>
 </template>
@@ -39,12 +39,13 @@ import { ReqPage } from "@/api/interface";
 import { GetAlarmEventYcList } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);
 
 const end = new Date();
 const start = new Date();
-start.setTime(start.getTime() - 3600 * 1000 * 24);
+start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
 const formInline = reactive({
   eventtype: "全部",
@@ -73,7 +74,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   const metername = formInline.metername;
   const paramname = formInline.paramname;
   return new Promise(async resolve => {
-    const { data } = await GetAlarmEventYcList({
+    const params: any = {
       pageNum,
       pageSize,
       starttime,
@@ -81,10 +82,17 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       metername,
       eventtype,
       paramname
-    });
+    };
+    if (getContextStationId()) params.stationid = getContextStationId();
+
+    const { data } = await GetAlarmEventYcList(params);
     console.log("fetchData", data.list);
     resolve(data);
   });
+};
+
+const onContextStationChange = () => {
+  tableRef?.value?.resetData();
 };
 </script>
 

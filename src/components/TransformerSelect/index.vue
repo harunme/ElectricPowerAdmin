@@ -93,10 +93,10 @@ const companyProps = { children: "children", label: "deptname" };
 const groupProps = { children: "children", label: "regionname" };
 
 const columns = [
-  { prop: "stationid", label: "ID", width: "80px" },
+  { prop: "stationid", label: "ID", width: 80 },
   { prop: "stationname", label: "变配电站名称" },
-  { prop: "deptname", label: "组织机构" },
-  { prop: "regionname", label: "区域", width: "120px" },
+  { prop: "deptname", label: "组织机构", width: 92 },
+  { prop: "regionname", label: "区域", width: 92 },
   { prop: "address", label: "用户地址" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];

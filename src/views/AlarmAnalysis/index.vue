@@ -167,7 +167,8 @@ const GetSubstationAlarmLogNum = async ({ pageSize, pageNum }: ReqPage): Promise
 const GetMessInfoTypeAlarmLogNum = async (): Promise<any> => {
   return new Promise(async resolve => {
     const colors = ["rgb(44,191,192)", "rgb(166,141,214)", "rgb(75,159,234)", "rgb(224,154,6)"];
-    const { data } = await getMessInfoTypeAlarmLogNum();
+    let { data } = await getMessInfoTypeAlarmLogNum();
+    if (data === null) data = [];
     pieData.value = data.map(({ messinfotypeexplain, todaylognum }, index) => ({
       value: todaylognum,
       name: messinfotypeexplain,

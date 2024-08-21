@@ -1,6 +1,6 @@
 <template>
   <div class="PlatformRunLog">
-    <TransformerSelect />
+    <TransformerSelect :on-change="onContextStationChange" />
     <div class="card flex-column table-box">
       <el-form :inline="true" :model="formInline" class="table-form-inline">
         <el-form-item label="开始时间" prop="date">
@@ -25,10 +25,10 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button @click="onExport">导出</el-button>
+          <!-- <el-button @click="onExport">导出</el-button> -->
         </el-form-item>
       </el-form>
-      <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
     </div>
   </div>
 </template>
@@ -40,12 +40,13 @@ import { ReqPage } from "@/api/interface";
 import { PlatformRunLogPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import moment from "moment";
+import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);
 
 const end = new Date();
 const start = new Date();
-start.setTime(start.getTime() - 3600 * 1000 * 24);
+start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
 const formInline = reactive({
   meterid: "",
@@ -57,9 +58,9 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
-const onExport = () => {
-  console.log("onExport");
-};
+// const onExport = () => {
+//   console.log("onExport");
+// };
 
 const columns = [
   { prop: "stationname", label: "变配电站名称", width: 300 },
@@ -76,16 +77,23 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   const eventtype = formInline.eventtype;
   const meterid = formInline.meterid;
   return new Promise(async resolve => {
-    const { data } = await PlatformRunLogPageInfo({
+    const params: any = {
       pageNum,
       pageSize,
       starttime,
       endtime,
       eventtype,
       meterid
-    });
+    };
+    if (getContextStationId()) params.stationid = getContextStationId();
+
+    const { data } = await PlatformRunLogPageInfo(params);
     resolve(data);
   });
+};
+
+const onContextStationChange = () => {
+  tableRef?.value?.resetData();
 };
 </script>
 
