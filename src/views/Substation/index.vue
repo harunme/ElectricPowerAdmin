@@ -1,7 +1,34 @@
 <template>
   <div class="flex-column Substation">
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <el-tabs stretch>
+          <el-tab-pane label="组织机构">
+            <el-tree
+              default-expand-all
+              style="max-width: 600px"
+              :data="deptTree"
+              node-key="deptid"
+              :props="deptProps"
+              @node-click="nodeClick"
+              :highlight-current="true"
+              :expand-on-click-node="false"
+            />
+          </el-tab-pane>
+          <el-tab-pane label="区域">
+            <el-tree
+              default-expand-all
+              style="max-width: 600px"
+              :data="regionTree"
+              node-key="regionid"
+              :props="regionProps"
+              @node-click="nodeClick"
+              :highlight-current="true"
+              :expand-on-click-node="false"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </CollapseBox>
       <div class="card table-box flex-column">
         <div class="action-box">
           <el-form :inline="true" :model="formInline" class="table-form-inline">
@@ -13,7 +40,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="priceSetVisible = true">电价设置</el-button>
+              <!-- <el-button type="primary" @click="priceSetVisible = true">电价设置</el-button> -->
               <!-- <el-button @click="onSubmit">巡检配置</el-button>
               <el-button @click="onSubmit">现场图片</el-button>
               <el-button @click="onSubmit">读取工程</el-button> -->
@@ -267,6 +294,11 @@ const tableRef = ref<any>(null);
 const deptTree = ref([] as any);
 // 区域树
 const regionTree = ref([] as any);
+const deptProps = { children: "children", label: "deptname" };
+const regionProps = { children: "children", label: "regionname" };
+
+const deptid = ref<number | null>(null);
+const regionid = ref<number | null>(null);
 
 const form = ref<Meter.ReqInsertSubstationInfo>(defaultForm);
 
@@ -298,29 +330,36 @@ const rules = reactive<FormRules<Meter.ReqInsertSubstationInfo>>({
 });
 
 const columns = [
-  { prop: "stationid", label: "变配电站编号" },
+  { prop: "stationid", label: "编号", width: 72 },
   { prop: "stationname", label: "变配电站名称" },
-  { prop: "deptname", label: "组织机构" },
-  { prop: "regionname", label: "区域" },
-  { prop: "customDom", slotName: "voltagelevel", label: "供电电压等级" },
-  { prop: "customDom", slotName: "voltageoftrans", label: "变电电压等级" },
+  { prop: "deptname", label: "组织机构", width: 132 },
+  { prop: "regionname", label: "区域", width: 132 },
+  { prop: "customDom", slotName: "voltagelevel", label: "供电电压等级", width: 132 },
+  { prop: "customDom", slotName: "voltageoftrans", label: "变电电压等级", width: 132 },
   { prop: "address", label: "地址" },
-  { prop: "installedcapacity", label: "变压器容量" },
-  { prop: "voltagestep", label: "最大需量" },
-  { prop: "transformernum", label: "变压器数量" },
-  { prop: "head", label: "负责人" },
-  { prop: "telephone", label: "负责人手机号" },
+  { prop: "installedcapacity", label: "变压器容量", width: 132 },
+  { prop: "voltagestep", label: "最大需量", width: 132 },
+  { prop: "transformernum", label: "变压器数量", width: 132 },
+  { prop: "head", label: "负责人", width: 132 },
+  { prop: "telephone", label: "负责人手机号", width: 132 },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const fetchData = async ({ pageNum, pageSize }): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await getSubstationPageInfo({
+    const params: any = {
       pageNum,
       pageSize,
       search: formInline.search
       // deptid  或 regionid
-    });
+    };
+    if (deptid.value) {
+      params.deptid = deptid.value;
+    }
+    if (regionid.value) {
+      params.regionid = regionid.value;
+    }
+    const { data } = await getSubstationPageInfo(params);
     resolve({ total: data?.total, list: data?.list });
   });
 };
@@ -330,6 +369,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const { deptid, regionid, ...params } = form.value;
+      console.log(params, "epitimelist");
       if (isEdit.value) {
         const res = await updateSubstationInfoById({ ...params, deptid: Number(deptid), regionid: Number(regionid) });
         if (res.code === 1) {
@@ -389,6 +429,18 @@ onMounted(async () => {
   regionTree.value = getSubGroupTreeRes?.data;
   deptTree.value = getCompanyTreeRes?.data;
 });
+
+const nodeClick = (node: any) => {
+  if (node.regionid) {
+    regionid.value = node.regionid;
+    deptid.value = null;
+  }
+  if (node.deptid) {
+    deptid.value = node.deptid;
+    regionid.value = null;
+  }
+  tableRef?.value?.resetData();
+};
 </script>
 
 <style scoped lang="scss">

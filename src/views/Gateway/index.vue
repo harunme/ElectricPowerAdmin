@@ -1,6 +1,6 @@
 <template>
   <div class="Gateway">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -8,7 +8,7 @@
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
           <template #useflag="{ row }">
             <span>{{ gatewayStateList.find(item => item.state === row.useflag)?.stateexplain }}</span>
           </template>
@@ -41,8 +41,8 @@
       >
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="变配电站名称" prop="stationname">
-              <span>TEST</span>
+            <el-form-item label="变配电站名称">
+              <span>{{ getContextStationName() }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -104,6 +104,7 @@ import {
   deleteGatewayInfo,
   updateGatewayInfo
 } from "@/api/modules/meter";
+import { getContextStationId, getContextStationName } from "@/utils";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
@@ -119,7 +120,6 @@ const defaultForm = {
 
 const gatewayStateList = ref<any>([]);
 const gatewayDev = ref<any>([]);
-const selectedRows = ref<any>([]);
 
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
@@ -159,14 +159,14 @@ const columns: any = [
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const { data } = await getGatewayInfo({
-      stationid: "000"
+      stationid: getContextStationId()
     });
     resolve({ list: data });
   });
 };
 
 const randomId = async () => {
-  const { data } = await randomChannelId({ stationid: "000" });
+  const { data } = await randomChannelId({ stationid: getContextStationId() });
   form.value.name = data.name;
 };
 
@@ -176,7 +176,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const params = form.value;
       if (isEdit.value) {
-        const res = await updateGatewayInfo({ ...params, stationid: "000" });
+        const res = await updateGatewayInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -185,7 +185,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
         formVisible.value = false;
       } else {
-        const res = await insertGatewayInfo({ ...params, stationid: "000" });
+        const res = await insertGatewayInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -209,7 +209,7 @@ const updateTransformer = async ({ stationname, ...row }) => {
 };
 
 const deleteGateway = async (name: string) => {
-  const res = await deleteGatewayInfo({ name, stationid: "000" });
+  const res = await deleteGatewayInfo({ name, stationid: getContextStationId() });
   if (res.code === 1) {
     tableRef?.value?.resetData();
     ElMessage.success({ message: res.msg });
@@ -226,8 +226,8 @@ onMounted(async () => {
   gatewayDev.value = dev.data;
 });
 
-const handleSelectionChange = rows => {
-  selectedRows.value = rows;
+const onContextStationChange = async () => {
+  tableRef?.value?.resetData();
 };
 </script>
 

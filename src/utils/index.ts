@@ -299,3 +299,8 @@ export function getContextStationId() {
   const context = localGet("context-station");
   return context?.stationid;
 }
+
+export function getContextStationName() {
+  const context = localGet("context-station");
+  return context?.stationname;
+}

@@ -68,6 +68,7 @@ const props = defineProps<{
   fetchData: any;
   selectionChange?: (param: any[]) => void;
   rowKey?: any;
+  fetchOnMounted?: any;
   // fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
 }>();
 
@@ -95,8 +96,8 @@ const refreshData = async () => {
     pageSize: pageSize.value,
     pageNum: currentPage.value
   });
-  tableData.value = res.list || [];
-  total.value = res.total;
+  tableData.value = res?.list || [];
+  total.value = res?.total;
   loading.value = false;
 };
 
@@ -109,7 +110,7 @@ const resetData = async () => {
 
 // 在组件创建后获取数据
 onMounted(() => {
-  refreshData();
+  if (props.fetchOnMounted !== false) refreshData();
 });
 
 defineExpose({

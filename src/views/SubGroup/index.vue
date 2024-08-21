@@ -1,6 +1,5 @@
 <template>
   <div class="SubGroup">
-    <TransformerSelect />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -71,7 +70,6 @@ import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
 import { getSubGroupTree, insertRegionInfo, deleteRegionById, updateRegionById } from "@/api/modules/org";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
 
 const defaultForm = {
   regionname: "",

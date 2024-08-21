@@ -1,6 +1,6 @@
 <template>
   <div class="Meter">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -9,7 +9,13 @@
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
+        <PaginationTable
+          ref="tableRef"
+          :fetch-on-mounted="false"
+          :columns="columns"
+          :fetch-data="fetchData"
+          :selection-change="handleSelectionChange"
+        >
           <template #useflag="{ row }">
             <span>{{ meterStateList.find(item => item.state === row.useflag)?.stateexplain }}</span>
           </template>
@@ -42,8 +48,8 @@
       >
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="变配电站名称" prop="stationname">
-              <span>TEST</span>
+            <el-form-item label="变配电站名称">
+              <span>{{ getContextStationName() }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -149,6 +155,7 @@ import {
 } from "@/api/modules/meter";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import { getContextStationId, getContextStationName } from "@/utils";
 
 const defaultForm = {
   meterdesc: "",
@@ -193,6 +200,7 @@ const rules = reactive<FormRules<Meter.ReqInsertMeterUseInfo>>({
 });
 
 const addMeter = () => {
+  if (gatewayList.value.length === 0) return ElMessage.warning({ message: "当前站点无通道，请先配置通道" });
   formVisible.value = true;
   meterFormRef.value?.resetFields();
   setTimeout(() => meterFormRef.value?.clearValidate());
@@ -211,17 +219,22 @@ const columns: any = [
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await getMeterUseInfoList({
+    const params: any = {
       pageNum,
-      pageSize,
-      stationid: "000"
-    });
-    resolve(data);
+      pageSize
+    };
+    if (!getContextStationId()) {
+      resolve({ list: [], total: 0 });
+    } else {
+      params.stationid = getContextStationId();
+      const { data } = await getMeterUseInfoList(params);
+      resolve(data);
+    }
   });
 };
 
 const randomId = async () => {
-  const { data } = await randomMeterId({ stationid: "000" });
+  const { data } = await randomMeterId({ stationid: getContextStationId() });
   form.value.metercode = data.metercode;
 };
 
@@ -231,7 +244,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const params = form.value;
       if (isEdit.value) {
-        const res = await updateMeterUseInfo({ ...params, stationid: "000" });
+        const res = await updateMeterUseInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -240,7 +253,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
         formVisible.value = false;
       } else {
-        const res = await insertMeterUseInfo({ ...params, stationid: "000" });
+        const res = await insertMeterUseInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -300,11 +313,6 @@ onMounted(async () => {
 
   const type = await getMeterTypeList();
   meterTypeList.value = type.data;
-
-  const gateway = await getGatewayInfo({
-    stationid: "000"
-  });
-  gatewayList.value = gateway.data;
 });
 
 const handleSelectionChange = rows => {
@@ -317,6 +325,17 @@ const updateMeters = () => {
   }
   statusFormVisible.value = true;
   setTimeout(() => meterStatusFormRef.value?.resetFields());
+};
+
+const onContextStationChange = async () => {
+  const gateway = await getGatewayInfo({
+    stationid: getContextStationId()
+  });
+  if (!gateway.data) {
+    ElMessage.warning({ message: gateway.msg });
+  }
+  gatewayList.value = gateway.data || [];
+  tableRef?.value?.resetData();
 };
 </script>
 

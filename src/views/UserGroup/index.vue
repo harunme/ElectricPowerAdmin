@@ -114,7 +114,7 @@ const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const deptTree = ref<any>([]);
 const userGroupTree = ref<any>([]);
-const deptid = ref<string>(null);
+const deptid = ref<string | null>(null);
 
 const isEdit = ref(false);
 const userGroupFormRef = ref<FormInstance>();

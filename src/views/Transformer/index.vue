@@ -1,6 +1,6 @@
 <template>
   <div class="Transformer">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -8,7 +8,7 @@
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable :fetch-on-mounted="false" ref="tableRef" :columns="columns" :fetch-data="fetchData">
           <template #actions="{ row }">
             <a class="mini-btn" @click="updateTransformer(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteTransformer(row.transformerid)">
@@ -35,8 +35,8 @@
       >
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="变配电站名称" prop="stationname">
-              <span>TEST</span>
+            <el-form-item label="变配电站名称">
+              <span>{{ getContextStationName() }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="tsx" name="Transformer">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import {
   getTransformerInfo,
@@ -107,6 +107,7 @@ import { Meter } from "@/api/interface/index";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
+import { getContextStationId, getContextStationName } from "@/utils";
 
 const defaultForm = {
   transformerid: "",
@@ -146,10 +147,14 @@ const rules = reactive<FormRules<Meter.ReqInsertTransformerInfo>>({
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await getTransformerInfo({
-      stationid: "000"
-    });
-    resolve({ list: data });
+    if (!getContextStationId()) {
+      resolve({ list: [] });
+    } else {
+      const { data } = await getTransformerInfo({
+        stationid: getContextStationId()
+      });
+      resolve({ list: data });
+    }
   });
 };
 
@@ -160,7 +165,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       const { meter, ...params } = form.value;
       params.meter = meter.join(",");
       if (isEdit.value) {
-        const res = await updateTransformerInfoById({ ...params, stationid: "000" });
+        const res = await updateTransformerInfoById({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -169,7 +174,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
         formVisible.value = false;
       } else {
-        const res = await insertTransformerInfo({ ...params, stationid: "000" });
+        const res = await insertTransformerInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -185,11 +190,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 };
 
 const randomId = async () => {
-  const { data } = await randomTransformerId({ stationid: "000" });
+  const { data } = await randomTransformerId({ stationid: getContextStationId() });
   form.value.transformerid = data.transformerid;
 };
 
 const addTransformer = () => {
+  if (meterList.value.length === 0) return ElMessage.warning({ message: "当前站点无仪表，请先配置仪表" });
   formVisible.value = true;
   transformerFormRef.value?.resetFields();
   setTimeout(() => transformerFormRef.value?.clearValidate());
@@ -212,12 +218,16 @@ const deleteTransformer = async (transformerid: string) => {
   }
 };
 
-onMounted(async () => {
-  const { data } = await getMeterListByStationId({
-    stationid: "000"
+const onContextStationChange = async () => {
+  const { data, msg } = await getMeterListByStationId({
+    stationid: getContextStationId()
   });
-  meterList.value = data;
-});
+  if (!data) {
+    ElMessage.warning({ message: msg });
+  }
+  meterList.value = data || [];
+  tableRef?.value?.resetData();
+};
 </script>
 
 <style scoped lang="scss">

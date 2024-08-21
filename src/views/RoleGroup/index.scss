@@ -4,6 +4,9 @@
 
   // border: 1px solid;
   height: 100%;
+  .content {
+    height: 100%;
+  }
   .table-box {
     height: 100%;
     :deep(.el-table .el-table__body td .cell > span:empty::after) {

@@ -8,11 +8,10 @@
     <el-button type="text" :icon="Search" round @click="dialogVisible = true">选择变配电站</el-button>
     <el-dialog v-model="dialogVisible" title="选择变配电站" width="1200" :before-close="handleClose">
       <el-container class="select-modal">
-        <el-aside width="280px">
+        <el-aside width="280px" style="padding: 0 16px">
           <el-tabs stretch v-model="activeTab">
             <el-tab-pane name="dept" label="组织机构">
               <el-tree
-                ref="companyTreeRef"
                 default-expand-all
                 style="max-width: 600px"
                 :data="companyTree"
@@ -71,7 +70,6 @@ import { localSet, localRemove, localGet, getContextStationId } from "@/utils";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const tableRef = ref<any>(null);
-const companyTreeRef = ref<any>(null);
 const activeTab = ref<any>(localGet("context-leftselected") ? localGet("context-leftselected").active : "dept");
 const props = defineProps<{
   disableAll?: boolean;
@@ -185,8 +183,9 @@ onMounted(async () => {
     const { data } = await getSubstationListBySubGroupId({ pageNum: 1, pageSize: 10 });
     localSet("context-station", data.list[0]);
     stationSelected.value = data.list[0];
-    if (props.onChange) props.onChange(data.list[0]);
   }
+
+  if (props.onChange) props.onChange(getContextStationId());
 });
 </script>
 <!-- http://111.231.24.91/meter/getSubstationListBySubGroupId -->

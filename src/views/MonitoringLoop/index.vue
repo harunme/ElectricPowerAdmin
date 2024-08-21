@@ -1,6 +1,6 @@
 <template>
   <div class="MonitoringLoop">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -35,8 +35,8 @@
       >
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="变配电站名称" prop="stationname">
-              <span>TEST</span>
+            <el-form-item label="变配电站名称">
+              <span>{{ getContextStationName() }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -96,6 +96,7 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Sys } from "@/api/interface/index";
+import { getContextStationId, getContextStationName } from "@/utils";
 import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById, updateCircuitById } from "@/api/modules/sys";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
@@ -146,7 +147,7 @@ const columns: any = [
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const { data } = await getCircuitInfoTree({
-      stationid: "000"
+      stationid: getContextStationId()
     });
     circuitInfoTree.value = [{ circuitname: "无", circuitid: -1 } as any].concat(data);
     resolve({ list: data });
@@ -154,7 +155,7 @@ const fetchData = async (): Promise<any> => {
 };
 
 const randomId = async () => {
-  const { data } = await randomCircuitId({ stationid: "000" });
+  const { data } = await randomCircuitId({ stationid: getContextStationId() });
   form.value.circuitid = data.circuitid;
 };
 
@@ -168,7 +169,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       else params.isincoming = 0;
 
       if (isEdit.value) {
-        const res = await updateCircuitById({ ...params, stationid: "000" });
+        const res = await updateCircuitById({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -177,7 +178,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
         formVisible.value = false;
       } else {
-        const res = await insertCircuitInfo({ ...params, stationid: "000" });
+        const res = await insertCircuitInfo({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });
           tableRef?.value?.resetData();
@@ -201,13 +202,17 @@ const updateCircuit = async row => {
 };
 
 const deleteCircuit = async (circuitid: string) => {
-  const res = await deleteCircuitById({ circuitid, stationid: "000" });
+  const res = await deleteCircuitById({ circuitid, stationid: getContextStationId() });
   if (res.code === 1) {
     tableRef?.value?.resetData();
     ElMessage.success({ message: res.msg });
   } else {
     ElMessage.error({ message: res.msg });
   }
+};
+
+const onContextStationChange = async () => {
+  tableRef?.value?.resetData();
 };
 </script>
 
