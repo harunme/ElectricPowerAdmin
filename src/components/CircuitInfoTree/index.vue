@@ -2,8 +2,8 @@
   <div class="CircuitInfoTree" v-loading="loading">
     <el-input v-model="search" style="width: 100%; margin-bottom: 8px" placeholder="输入关键字过滤" :suffix-icon="Search" />
     <div style="display: flex; justify-content: center; margin-bottom: 8px">
-      <el-checkbox label="级联选择" v-model="checkedCascade" />
-      <el-checkbox label="全部" v-model="checkedAll" @change="onCheckAll" />
+      <el-checkbox v-if="isMultiple && showCascade" label="级联选择" v-model="checkedCascade" />
+      <el-checkbox v-if="isMultiple && showAll" label="全部" v-model="checkedAll" @change="onCheckAll" />
     </div>
     <el-tree
       ref="treeRef"
@@ -54,13 +54,16 @@ const loadTree = async () => {
 };
 onMounted(async () => {
   await loadTree();
-  onCheckAll(true);
+  if (tree.value.length) {
+    if (props.isMultiple) onCheckAll(true);
+    else nodeClick(tree.value[0]);
+  }
 });
 
 const nodeClick = (node: any) => {
   if (props.isMultiple) return false;
   if (props.onChange) {
-    props.onChange([node]);
+    props.onChange([node.circuitid]);
   }
 };
 

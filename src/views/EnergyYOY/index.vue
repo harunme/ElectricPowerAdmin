@@ -1,8 +1,11 @@
 <template>
   <div class="EnergyYOY flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
+
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -26,24 +29,29 @@
           <ECharts v-if="option !== null" :option="option" />
         </div>
         <div class="table-box">
-          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+          <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="EnergyYOY">
 import { ref, reactive } from "vue";
 import moment from "moment";
+import { ElMessage } from "element-plus";
 import PaginationTable from "@/components/PaginationTable/index.vue";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { getMonthMom } from "@/api/modules/main";
 import ECharts from "@/components/Charts/echarts.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
+import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 const option = ref<any>(null);
+const circuit = ref<any>(null);
 
 const formInline = reactive({
   starttime: moment().format("YYYY")
@@ -70,8 +78,8 @@ const clickNext = () => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
-      stationid: "000",
-      circuitid: "000",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       starttime: `${formInline.starttime}-01-01`
     };
     const { data } = await getMonthMom(params);
@@ -107,7 +115,7 @@ const fetchData = async (): Promise<any> => {
       xAxis: [
         {
           type: "category",
-          data: data.PowerValue.map(({ collecttime }) => collecttime),
+          data: data?.PowerValue?.map(({ collecttime }) => collecttime) || [],
           axisPointer: {
             type: "shadow"
           }
@@ -123,17 +131,27 @@ const fetchData = async (): Promise<any> => {
         {
           name: "本期",
           type: "bar",
-          data: data.PowerValue.map(({ predata }) => Number(predata))
+          data: data?.PowerValue?.map(({ predata }) => Number(predata)) || []
         },
         {
           name: "同期",
           type: "bar",
-          data: data.PowerValue.map(({ data }) => Number(data))
+          data: data?.PowerValue?.map(({ data }) => Number(data)) || []
         }
       ]
     };
-    resolve({ list: data.PowerValue });
+    resolve({ list: data?.PowerValue || [] });
   });
+};
+
+const onContextStationChange = async () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 

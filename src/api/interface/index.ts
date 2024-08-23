@@ -699,7 +699,7 @@ export namespace Main {
 
   export interface ReqGetMonthMom {
     stationid: string;
-    circuitid: string;
+    circuitids: string;
     starttime: string;
   }
 

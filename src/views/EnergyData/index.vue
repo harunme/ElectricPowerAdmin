@@ -195,7 +195,7 @@ const fetchData = async (): Promise<any> => {
     ElectricityFeesNoHjResponse.value = data?.EnergyReport;
     let _columns: any = [];
     const list =
-      data?.EnergyReport.map((row: any, index) => {
+      data?.EnergyReport?.map((row: any, index) => {
         let data: any = {};
         let total: number = 0;
         if (index === 0) {
