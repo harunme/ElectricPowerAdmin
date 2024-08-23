@@ -1,8 +1,16 @@
 <template>
   <div class="EnergyData flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
+      </CollapseBox>
       <div class="card content-box">
         <el-tabs v-model="activeTab" @tab-click="tabClick">
           <el-tab-pane label="日报" name="D"> </el-tab-pane>
@@ -78,7 +86,7 @@
               <el-button type="primary" @click="onSubmit">查询</el-button>
               <el-button type="primary" @click="showChart">图表</el-button>
               <el-button type="primary" @click="showPie">饼图</el-button>
-              <el-button type="primary">导出</el-button>
+              <!-- <el-button type="primary">导出</el-button> -->
               <div style="margin-left: 8px; color: var(--el-text-color-regular)">(*为进线回路)</div>
             </el-form-item>
           </el-form>
@@ -87,7 +95,13 @@
               <ECharts v-if="option !== null" :option="option" />
             </div>
           </el-dialog>
-          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
+          <PaginationTable
+            ref="tableRef"
+            :fetch-on-mounted="false"
+            :columns="columns"
+            :fetch-data="fetchData"
+            :selection-change="handleSelectionChange"
+          >
           </PaginationTable>
         </div>
       </div>
@@ -101,13 +115,16 @@ import { ElMessage } from "element-plus";
 import moment from "moment";
 import { ElectricityFeesNoHj } from "@/api/modules/main";
 import CollapseBox from "@/components/CollapseBox/index.vue";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
+import { getContextStationId } from "@/utils";
 
-// const tree = ref([] as any);
+const circuit = ref<any>(null);
 const option = ref<any>(null);
 const tableRef = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 const dialogVisible = ref(false);
 const ElectricityFeesNoHjResponse = ref<any>(null);
 const activeTab = ref<"D" | "M" | "Y">("D");
@@ -169,40 +186,40 @@ const fetchData = async (): Promise<any> => {
       endtime = `${lineForm.date}-${lineForm.endtime < 10 ? `0${lineForm.endtime}` : lineForm.endtime}`;
     }
     const { data } = await ElectricityFeesNoHj({
-      stationid: "000",
-      circuitids: "000",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       scheme: activeTab.value,
       starttime,
       endtime
     });
     ElectricityFeesNoHjResponse.value = data?.EnergyReport;
     let _columns: any = [];
-    const list = data?.EnergyReport.map((row: any, index) => {
-      let data: any = {};
-      let total: number = 0;
-      if (index === 0) {
-        data.circuitname = row[0].circuitname;
-        _columns.push({ prop: "circuitname", label: "回路名称 / kW·h", width: 160 });
-        row.forEach(item => {
-          _columns.push({
-            prop: item.collecttime,
-            label: item.collecttime
+    const list =
+      data?.EnergyReport.map((row: any, index) => {
+        let data: any = {};
+        let total: number = 0;
+        if (index === 0) {
+          data.circuitname = row[0].circuitname;
+          _columns.push({ prop: "circuitname", label: "回路名称 / kW·h", width: 160 });
+          row.forEach(item => {
+            _columns.push({
+              prop: item.collecttime,
+              label: item.collecttime
+            });
+            data[item.collecttime] = item.data;
+            total += item.data;
           });
-          data[item.collecttime] = item.data;
-          total += item.data;
-        });
-        _columns.push({ prop: "total", label: "合计" });
-        data.total = total;
-      }
-      return data;
-    });
+          _columns.push({ prop: "total", label: "合计" });
+          data.total = total;
+        }
+        return data;
+      }) || [];
     columns.value = _columns;
     resolve({ list });
   });
 };
 
 const handleSelectionChange = rows => {
-  console.log("handleSelectionChange1111111", rows);
   selectedRows.value = rows;
 };
 
@@ -271,6 +288,16 @@ const showPie = () => {
 };
 
 const onSubmit = () => {
+  tableRef?.value?.resetData();
+};
+
+const onContextStationChange = async () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
   tableRef?.value?.resetData();
 };
 </script>

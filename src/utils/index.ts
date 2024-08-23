@@ -297,7 +297,7 @@ export function getParameterByName(name, url = window.location.href) {
 
 export function getContextStationId() {
   const context = localGet("context-station");
-  return context?.stationid;
+  return context?.stationid ? String(context?.stationid) : "";
 }
 
 export function getContextStationName() {
