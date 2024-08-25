@@ -7,25 +7,15 @@
       width: 100%;
       height: calc(100% - 54px);
       padding-top: 6px;
-
-      // border: 1px solid;
       .el-tabs {
-        // border: 1px solid;
         display: flex;
         flex-direction: column;
         height: calc(100% - 50px);
         :deep(.el-tabs__content) {
-          // border: 1px solid red;
           flex: 1;
           .chart-box {
-            height: 100%;
+            height: calc(100% - 55px);
           }
-
-          // .content-pane {
-          //   border: 1px solid;
-          //   height: 100%;
-
-          // }
         }
       }
     }

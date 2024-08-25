@@ -1,10 +1,12 @@
 <template>
   <div class="ElectricData flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card content-box">
-        <el-tabs v-model="activeTab">
+        <el-tabs v-model="activeTab" @tab-click="tabClick">
           <el-tab-pane label="日原始数据" :name="0"> </el-tab-pane>
           <el-tab-pane label="逐日极值数据" lazy :name="1"> </el-tab-pane>
         </el-tabs>
@@ -31,13 +33,13 @@
               <el-button type="primary" @click="onSubmit">查询</el-button>
             </el-form-item>
           </el-form>
-
           <el-tabs v-if="activeTab === 0">
             <el-tab-pane label="图表" class="chart-box">
               <ECharts v-if="option !== null" :option="option" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
-              <PaginationTable ref="tableRef1" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+              <PaginationTable ref="tableRef1" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
+              </PaginationTable>
             </el-tab-pane>
           </el-tabs>
           <el-tabs v-if="activeTab === 1">
@@ -45,7 +47,8 @@
               <ECharts v-if="option !== null" :option="option" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
-              <PaginationTable ref="tableRef2" :columns="columns2" :fetch-data="fetchData"> </PaginationTable>
+              <PaginationTable ref="tableRef2" :fetch-on-mounted="false" :columns="columns2" :fetch-data="fetchData">
+              </PaginationTable>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -59,11 +62,14 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import { ElectricDataMonth, ElectricDataPaging } from "@/api/modules/main";
 import CollapseBox from "@/components/CollapseBox/index.vue";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import { ReqPage } from "@/api/interface/index";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
 import { columnsConfig, phaseConfig, energyKinds } from "./config";
 
 const size = ref<"default" | "large" | "small">("default");
@@ -74,13 +80,15 @@ const formInline = reactive({
 });
 const tableRef1 = ref<any>(null);
 const tableRef2 = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 const option = ref<ECOption | null>(null);
 const columns = ref<any>([]);
 const activeTab = ref<0 | 1>(0);
+const circuit = ref<any>(null);
 
 const columns2 = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "日期" },
+  { prop: "circuitname", label: "回路名称" },
+  { prop: "collecttime", label: "日期" },
   {
     label: "总有功功率(kW)",
     children: [
@@ -107,8 +115,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
     columns.value = columnsConfig[formInline.energykind];
     const ElectricDataPagingParams: any = {
-      stationid: "000",
-      circuitids: "000",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       pageNum,
       pageSize,
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
@@ -118,14 +126,14 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     };
 
     const ElectricDataMonthParams: any = {
-      stationid: "000",
-      circuitids: "000",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
       energykind: formInline.energykind,
       phase: phaseConfig[formInline.energykind]
     };
-
+    // http://111.231.24.91/main/ElecMaxMinAvgValue
     const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
     const { data: ElectricDataMonthData } = await ElectricDataMonth(ElectricDataMonthParams);
     option.value = {
@@ -158,7 +166,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       xAxis: {
         type: "category",
         boundaryGap: false,
-        data: ElectricDataMonthData.times
+        data: ElectricDataMonthData?.times
       },
       yAxis: {
         type: "value"
@@ -169,10 +177,10 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
           name: key,
           type: "line",
           stack: "Total",
-          data: ElectricDataMonthData[key].map(Number)
+          data: ElectricDataMonthData ? ElectricDataMonthData[key].map(Number) : []
         }))
     };
-    resolve({ list: ElectricDataPagingData.list, total: ElectricDataPagingData.total });
+    resolve({ list: ElectricDataPagingData?.list, total: ElectricDataPagingData?.total });
   });
 };
 
@@ -213,6 +221,20 @@ const onSubmit = () => {
   if (activeTab.value === 1) {
     tableRef2?.value?.resetData();
   }
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  onSubmit();
+};
+
+const tabClick = () => {
+  onSubmit();
 };
 </script>
 
