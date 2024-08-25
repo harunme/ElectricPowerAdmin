@@ -1,20 +1,22 @@
 <template>
   <div class="EnergyMOM flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card content-box">
-        <el-tabs>
+        <el-tabs @tab-click="tabClick">
           <el-tab-pane lazy label="按日" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
                 <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary">导出</el-button>
+                <!-- <el-button type="primary">导出</el-button> -->
               </el-form-item>
             </el-form>
-            <PaginationTable ref="tableRef" :columns="dayColumns" :fetch-data="fetchData">
+            <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="dayColumns" :fetch-data="fetchData">
               <template #actions="{ row }">
                 <el-button link size="small" @click="showChart(row)">查看图表</el-button>
               </template>
@@ -26,10 +28,10 @@
                 <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary">导出</el-button>
+                <!-- <el-button type="primary">导出</el-button> -->
               </el-form-item>
             </el-form>
-            <PaginationTable ref="tableRef" :columns="weekColumns" :fetch-data="fetchData">
+            <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="weekColumns" :fetch-data="fetchData">
               <template #actions="">
                 <el-button link size="small">查看图表</el-button>
               </template>
@@ -41,10 +43,10 @@
                 <el-date-picker v-model="formInline.starttime" type="month" @change="onTimeChange" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary">导出</el-button>
+                <!-- <el-button type="primary">导出</el-button> -->
               </el-form-item>
             </el-form>
-            <PaginationTable ref="tableRef" :columns="monthColumns" :fetch-data="fetchData">
+            <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="monthColumns" :fetch-data="fetchData">
               <template #actions="">
                 <el-button link size="small">查看图表</el-button>
               </template>
@@ -70,12 +72,16 @@ import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
+import { ElMessage } from "element-plus";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);
 const dialogVisible = ref(false);
 const currentRow = ref<any>(null);
-
 const option = ref<any>(null);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   starttime: string;
@@ -119,7 +125,7 @@ const onTimeChange = value => {
 
 const showChart = value => {
   dialogVisible.value = true;
-  row.value = value;
+  // row.value = value;
   let curvalueText, beforevalueText;
   if (formInline.scheme === "D") {
     curvalueText = "当日用电";
@@ -186,16 +192,33 @@ const showChart = value => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
-      stationid: "000",
-      circuitid: "000",
-      circuitids: "000",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       starttime: formInline.starttime,
       scheme: formInline.scheme
     };
     const { data } = await energyReportMOM(params);
+    if (!data) {
+      resolve({ list: [] });
+    } else {
+      resolve({ list: data.PowerValue });
+    }
     // console.log("dataa", data);
-    resolve({ list: data.PowerValue });
   });
+};
+
+const onContextStationChange = async () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
+};
+
+const tabClick = () => {
+  tableRef?.value?.resetData();
 };
 </script>
 
