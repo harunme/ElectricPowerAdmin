@@ -1,8 +1,16 @@
 <template>
   <div class="flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
+      </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -25,13 +33,13 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button>导出</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <PaginationTable
           ref="tableRef"
-          v-loading="loading"
+          :fetch-on-mounted="false"
           :span-method="objectSpanMethod"
           :columns="columns"
           :fetch-data="fetchData"
@@ -49,16 +57,20 @@ import { ElectricMonthReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
-// import data from "./data.json";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const tableRef = ref<any>(null);
 const params = ref<any>([]);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   starttime: string;
   voltageType: "all" | "pv" | "lv";
 }>({
-  starttime: "2024-06",
+  starttime: moment().format("YYYY-MM"),
   voltageType: "all"
 });
 
@@ -79,8 +91,8 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 };
 
 const columns = ref([
-  { prop: "fCircuitname", label: "回路名称", width: 200 },
-  { prop: "paramsName", label: "参数名称", width: 200 }
+  { prop: "fCircuitname", label: "回路名称" },
+  { prop: "paramsName", label: "参数名称" }
 ]);
 
 const loading = ref(true);
@@ -108,17 +120,10 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     loading.value = true;
     const { data }: any = await ElectricMonthReport({
-      stationid: "000",
-      circuitid: "000",
+      stationid: getContextStationId(),
+      circuitid: circuit.value,
       starttime: formInline.starttime
     });
-    const circuitnames: any[] = [];
-    for (let index = 0; index < data.PowerValue.length; index++) {
-      if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
-        circuitnames.push(data.PowerValue[index].circuitname);
-      }
-    }
-
     const lineParams = [
       { name: "A相电压(V)", value: "fUa" },
       { name: "B相电压(V)", value: "fUb" },
@@ -139,6 +144,14 @@ const fetchData = async (): Promise<any> => {
       { name: "总功率因数", value: "fPF" },
       { name: "有功电能（kW·h)", value: "fEpi" }
     ];
+
+    if (!data) return resolve({ list: [] });
+    const circuitnames: any[] = [];
+    for (let index = 0; index < data.PowerValue.length; index++) {
+      if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
+        circuitnames.push(data.PowerValue[index].circuitname);
+      }
+    }
 
     if (formInline.voltageType === "all") {
       params.value = [...lineParams, ...phaseParams, ...otherParams];
@@ -169,6 +182,16 @@ const fetchData = async (): Promise<any> => {
     loading.value = false;
     resolve({ list: circuitUIPQPfEpis, total: 0 });
   });
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 

@@ -1,8 +1,10 @@
 <template>
   <div class="ElectricReport flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -34,27 +36,37 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button>导出</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
-        <PaginationTable ref="tableRef" :span-method="objectSpanMethod" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable
+          ref="tableRef"
+          :fetch-on-mounted="false"
+          :span-method="objectSpanMethod"
+          :columns="columns"
+          :fetch-data="fetchData"
+        >
         </PaginationTable>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="ElectricReport">
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { ElectricReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
-// import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const tableRef = ref<any>(null);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   starttime: string;
@@ -163,8 +175,8 @@ const changeVoltageType = value => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
-      stationid: "000",
-      circuitid: "000",
+      stationid: getContextStationId(),
+      circuitid: circuit.value,
       starttime: formInline.starttime,
       timeinterval: formInline.timeinterval
     };
@@ -173,6 +185,16 @@ const fetchData = async (): Promise<any> => {
 
     resolve({ list, total: 0 });
   });
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 

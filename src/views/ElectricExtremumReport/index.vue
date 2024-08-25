@@ -1,8 +1,16 @@
 <template>
   <div class="flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
+      </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
@@ -60,10 +68,10 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button>导出</el-button>
+            <!-- <el-button>导出</el-button> -->
           </el-form-item>
         </el-form>
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
           <template #collecttime="{ row }"> {{ moment(row.collecttime).format("YYYY-MM-DD") }} </template>
           <template #fIamaxtime="{ row }">{{ moment(row.fIamaxtime).format("HH:mm") }} </template>
           <template #fIbmaxtime="{ row }">{{ moment(row.fIbmaxtime).format("HH:mm") }} </template>
@@ -95,7 +103,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="ElectricExtremumReport">
 import { ref, reactive } from "vue";
 import moment from "moment";
 import PaginationTable from "@/components/PaginationTable/index.vue";
@@ -103,6 +111,9 @@ import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import { ElecMaxMinAvgValue } from "@/api/modules/main";
 import columnsConfig from "./config";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const end = new Date();
 const start = new Date();
@@ -110,6 +121,8 @@ start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
 
 const tableRef = ref<any>(null);
 const columns = ref<any>([]);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   param: "I" | "U" | "ABCU" | "P" | "UnB" | "UHR" | "IHR";
@@ -149,8 +162,8 @@ const clickNext = () => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params: any = {
-      stationid: "000",
-      circuitids: "000-001-002",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       scheme: formInline.scheme,
       starttime: formInline.starttime,
       param: formInline.param === "ABCU" ? "U" : formInline.param
@@ -166,6 +179,16 @@ const fetchData = async (): Promise<any> => {
     const list = data?.StatisticValue || [];
     resolve({ list, total: 0 });
   });
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  onSubmit();
 };
 </script>
 

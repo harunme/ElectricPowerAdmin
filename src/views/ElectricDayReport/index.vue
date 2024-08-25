@@ -1,8 +1,16 @@
 <template>
   <div class="flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
+      </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -25,13 +33,13 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button>导出</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <PaginationTable
           ref="tableRef"
-          v-loading="loading"
+          :fetch-on-mounted="false"
           :span-method="objectSpanMethod"
           :columns="columns"
           :fetch-data="fetchData"
@@ -49,15 +57,19 @@ import { ElectricReportNew } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
-// import data from "./data.json";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const tableRef = ref<any>(null);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   starttime: string;
   voltageType: "all" | "pv" | "lv";
 }>({
-  starttime: "2024-06-01",
+  starttime: moment().format("YYYY-MM-DD"),
   voltageType: "all"
 });
 
@@ -78,11 +90,9 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 };
 
 const columns = ref([
-  { prop: "fCircuitname", label: "回路名称", width: 200 },
-  { prop: "paramsName", label: "参数名称", width: 200 }
+  { prop: "fCircuitname", label: "回路名称" },
+  { prop: "paramsName", label: "参数名称" }
 ]);
-
-const loading = ref(true);
 
 const clickPrev = () => {
   formInline.starttime = moment(formInline.starttime).subtract(1, "d").format("YYYY-MM-DD");
@@ -102,30 +112,16 @@ const changeStartTime = value => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const { data }: any = await ElectricReportNew({
-      stationid: "000",
-      circuitid: "000",
+      stationid: getContextStationId(),
+      circuitid: circuit.value,
       starttime: formInline.starttime
     });
-    console.log(data.PowerValue);
-
-    const circuitnames: any[] = [];
-
-    for (let index = 0; index < data.PowerValue.length; index++) {
-      if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
-        circuitnames.push(data.PowerValue[index].circuitname);
-      }
-    }
-
     const lineParams = [
       { name: "A相电压(V)", value: "fUa" },
       { name: "B相电压(V)", value: "fUb" },
       { name: "C相电压(V)", value: "fUc" }
     ];
-    // const phaseParams = [
-    //   { name: "AB线电压(V)", value: "fUab" },
-    //   { name: "BC线电压(V)", value: "fUbc" },
-    //   { name: "CA线电压(V)", value: "fUca" }
-    // ];
+
     const otherParams = [
       { name: "A相电流(A)", value: "fIa" },
       { name: "B相电流(A)", value: "fIb" },
@@ -136,6 +132,15 @@ const fetchData = async (): Promise<any> => {
       { name: "总功率因数", value: "fPF" },
       { name: "有功电能（kW·h)", value: "fEpi" }
     ];
+
+    if (!data) return resolve({ list: [] });
+    const circuitnames: any[] = [];
+
+    for (let index = 0; index < data.PowerValue.length; index++) {
+      if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
+        circuitnames.push(data.PowerValue[index].circuitname);
+      }
+    }
 
     const circuitUIPQPfEpis: any[] = [];
     const timeColumns = [] as any[];
@@ -153,9 +158,18 @@ const fetchData = async (): Promise<any> => {
       });
     });
     columns.value = [...columns.value, ...timeColumns];
-    loading.value = false;
-    resolve({ list: circuitUIPQPfEpis, total: 0 });
+    resolve({ list: circuitUIPQPfEpis });
   });
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 
