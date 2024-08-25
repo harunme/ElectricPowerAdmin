@@ -718,7 +718,6 @@ export namespace Main {
   export interface ReqEnergyReportMOM {
     stationid: string;
     circuitids?: string;
-    circuitid: string;
     starttime: string;
     scheme: "D" | "W" | "M";
   }

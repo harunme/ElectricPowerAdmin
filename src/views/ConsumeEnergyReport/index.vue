@@ -1,8 +1,16 @@
 <template>
   <div class="flex-column ConsumeEnergyReport">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
+      </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="时间范围">
@@ -24,28 +32,43 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button>导出</el-button>
+            <!-- <el-button>导出</el-button> -->
           </el-form-item>
         </el-form>
-        <PaginationTable ref="tableRef" :span-method="objectSpanMethod" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable
+          ref="tableRef"
+          :fetch-on-mounted="false"
+          :span-method="objectSpanMethod"
+          :columns="columns"
+          :fetch-data="fetchData"
+        >
         </PaginationTable>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="ConsumeEnergyReport">
 import { ref, reactive } from "vue";
 import moment from "moment";
+import { ElMessage } from "element-plus";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ConsumeEnergyReport } from "@/api/modules/main";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { getContextStationId } from "@/utils";
 
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 const tableRef = ref<any>(null);
 
+const end = new Date();
+const start = new Date();
+start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+
 const formInline = reactive({
-  date: ["2024-06-01 00:15:00", "2024-06-01 00:20:00"],
+  date: [start, end],
   energyKind: "EPI" as "EPI" | "EPE" | "ZHEPI"
 });
 
@@ -81,8 +104,8 @@ const fetchData = async (): Promise<any> => {
     const starttime = moment(formInline.date[0]).format("YYYY-MM-DD HH:mm:ss");
     const endtime = moment(formInline.date[1]).format("YYYY-MM-DD HH:mm:ss");
     const params: any = {
-      stationid: "000",
-      circuitids: "000-001",
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
       starttime,
       endtime
       // energyKind: formInline.energyKind
@@ -91,12 +114,22 @@ const fetchData = async (): Promise<any> => {
       params.energyKind = formInline.energyKind;
     }
     const { data } = await ConsumeEnergyReport(params);
-    if (data === null) {
+    if (!data) {
       resolve({ list: [] });
     } else {
       resolve({ list: data.PowerValue });
     }
   });
+};
+
+const onContextStationChange = async () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 

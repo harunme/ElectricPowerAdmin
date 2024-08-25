@@ -1,6 +1,6 @@
 <template>
   <div class="LossAnalysis">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="时间范围">
@@ -38,6 +38,7 @@ import { EnergyLineLoss2Tree } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import moment from "moment";
+import { getContextStationId } from "@/utils";
 
 const end = new Date();
 const start = new Date();
@@ -94,7 +95,7 @@ const shortcuts = [
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const { data } = await EnergyLineLoss2Tree({
-      stationid: "000",
+      stationid: getContextStationId(),
       starttime: moment(formInline.date[0]).format("YYYY-MM-DD HH:mm:ss"),
       endtime: moment(formInline.date[1]).format("YYYY-MM-DD HH:mm:ss")
     });
@@ -123,6 +124,10 @@ const fetchData = async (): Promise<any> => {
       )
     });
   });
+};
+
+const onContextStationChange = async () => {
+  tableRef?.value?.resetData();
 };
 </script>
 

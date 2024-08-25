@@ -3,7 +3,13 @@
     <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
-        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+        <CircuitInfoTree
+          ref="circuitInfoTreeRef"
+          :show-cascade="true"
+          :show-all="true"
+          :is-multiple="true"
+          :on-change="onCircuitInfoTreeChange"
+        />
       </CollapseBox>
       <div class="card content-box">
         <el-tabs @tab-click="tabClick">
