@@ -25,8 +25,8 @@
             <el-button type="primary">导出</el-button>
           </el-form-item>
         </el-form>
-        <div class="chart-box">
-          <ECharts v-if="option !== null" :option="option" />
+        <div class="chart-box" v-if="option !== null">
+          <ECharts :option="option" />
         </div>
         <div class="table-box">
           <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
@@ -83,64 +83,67 @@ const fetchData = async (): Promise<any> => {
       starttime: `${formInline.starttime}-01-01`
     };
     const { data } = await getMonthMom(params);
-
-    option.value = {
-      grid: {
-        left: 10,
-        right: 10,
-        bottom: 10,
-        top: 64,
-        containLabel: true
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "cross",
-          crossStyle: {
-            color: "#999"
-          }
-        }
-      },
-      toolbox: {
-        feature: {
-          dataView: { show: true, readOnly: false },
-          magicType: { show: true, type: ["line", "bar"] },
-          restore: { show: true },
-          saveAsImage: { show: true }
-        }
-      },
-      legend: {
-        data: ["正向有功电度", "反向有功电度", "正向无功电度", "反向无功电度"]
-      },
-      xAxis: [
-        {
-          type: "category",
-          data: data?.PowerValue?.map(({ collecttime }) => collecttime) || [],
-          axisPointer: {
-            type: "shadow"
-          }
-        }
-      ],
-      yAxis: [
-        {
-          type: "value",
-          name: "kW.h"
-        }
-      ],
-      series: [
-        {
-          name: "本期",
-          type: "bar",
-          data: data?.PowerValue?.map(({ predata }) => Number(predata)) || []
+    if (!data) {
+      resolve({ list: [] });
+    } else {
+      option.value = {
+        grid: {
+          left: 50,
+          right: 10,
+          bottom: 10,
+          top: 64,
+          containLabel: true
         },
-        {
-          name: "同期",
-          type: "bar",
-          data: data?.PowerValue?.map(({ data }) => Number(data)) || []
-        }
-      ]
-    };
-    resolve({ list: data?.PowerValue || [] });
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            crossStyle: {
+              color: "#999"
+            }
+          }
+        },
+        toolbox: {
+          feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ["line", "bar"] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        legend: {
+          data: ["正向有功电度", "反向有功电度", "正向无功电度", "反向无功电度"]
+        },
+        xAxis: [
+          {
+            type: "category",
+            data: data?.PowerValue?.map(({ collecttime }) => collecttime) || [],
+            axisPointer: {
+              type: "shadow"
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: "value",
+            name: "kW.h"
+          }
+        ],
+        series: [
+          {
+            name: "本期",
+            type: "bar",
+            data: data?.PowerValue?.map(({ predata }) => Number(predata)) || []
+          },
+          {
+            name: "同期",
+            type: "bar",
+            data: data?.PowerValue?.map(({ data }) => Number(data)) || []
+          }
+        ]
+      };
+      resolve({ list: data?.PowerValue || [] });
+    }
   });
 };
 
