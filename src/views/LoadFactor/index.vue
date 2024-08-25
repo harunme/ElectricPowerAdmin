@@ -1,8 +1,10 @@
 <template>
   <div class="LoadFactor flex-column">
-    <TransformerSelect />
+    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
@@ -12,10 +14,14 @@
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" :type="formInline.scheme === 'M' ? 'month' : 'year'" />
+            <el-date-picker
+              v-model="formInline.starttime"
+              @change="changeStartTime"
+              :type="formInline.scheme === 'M' ? 'month' : 'year'"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button-group v-if="formInline.scheme === 'M'">
+            <el-button-group v-if="formInline.scheme === 'M'" type="primary">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一月
               </el-button>
@@ -23,7 +29,7 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-else>
+            <el-button-group v-else type="primary">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
@@ -32,15 +38,21 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button>导出</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
         </div>
         <div class="table-box">
-          <PaginationTable ref="tableRef" :span-method="objectSpanMethod" :columns="columns" :fetch-data="fetchData">
+          <PaginationTable
+            ref="tableRef"
+            :fetch-on-mounted="false"
+            :span-method="objectSpanMethod"
+            :columns="columns"
+            :fetch-data="fetchData"
+          >
           </PaginationTable>
         </div>
       </div>
@@ -56,6 +68,8 @@ import TransformerSelect from "@/components/TransformerSelect/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { GetCirLoadRate } from "@/api/modules/main";
+import { getContextStationId } from "@/utils";
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const formInline = reactive<{
   scheme: "M" | "Y";
@@ -67,6 +81,8 @@ const formInline = reactive<{
 
 const tableRef = ref<any>(null);
 const option = ref<any>(null);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   if (columnIndex === 0) {
@@ -103,6 +119,11 @@ const changeScheme = value => {
   } else {
     formInline.starttime = moment().format("YYYY");
   }
+  tableRef?.value?.resetData();
+};
+
+const changeStartTime = () => {
+  tableRef?.value?.resetData();
 };
 
 const clickPrev = () => {
@@ -119,12 +140,16 @@ const clickNext = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const params = {
-      stationid: "000",
-      circuitid: "000",
-      scheme: formInline.scheme,
-      starttime: formInline.starttime
+    const params: any = {
+      stationid: getContextStationId(),
+      circuitid: circuit.value,
+      scheme: formInline.scheme
     };
+    if (formInline.scheme === "Y") {
+      params.starttime = moment(formInline.starttime).format("YYYY");
+    } else {
+      params.starttime = moment(formInline.starttime).format("YYYY-MM");
+    }
     const { data } = await GetCirLoadRate(params);
     const list = data?.PowerValue || [];
     option.value = {
@@ -169,6 +194,15 @@ const fetchData = async (): Promise<any> => {
     };
     resolve({ list, total: 0 });
   });
+};
+
+const onContextStationChange = () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 
