@@ -1,5 +1,5 @@
 <template>
-  <div class="TransformerSelect card">
+  <div class="StationContext card">
     <span class="label">当前变配电站:</span>
     <el-tag :closable="!disableAll" round @close="onSelect" v-if="stationSelected.stationname">{{
       stationSelected.stationname
@@ -60,7 +60,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="TransformerSelect">
+<script setup lang="tsx" name="StationContext">
 import { Meter, ReqPage } from "@/api/interface/index";
 import { Search } from "@element-plus/icons-vue";
 import { getCompanyTree, getSubGroupTree } from "@/api/modules/org";

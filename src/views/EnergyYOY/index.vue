@@ -1,6 +1,6 @@
 <template>
   <div class="EnergyYOY flex-column">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
         <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
@@ -42,7 +42,7 @@ import moment from "moment";
 import { ElMessage } from "element-plus";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import { getMonthMom } from "@/api/modules/main";
 import ECharts from "@/components/Charts/echarts.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";

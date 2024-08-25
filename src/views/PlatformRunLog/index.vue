@@ -1,6 +1,6 @@
 <template>
   <div class="PlatformRunLog">
-    <TransformerSelect :on-change="onContextStationChange" />
+    <StationContext :on-change="onContextStationChange" />
     <div class="card flex-column table-box">
       <el-form :inline="true" :model="formInline" class="table-form-inline">
         <el-form-item label="开始时间" prop="date">
@@ -35,7 +35,7 @@
 
 <script setup lang="tsx" name="PlatformRunLog">
 import { reactive, ref } from "vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import { ReqPage } from "@/api/interface";
 import { PlatformRunLogPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";

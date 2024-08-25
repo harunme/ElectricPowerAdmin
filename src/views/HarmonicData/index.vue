@@ -1,6 +1,6 @@
 <template>
   <div class="HarmonicData flex-column">
-    <TransformerSelect />
+    <StationContext />
     <div class="main-box">
       <CollapseBox />
       <div class="card content-box">
@@ -49,7 +49,7 @@ import { onMounted, ref, reactive } from "vue";
 import { getCircuitInfoTree } from "@/api/modules/sys";
 import { ReqPage } from "@/api/interface/index";
 import { summary } from "@/api/modules/main";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";

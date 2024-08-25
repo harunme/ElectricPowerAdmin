@@ -1,6 +1,6 @@
 <template>
   <div class="flex-column TransformerList">
-    <TransformerSelect :on-change="onContextStationChange" />
+    <StationContext :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox :width="412">
         <CirecleNumber label="高损耗运行" color="rgb(255, 86, 48)" :value="number.red" />
@@ -21,7 +21,7 @@
 import { ref } from "vue";
 import { ReqPage } from "@/api/interface/index";
 import { summary } from "@/api/modules/main";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CirecleNumber from "@/components/Charts/components/CirecleNumber.vue";
 import Pie from "@/components/Charts/components/Pie.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";

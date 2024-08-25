@@ -1,6 +1,6 @@
 <template>
   <div class="AveragePowerReport flex-column">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
         <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
@@ -60,7 +60,7 @@ import { min, max } from "lodash";
 import moment from "moment";
 import { AveragePowerReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { getContextStationId } from "@/utils";

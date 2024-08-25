@@ -1,6 +1,6 @@
 <template>
   <div class="Transformer">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true">
         <el-form-item>
@@ -105,7 +105,7 @@ import {
 } from "@/api/modules/meter";
 import { Meter } from "@/api/interface/index";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
 import { getContextStationId, getContextStationName } from "@/utils";
 

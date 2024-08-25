@@ -1,6 +1,6 @@
 <template>
   <div class="SubstationStatus">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="dataVisualize-box">
       <el-row>
         <el-col :span="8">
@@ -307,7 +307,7 @@ import { getContextStationId } from "@/utils";
 import { ECOption } from "@/components/Charts/config";
 import ECharts from "@/components/Charts/echarts.vue";
 import moment from "moment";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import {
   CommunicationStatusNew,

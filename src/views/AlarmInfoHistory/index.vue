@@ -1,6 +1,6 @@
 <template>
   <div class="AlarmInfoHistory">
-    <TransformerSelect :on-change="onContextStationChange" />
+    <StationContext :on-change="onContextStationChange" />
     <div class="card flex-column">
       <el-form :inline="true" :model="formInline" class="table-form-inline">
         <el-form-item label="开始时间" prop="date">
@@ -51,7 +51,7 @@ import moment from "moment";
 import { ReqPage } from "@/api/interface";
 import { GetAlarmEventLogListHis } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);

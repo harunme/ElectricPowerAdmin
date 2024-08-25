@@ -1,6 +1,6 @@
 <template>
   <div class="LossAnalysis">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="card content">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="时间范围">
@@ -36,7 +36,7 @@
 import { reactive, ref } from "vue";
 import { EnergyLineLoss2Tree } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import moment from "moment";
 import { getContextStationId } from "@/utils";
 

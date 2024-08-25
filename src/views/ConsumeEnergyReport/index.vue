@@ -1,6 +1,6 @@
 <template>
   <div class="flex-column ConsumeEnergyReport">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
         <CircuitInfoTree
@@ -53,7 +53,7 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import { ElMessage } from "element-plus";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ConsumeEnergyReport } from "@/api/modules/main";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";

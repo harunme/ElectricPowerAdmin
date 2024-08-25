@@ -1,6 +1,6 @@
 <template>
   <div class="flex-column">
-    <TransformerSelect />
+    <StationContext />
     <div class="main-box">
       <CollapseBox />
       <div class="card table-box flex-column">
@@ -30,7 +30,7 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import { transformerTempMonthReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 
 const tableRef = ref<any>(null);

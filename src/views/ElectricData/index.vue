@@ -1,6 +1,6 @@
 <template>
   <div class="ElectricData flex-column">
-    <TransformerSelect :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
         <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
@@ -64,7 +64,7 @@ import { ElectricDataMonth, ElectricDataPaging } from "@/api/modules/main";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import { ReqPage } from "@/api/interface/index";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";

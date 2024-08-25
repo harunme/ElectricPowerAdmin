@@ -1,6 +1,6 @@
 <template>
   <div class="UserReport flex-column">
-    <TransformerSelect />
+    <StationContext />
     <div class="main-box">
       <CollapseBox />
       <div class="card content-box">
@@ -146,7 +146,7 @@ import { onMounted, ref, reactive, h } from "vue";
 import type { VNode } from "vue";
 import type { TableColumnCtx } from "element-plus";
 import { getCircuitInfoTree } from "@/api/modules/sys";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 

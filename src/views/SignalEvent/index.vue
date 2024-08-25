@@ -1,6 +1,6 @@
 <template>
   <div class="SignalEvent">
-    <TransformerSelect :on-change="onContextStationChange" />
+    <StationContext :on-change="onContextStationChange" />
     <div class="card flex-column">
       <el-form :inline="true" :model="formInline">
         <el-form-item label="开始时间" prop="date">
@@ -32,7 +32,7 @@
 <script setup lang="tsx" name="SignalEvent">
 import { ref, reactive } from "vue";
 import moment from "moment";
-import TransformerSelect from "@/components/TransformerSelect/index.vue";
+import StationContext from "@/components/StationContext/index.vue";
 import { ReqPage } from "@/api/interface";
 import { GetAlarmEventYxList } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
