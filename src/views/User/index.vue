@@ -7,29 +7,45 @@
       <div class="card table-box">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="用户名">
-            <el-input v-model="formInline.user" placeholder="请输入用户名或姓名" clearable />
+            <el-input v-model="formInline.search" placeholder="请输入用户名或姓名" clearable />
           </el-form-item>
           <el-form-item label="角色类型">
-            <el-select v-model="formInline.region" placeholder="点击选择用户角色" clearable>
-              <el-option label="Zone one" value="shanghai" />
-              <el-option label="Zone two" value="beijing" />
-            </el-select>
+            <el-cascader
+              v-model="formInline.roleid"
+              style="width: 100%"
+              :options="userRoleTree"
+              :props="{
+                checkStrictly: true,
+                value: 'roleid',
+                label: 'rolename',
+                emitPath: false
+              }"
+              clearable
+            />
           </el-form-item>
           <el-form-item label="用户组">
-            <el-select v-model="formInline.region" placeholder="点击选择用户组" clearable>
-              <el-option label="Zone one" value="shanghai" />
-              <el-option label="Zone two" value="beijing" />
-            </el-select>
+            <el-cascader
+              v-model="formInline.groupid"
+              style="width: 100%"
+              :options="userGroupTree"
+              :props="{
+                checkStrictly: true,
+                value: 'groupid',
+                label: 'groupname',
+                emitPath: false
+              }"
+              clearable
+            />
           </el-form-item>
           <el-form-item>
             <el-button @click="onSubmit">查询</el-button>
-            <el-button type="primary" @click="formVisible = true">新增</el-button>
+            <el-button type="primary" @click="addUser">新增</el-button>
           </el-form-item>
         </el-form>
-        <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="groupid" :fetch-data="fetchData">
+        <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="userid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateGroup(row)">修改</a>
-            <el-popconfirm title="确认删除?" @confirm="deleteGroup(row.groupid)">
+            <a class="mini-btn" @click="updateUserAction(row)">修改</a>
+            <el-popconfirm title="确认删除?" @confirm="deleteUserAction(row.userid)">
               <template #reference>
                 <a class="mini-btn">删除</a>
               </template>
@@ -38,7 +54,7 @@
         </PaginationTable>
       </div>
     </div>
-    <el-dialog v-model="formVisible" title="新增用户信息" width="860">
+    <el-dialog v-model="formVisible" :title="isEdit ? '修改用户' : '新增用户'" width="860">
       <el-form
         ref="userFormRef"
         :model="form"
@@ -61,12 +77,17 @@
           </el-col>
           <el-col :span="12">
             <el-form-item required label="密码" :label-width="formLabelWidth">
-              <el-input v-model="form.password" autocomplete="off" placeholder="密码必须包含大小写字母，数字及特殊符号" />
+              <el-input
+                v-model="form.password"
+                autocomplete="off"
+                type="password"
+                placeholder="密码必须包含大小写字母，数字及特殊符号"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item required label="密码确认" :label-width="formLabelWidth">
-              <el-input v-model="form.passwordconfirm" autocomplete="off" placeholder="请再次输入密码" />
+              <el-input v-model="form.passwordconfirm" autocomplete="off" type="password" placeholder="请再次输入密码" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -123,7 +144,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="邮箱" :label-width="formLabelWidth">
+            <el-form-item label="邮箱" :label-width="formLabelWidth">
               <el-input v-model="form.email" autocomplete="off" placeholder="请填写邮箱" />
             </el-form-item>
           </el-col>
@@ -172,9 +193,10 @@ const formVisible = ref(false);
 const isEdit = ref(false);
 const userFormRef = ref<FormInstance>();
 const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+  deptid: "",
+  groupid: "",
+  roleid: "",
+  search: ""
 });
 const form = ref<any>({
   username: "",
@@ -195,26 +217,42 @@ const columns: any = [
   { prop: "deptname", label: "组织机构" },
   { prop: "rolename", label: "角色" },
   { prop: "groupname", label: "用户组" },
-  { prop: "telephone", label: "手机号" },
+  { prop: "telephone", label: "手机号", width: 132 },
+  { prop: "email", label: "邮箱" },
+  { prop: "title", label: "备注" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
 const rules = reactive<FormRules<Org.ReqInsertDeptInfo>>({
-  groupname: [
-    { required: true, message: "请输入用户组名称" },
-    { max: 30, message: "长度不超过 30 个字符" }
+  username: [
+    { required: true, message: "请输入用户名" },
+    { max: 24, message: "长度不超过 24 个字符" }
   ],
-  parentid: [{ required: true, message: "请选择上级用户组" }],
-  deptid: [{ required: true, message: "请选择组织机构" }]
+  name: [
+    { required: true, message: "请输入姓名" },
+    { max: 24, message: "长度不超过 12 个字符" }
+  ],
+  password: [
+    { required: true, message: "请输入密码" },
+    { min: 6, message: "长度至少 6 个字符" }
+  ],
+  passwordconfirm: [
+    { required: true, message: "请输入密码" },
+    { min: 6, message: "长度至少 6 个字符" }
+  ],
+  telephone: [{ pattern: /^1[3-9]\d{9}$/, message: "请输入正确的手机号" }],
+  email: [{ type: "email", message: "请输入正确的邮箱地址" }],
+  deptid: [{ required: true, message: "请选择组织机构" }],
+  groupid: [{ required: true, message: "请选择用户组" }]
 });
 
-// http://111.231.24.91/org/getUserCommonInfo
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await getUserCommonInfo({
-      deptid: deptid.value
-    });
-    // userGroupTree.value = [{ groupname: "无", groupid: -1 } as any].concat(data);
+    const params: any = { deptid: deptid.value };
+    if (formInline.search) params.search = formInline.search;
+    if (formInline.roleid) params.roleid = formInline.roleid;
+    if (formInline.groupid) params.groupid = formInline.groupid;
+    const { data } = await getUserCommonInfo(params);
     resolve({ list: data });
   });
 };
@@ -224,26 +262,27 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const params = { ...form.value };
-      if (params.parentid === -1) params.parentid = 0;
-
-      if (isEdit.value) {
-        const res = await updateUser({ ...params });
-        if (res.code === 1) {
-          ElMessage.success({ message: res.msg });
-          tableRef?.value?.resetData();
+      if (params.password !== params.passwordconfirm) ElMessage.warning({ message: "密码不一致,请重新输入" });
+      else {
+        if (isEdit.value) {
+          const res = await updateUser({ ...params });
+          if (res.code === 1) {
+            ElMessage.success({ message: res.msg });
+            tableRef?.value?.resetData();
+          } else {
+            ElMessage.error({ message: res.msg });
+          }
+          formVisible.value = false;
         } else {
-          ElMessage.error({ message: res.msg });
+          const res = await insertUser({ ...params });
+          if (res.code === 1) {
+            ElMessage.success({ message: res.msg });
+            tableRef?.value?.resetData();
+          } else {
+            ElMessage.error({ message: res.msg });
+          }
+          formVisible.value = false;
         }
-        formVisible.value = false;
-      } else {
-        const res = await insertUser({ ...params });
-        if (res.code === 1) {
-          ElMessage.success({ message: res.msg });
-          tableRef?.value?.resetData();
-        } else {
-          ElMessage.error({ message: res.msg });
-        }
-        formVisible.value = false;
       }
     } else {
       console.log("error submit!", fields);
@@ -251,15 +290,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   });
 };
 
-const updateGroup = async row => {
+const updateUserAction = async row => {
   isEdit.value = true;
   formVisible.value = true;
-  form.value = { ...row, parentid: String(row.parentid) === "0" ? -1 : row.parentid };
+  form.value = { ...row };
   setTimeout(() => userFormRef.value?.clearValidate());
 };
 
-const deleteGroup = async (groupid: string) => {
-  const res = await deleteUser({ groupid });
+const deleteUserAction = async (userid: string) => {
+  const res = await deleteUser({ userid });
   if (res.code === 1) {
     tableRef?.value?.resetData();
     ElMessage.success({ message: res.msg });
@@ -268,7 +307,12 @@ const deleteGroup = async (groupid: string) => {
   }
 };
 
-// onMounted(async () => {});
+const addUser = () => {
+  isEdit.value = false;
+  formVisible.value = true;
+  userFormRef.value?.resetFields();
+  setTimeout(() => userFormRef.value?.clearValidate());
+};
 
 const onDeptTreeChange = async node => {
   deptid.value = node.deptid;
@@ -287,6 +331,10 @@ const onDeptTreeChange = async node => {
   userRoleTree.value = roleRes.data;
 
   userGroupTree.value = userGroupRes.data;
+};
+
+const onSubmit = () => {
+  tableRef?.value?.resetData();
 };
 </script>
 
