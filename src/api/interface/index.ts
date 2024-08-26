@@ -129,10 +129,10 @@ export namespace Org {
   export interface ReqListProjectRoleAppMenu {}
   export interface ResListProjectRoleAppMenu {}
   export interface ReqGetUserCommonInfo {
-    deptid: string;
-    groupid: string;
-    roleid: string;
-    search: string;
+    deptid?: string;
+    groupid?: string;
+    roleid?: string;
+    search?: string;
   }
   export interface ResGetUserCommonInfo {
     userid: number;
