@@ -10,7 +10,7 @@
         </el-form-item>
       </el-form>
       <div class="table-box">
-        <PaginationTable ref="tableRef" :columns="columns" row-key="groupid" :fetch-data="fetchData">
+        <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="groupid" :fetch-data="fetchData">
           <template #actions="{ row }">
             <a class="mini-btn" @click="updateGroup(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteGroup(row.groupid)">
@@ -146,7 +146,6 @@ const columns: any = [
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    if (deptid.value === null) return resolve({ list: [] });
     const { data } = await selectUserGroupTree({
       deptid: deptid.value
     });

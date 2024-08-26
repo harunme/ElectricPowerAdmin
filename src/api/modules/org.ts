@@ -80,3 +80,48 @@ export const selectProjectRoleById = (params: Org.ReqSelectProjectRoleById) => {
 export const listProjectRoleAppMenu = (params: Org.ReqListProjectRoleAppMenu) => {
   return http.postForm<Org.ResListProjectRoleAppMenu>(`/org/listProjectRoleAppMenu`, params);
 };
+
+// 角色 接口1 根据组织机构ID查询用户信息
+export const getUserCommonInfo = (params: Org.ReqGetUserCommonInfo) => {
+  return http.postForm<Org.ResGetUserCommonInfo[]>(`/org/getUserCommonInfo`, params);
+};
+
+// 角色 接口2 根据用户ID查询变电站信息
+export const getSubstationListOfSelected = (params: Org.ReqGetSubstationListOfSelected) => {
+  return http.postForm<Org.ResGetSubstationListOfSelected>(`/org/getSubstationListOfSelected`, params);
+};
+
+// 角色 接口3  用户ID所属组织或区域的所有变电站
+export const getSubstationListUnderCompanyOrSubgroup = (params: Org.ReqGetSubstationListUnderCompanyOrSubgroup) => {
+  return http.postForm<Org.ResGetSubstationListUnderCompanyOrSubgroup>(`/org/getSubstationListUnderCompanyOrSubgroup`, params);
+};
+
+// 角色 接口4  修改用户ID和变电站关系表
+export const updateUserAndSub = (params: Org.ReqUpdateUserAndSub) => {
+  return http.postForm<Org.ResUpdateUserAndSub>(`/org/updateUserAndSub`, params);
+};
+
+// 角色 接口5  新增一个用户
+export const insertUser = (params: Org.ReqInsertUser) => {
+  return http.postForm<Org.ResInsertUser>(`/org/insertUser`, params);
+};
+
+// 角色 接口6  删除一个用户
+export const deleteUser = (params: Org.ReqDeleteUser) => {
+  return http.postForm<Org.ResDeleteUser>(`/org/deleteUser`, params);
+};
+
+// 角色 接口7  修改一个用户
+export const updateUser = (params: Org.ReqUpdateUser) => {
+  return http.postForm<Org.ResUpdateUser>(`/org/updateUser`, params);
+};
+
+// 角色 接口8  修改一级密码
+export const updatePassword = (params: Org.ReqUpdatePassword) => {
+  return http.postForm<Org.ResUpdatePassword>(`/org/updatePassword`, params);
+};
+
+// 角色 接口9  修改二级密码
+export const updatePassword2 = (params: Org.ReqUpdatePassword2) => {
+  return http.postForm<Org.ResUpdatePassword2>(`/org/updatePassword2`, params);
+};

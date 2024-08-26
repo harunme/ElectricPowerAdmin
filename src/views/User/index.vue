@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-column">
+  <div class="flex-column User">
     <div class="main-box">
       <CollapseBox />
       <div class="card table-box">
@@ -87,7 +87,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
+<script setup lang="tsx" name="User">
 import { reactive, ref } from "vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 

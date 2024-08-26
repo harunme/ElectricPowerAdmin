@@ -128,6 +128,47 @@ export namespace Org {
   export interface ResSelectProjectRoleById {}
   export interface ReqListProjectRoleAppMenu {}
   export interface ResListProjectRoleAppMenu {}
+  export interface ReqGetUserCommonInfo {
+    deptid: string;
+    groupid: string;
+    roleid: string;
+    search: string;
+  }
+  export interface ResGetUserCommonInfo {
+    userid: number;
+    username: string;
+    name: string;
+    password: string;
+    password2: string;
+    deptid: string;
+    deptname: string;
+    groupid: string;
+    groupname: string;
+    email: string;
+    telephone: string;
+    thirdplatform: string;
+    title: string;
+    status: number;
+    headpicture: string;
+    roleid: string;
+    rolename: string;
+  }
+  export interface ReqGetSubstationListOfSelected {}
+  export interface ResGetSubstationListOfSelected {}
+  export interface ReqGetSubstationListUnderCompanyOrSubgroup {}
+  export interface ResGetSubstationListUnderCompanyOrSubgroup {}
+  export interface ReqUpdateUserAndSub {}
+  export interface ResUpdateUserAndSub {}
+  export interface ReqInsertUser {}
+  export interface ResInsertUser {}
+  export interface ReqDeleteUser {}
+  export interface ResDeleteUser {}
+  export interface ReqUpdateUser {}
+  export interface ResUpdateUser {}
+  export interface ReqUpdatePassword {}
+  export interface ResUpdatePassword {}
+  export interface ReqUpdatePassword2 {}
+  export interface ResUpdatePassword2 {}
 }
 
 // 变电站模块
