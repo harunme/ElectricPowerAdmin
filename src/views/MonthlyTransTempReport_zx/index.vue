@@ -1,9 +1,9 @@
 <template>
   <div class="flex-column">
-    <StationContext :disable-all="true" :on-change="onContextStationChange" />
+    <StationContext :on-change="onContextStationChange" />
     <div class="main-box">
       <CollapseBox>
-        <TransformerTree ref="transformerInfoTreeRef" :is-multiple="true" :on-change="onCircuitInfoTreeChange" />
+        <TransformerTree ref="transformerInfoTreeRef" :is-multiple="true" :on-change="onTransformerTreeChange" />
       </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
@@ -16,7 +16,7 @@
         </el-form>
         <PaginationTable
           ref="tableRef"
-          v-loading="loading"
+          :fetch-on-mounted="false"
           :span-method="objectSpanMethod"
           :columns="columns"
           :fetch-data="fetchData"
@@ -45,7 +45,7 @@ const transformerInfoTreeRef = ref<any>(null);
 const formInline = reactive<{
   starttime: string;
 }>({
-  starttime: "2024-06"
+  starttime: moment().format("YYYY-MM")
 });
 
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
@@ -71,8 +71,6 @@ const columns = ref([
   { prop: "paramsName", label: "" }
 ]);
 
-const loading = ref(true);
-
 const changeStartTime = value => {
   formInline.starttime = moment(value).format("YYYY-MM");
   tableRef?.value?.resetData();
@@ -80,7 +78,6 @@ const changeStartTime = value => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    loading.value = true;
     const { data }: any = await transformerTempMonthReport([
       {
         stationid: getContextStationId(),
@@ -89,7 +86,6 @@ const fetchData = async (): Promise<any> => {
       }
     ]);
     if (!data) {
-      loading.value = false;
       return resolve({ list: [], total: 0 });
     }
     const circuitnames: any[] = [];
@@ -123,7 +119,6 @@ const fetchData = async (): Promise<any> => {
       });
     });
     columns.value = [...columns.value, ...timeColumns];
-    loading.value = false;
     resolve({ list: circuitUIPQPfEpis, total: 0 });
   });
 };
@@ -132,9 +127,9 @@ const onContextStationChange = async () => {
   transformerInfoTreeRef?.value?.resetData();
 };
 
-const onCircuitInfoTreeChange = (circuitids: string[]) => {
-  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
-  transformer.value = circuitids.join("-");
+const onTransformerTreeChange = (transformerids: string[]) => {
+  if (transformerids.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
+  transformer.value = transformerids.join("-");
   tableRef?.value?.resetData();
 };
 </script>

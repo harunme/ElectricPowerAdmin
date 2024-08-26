@@ -1,5 +1,31 @@
-.CircuitInfoTree {
+.TransformerTree {
   //   border: 1px solid;
   //   height: 100%;
   padding: 24px 16px;
+  .single {
+    // border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    > div {
+      // border: 1px solid;
+      // display: flex;
+      // align-items: center;
+      // flex-direction: column;
+      // justify-content: center;
+      margin: 8px 0;
+      cursor: pointer;
+      > img {
+        display: block;
+        width: 72px;
+        // border: 1px solid;
+        margin: 0 auto;
+      }
+      > span {
+        display: inline-block;
+        width: 100%;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
 }

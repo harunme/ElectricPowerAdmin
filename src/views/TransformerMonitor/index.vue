@@ -1,12 +1,14 @@
 <template>
   <div class="TransformerMonitor">
-    <StationContext />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <TransformerTree ref="transformerTreeRef" :on-change="onTransformerTreeChange" />
+      </CollapseBox>
       <div class="right-box">
         <div class="card top-box">
           <p>
-            <span>1#变压器状态</span>
+            <span>{{ transformer?.transformername }}状态</span>
             <span>更新时间：{{ moment().format("YYYY-MM-DD HH:mm:ss") }}</span>
           </p>
           <div>
@@ -103,13 +105,16 @@
 </template>
 
 <script setup lang="tsx" name="TransformerMonitor">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive } from "vue";
 import { getCurveDataOfPowerAndTempABCNew, TransformerMonitor } from "@/api/modules/main";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import moment from "moment";
+import { ElMessage } from "element-plus";
+import TransformerTree from "@/components/TransformerTree/index.vue";
+import { getContextStationId } from "@/utils";
 import columns from "./config";
 
 const ParamsOptions = [
@@ -124,6 +129,8 @@ const ParamsOptions = [
 ];
 
 const option = ref<any>(null);
+const transformer = ref<any>(null);
+const transformerTreeRef = ref<any>(null);
 const tableRef = ref<any>(null);
 const formInline = reactive<{
   params: "S" | "P" | "Q" | "Pf" | "Pv" | "I" | "Temp" | "Lv";
@@ -133,27 +140,28 @@ const formInline = reactive<{
   starttime: moment().format("YYYY-MM-DD")
 });
 
-const TransformerStatus = ref<any>({
-  fIa: "0.00A",
-  fIb: "0.00A",
-  fIc: "0.00A",
-  fP: "0.00kw",
-  fPF: "0.00",
-  fQ: "0.00KVar",
-  fS: "0.00KVA",
-  fTempA: "0.00℃",
-  fTempB: "0.00℃",
-  fTempC: "0.00℃",
-  fUab: "0.00V",
-  fUbc: "0.00V",
-  fUca: "0.00V",
-  fInstalledcapacity: 400,
+const defaultData = {
+  fIa: "-",
+  fIb: "-",
+  fIc: "-",
+  fP: "-",
+  fPF: "-",
+  fQ: "-",
+  fS: "-",
+  fTempA: "-",
+  fTempB: "-",
+  fTempC: "-",
+  fUab: "-",
+  fUbc: "-",
+  fUca: "-",
+  fInstalledcapacity: "-",
   fRatedcurrent: "-",
-  loadFactor: "0.00%",
-  maxDemand: 0.0,
-  loadRate: 0.0,
-  averageVal: 0.0
-});
+  loadFactor: "-",
+  maxDemand: "-",
+  loadRate: "-",
+  averageVal: "-"
+};
+const TransformerStatus = ref<any>(defaultData);
 
 const clickPrev = () => {
   formInline.starttime = moment(formInline.starttime).subtract(1, "d").format("YYYY-MM-DD");
@@ -177,7 +185,7 @@ const onParamsChange = () => {
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
-      transformerid: "0",
+      transformerid: transformer?.value?.transformerid,
       starttime: formInline.starttime,
       params: formInline.params as "S" | "P" | "Q" | "Pf" | "U" | "I" | "Temp"
     };
@@ -190,7 +198,7 @@ const fetchData = async (): Promise<any> => {
     }
     const { data } = await getCurveDataOfPowerAndTempABCNew(params);
 
-    if (data === null) {
+    if (!data) {
       option.value = null;
       resolve({ list: [] });
     } else {
@@ -360,13 +368,24 @@ const fetchData = async (): Promise<any> => {
   });
 };
 
-onMounted(async () => {
+const getTransformerMonitor = async () => {
   const { data } = await TransformerMonitor({
-    stationid: "000",
-    transformerid: "0"
+    stationid: getContextStationId(),
+    transformerid: transformer.value?.transformerid
   });
-  TransformerStatus.value = data.TransformerStatus;
-});
+  TransformerStatus.value = data?.TransformerStatus || defaultData;
+};
+
+const onContextStationChange = async () => {
+  transformerTreeRef?.value?.resetData();
+};
+
+const onTransformerTreeChange = (transformerids: string[], transformers: any[]) => {
+  if (transformerids.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
+  transformer.value = transformers[0];
+  tableRef?.value?.resetData();
+  getTransformerMonitor();
+};
 </script>
 
 <style scoped lang="scss">
