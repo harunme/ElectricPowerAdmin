@@ -1,8 +1,10 @@
 <template>
   <div class="flex-column">
-    <StationContext />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <TransformerTree ref="transformerInfoTreeRef" :is-multiple="true" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
@@ -25,15 +27,20 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="ElectricDayReport">
+<script setup lang="tsx" name="MonthlyTransTempReport_zx">
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { transformerTempMonthReport } from "@/api/modules/main";
 import PaginationTable, { SpanMethodProps } from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
+import TransformerTree from "@/components/TransformerTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
+import { ElMessage } from "element-plus";
+import { getContextStationId } from "@/utils";
 
 const tableRef = ref<any>(null);
+const transformer = ref<any>(null);
+const transformerInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
   starttime: string;
@@ -76,14 +83,14 @@ const fetchData = async (): Promise<any> => {
     loading.value = true;
     const { data }: any = await transformerTempMonthReport([
       {
-        stationid: "000",
-        transformerid: "0",
+        stationid: getContextStationId(),
+        transformerid: transformer.value,
         starttime: formInline.starttime
       }
     ]);
-    if (data === null) {
+    if (!data) {
       loading.value = false;
-      resolve({ list: [], total: 0 });
+      return resolve({ list: [], total: 0 });
     }
     const circuitnames: any[] = [];
     for (let index = 0; index < data.PowerValue.length; index++) {
@@ -119,6 +126,16 @@ const fetchData = async (): Promise<any> => {
     loading.value = false;
     resolve({ list: circuitUIPQPfEpis, total: 0 });
   });
+};
+
+const onContextStationChange = async () => {
+  transformerInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
+  transformer.value = circuitids.join("-");
+  tableRef?.value?.resetData();
 };
 </script>
 
