@@ -1,8 +1,10 @@
 <template>
   <div class="UnbMonitor flex-column">
-    <StationContext />
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
-      <CollapseBox />
+      <CollapseBox>
+        <CircuitInfoTree ref="circuitInfoTreeRef" :on-change="onCircuitInfoTreeChange" />
+      </CollapseBox>
       <div class="card content-box">
         <el-tabs>
           <el-tab-pane label="日原始数据" class="content-pane">
@@ -10,7 +12,7 @@
               <el-form :inline="true" :model="formInline" class="table-form-inline">
                 <el-form-item label="时间范围">
                   <el-date-picker
-                    v-model="formInline.date"
+                    v-model="formInline.range"
                     type="daterange"
                     unlink-panels
                     range-separator="至"
@@ -21,14 +23,14 @@
                   />
                 </el-form-item>
                 <el-form-item label="电力类别">
-                  <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
-                    <el-option label="三相电流不平衡度" value="shanghai" />
-                    <el-option label="三相电压不平衡度" value="beijing" />
+                  <el-select v-model="formInline.phase">
+                    <el-option label="三相电流不平衡度" value="IUnB" />
+                    <el-option label="三相电压不平衡度" value="UUnB" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="onSubmit">查询</el-button>
-                  <el-button type="primary" @click="onSubmit">设置</el-button>
+                  <!-- <el-button type="primary" @click="onSubmit">设置</el-button> -->
                 </el-form-item>
               </el-form>
               <el-tabs>
@@ -36,7 +38,8 @@
                   <ECharts :option="option" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
-                  <PaginationTable :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+                  <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
+                  </PaginationTable>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -46,7 +49,7 @@
               <el-form :inline="true" :model="formInline" class="table-form-inline">
                 <el-form-item label="时间范围">
                   <el-date-picker
-                    v-model="formInline.date"
+                    v-model="formInline.range"
                     type="daterange"
                     unlink-panels
                     range-separator="至"
@@ -57,9 +60,9 @@
                   />
                 </el-form-item>
                 <el-form-item label="电力类别">
-                  <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
-                    <el-option label="三相电流不平衡度" value="shanghai" />
-                    <el-option label="三相电压不平衡度" value="beijing" />
+                  <el-select v-model="formInline.phase">
+                    <el-option label="三相电流不平衡度" value="IUnB" />
+                    <el-option label="三相电压不平衡度" value="UUnB" />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -82,29 +85,33 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="bing">
-import { onMounted, ref, reactive } from "vue";
-import { getCircuitInfoTree } from "@/api/modules/sys";
-import { ReqPage } from "@/api/interface/index";
-import { summary } from "@/api/modules/main";
+<script setup lang="tsx" name="UnbMonitor">
+import { ref, reactive } from "vue";
+// import { ReqPage } from "@/api/interface/index";
+import moment from "moment";
+import { ElectricData } from "@/api/modules/main";
 import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
-
-const tree = ref([] as any);
-// const props = { children: "children", label: "circuitname" };
+import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { getContextStationId } from "@/utils";
 
 const size = ref<"default" | "large" | "small">("default");
+const tableRef = ref<any>(null);
+const circuit = ref<any>(null);
+const circuitInfoTreeRef = ref<any>(null);
 
-// const value1 = ref("");
-// const value2 = ref("");
+const end = new Date();
+const start = new Date();
+start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
-const columns = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "采集时间" }
-];
+const formInline = reactive({
+  range: [moment(start).format("YYYY-MM-DD"), moment(end).format("YYYY-MM-DD")],
+  phase: "IUnB" as "IUnB" | "UUnB"
+});
+const columns = ref<any>([]);
 
 const columns2 = [
   { prop: "stationname", label: "回路名称" },
@@ -131,15 +138,30 @@ const columns2 = [
   }
 ];
 
-const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
+const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await summary({
-      pageNum,
-      pageSize,
-      sortParam: "001",
-      sortTag: "ASC"
+    const { data } = await ElectricData({
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
+      startTime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endTime: moment(formInline.range[1]).format("YYYY-MM-DD"),
+      phase: formInline.phase
     });
-    resolve(data.pageInfo);
+    if (formInline.phase === "IUnB") {
+      columns.value = [
+        { prop: "circuitname", label: "回路名称" },
+        { prop: "date", label: "采集时间" },
+        { prop: "data", label: "IUnB(%)" }
+      ];
+    }
+    if (formInline.phase === "UUnB") {
+      columns.value = [
+        { prop: "circuitname", label: "回路名称" },
+        { prop: "date", label: "采集时间" },
+        { prop: "data", label: "UUnB(%)" }
+      ];
+    }
+    resolve({ list: data?.PowerValue });
   });
 };
 
@@ -172,11 +194,6 @@ const shortcuts = [
     }
   }
 ];
-
-onMounted(async () => {
-  const res = await getCircuitInfoTree();
-  tree.value = res?.data;
-});
 
 const option: ECOption = {
   title: {
@@ -247,14 +264,17 @@ const option: ECOption = {
   ]
 };
 
-const formInline = reactive({
-  user: "",
-  region: "shanghai",
-  date: ""
-});
-
 const onSubmit = () => {
-  console.log("submit!");
+  tableRef?.value?.resetData();
+};
+
+const onContextStationChange = async () => {
+  circuitInfoTreeRef?.value?.resetData();
+};
+
+const onCircuitInfoTreeChange = (circuitids: string[]) => {
+  circuit.value = circuitids[0];
+  tableRef?.value?.resetData();
 };
 </script>
 
