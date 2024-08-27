@@ -30,12 +30,11 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="onSubmit">查询</el-button>
-                  <!-- <el-button type="primary" @click="onSubmit">设置</el-button> -->
                 </el-form-item>
               </el-form>
               <el-tabs>
                 <el-tab-pane label="图表" class="chart-box">
-                  <ECharts :option="option" />
+                  <ECharts v-if="option !== null" :option="option" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
                   <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
@@ -92,7 +91,7 @@ import moment from "moment";
 import { ElectricData } from "@/api/modules/main";
 import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
-import { ECOption } from "@/components/Charts/config";
+// import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
@@ -111,6 +110,14 @@ const formInline = reactive({
   range: [moment(start).format("YYYY-MM-DD"), moment(end).format("YYYY-MM-DD")],
   phase: "IUnB" as "IUnB" | "UUnB"
 });
+
+const PhaseMap = {
+  IUnB: "三相电流不平衡度",
+  UUnB: "三相电压不平衡度"
+};
+
+const option = ref<any>(null);
+
 const columns = ref<any>([]);
 
 const columns2 = [
@@ -140,13 +147,6 @@ const columns2 = [
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const { data } = await ElectricData({
-      stationid: getContextStationId(),
-      circuitids: circuit.value,
-      startTime: moment(formInline.range[0]).format("YYYY-MM-DD"),
-      endTime: moment(formInline.range[1]).format("YYYY-MM-DD"),
-      phase: formInline.phase
-    });
     if (formInline.phase === "IUnB") {
       columns.value = [
         { prop: "circuitname", label: "回路名称" },
@@ -161,7 +161,85 @@ const fetchData = async (): Promise<any> => {
         { prop: "data", label: "UUnB(%)" }
       ];
     }
-    resolve({ list: data?.PowerValue });
+    const { data } = await ElectricData({
+      stationid: getContextStationId(),
+      circuitids: circuit.value,
+      startTime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+      endTime: moment(formInline.range[1]).format("YYYY-MM-DD"),
+      phase: formInline.phase
+    });
+    if (!data.PowerValue) return resolve({ list: [] });
+    else {
+      option.value = {
+        title: {
+          text: PhaseMap[formInline.phase]
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        legend: {
+          data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"]
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: "none"
+            },
+            dataView: { readOnly: false },
+            magicType: { type: ["line", "bar"] },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: [
+          {
+            name: "Email",
+            type: "line",
+            stack: "Total",
+            data: [120, 132, 101, 134, 90, 230, 210]
+          },
+          {
+            name: "Union Ads",
+            type: "line",
+            stack: "Total",
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: "Video Ads",
+            type: "line",
+            stack: "Total",
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
+          {
+            name: "Direct",
+            type: "line",
+            stack: "Total",
+            data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+            name: "Search Engine",
+            type: "line",
+            stack: "Total",
+            data: [820, 932, 901, 934, 1290, 1330, 1320]
+          }
+        ]
+      };
+      resolve({ list: data?.PowerValue });
+    }
   });
 };
 
@@ -194,75 +272,6 @@ const shortcuts = [
     }
   }
 ];
-
-const option: ECOption = {
-  title: {
-    text: "三相电流不平衡度"
-  },
-  tooltip: {
-    trigger: "axis"
-  },
-  legend: {
-    data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"]
-  },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  },
-  toolbox: {
-    feature: {
-      dataZoom: {
-        yAxisIndex: "none"
-      },
-      dataView: { readOnly: false },
-      magicType: { type: ["line", "bar"] },
-      restore: {},
-      saveAsImage: {}
-    }
-  },
-  xAxis: {
-    type: "category",
-    boundaryGap: false,
-    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  },
-  yAxis: {
-    type: "value"
-  },
-  series: [
-    {
-      name: "Email",
-      type: "line",
-      stack: "Total",
-      data: [120, 132, 101, 134, 90, 230, 210]
-    },
-    {
-      name: "Union Ads",
-      type: "line",
-      stack: "Total",
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      name: "Video Ads",
-      type: "line",
-      stack: "Total",
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      name: "Direct",
-      type: "line",
-      stack: "Total",
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      name: "Search Engine",
-      type: "line",
-      stack: "Total",
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
-    }
-  ]
-};
 
 const onSubmit = () => {
   tableRef?.value?.resetData();
