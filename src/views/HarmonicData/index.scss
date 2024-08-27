@@ -1,10 +1,16 @@
 .HarmonicData {
+  height: 100%;
   .content-box {
+    flex: 1;
     width: 100%;
+    overflow: hidden;
     .el-tabs {
       display: flex;
+      flex: 1;
       flex-direction: column;
-      height: calc(100% - 50px);
+
+      // height: calc(100% - 50px);
+      // height: 600px;
       :deep(.el-tabs__content) {
         flex: 1;
         .chart-box {
