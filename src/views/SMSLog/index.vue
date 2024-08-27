@@ -86,8 +86,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     if (getContextStationId()) params.stationid = getContextStationId();
 
     const { data } = await GetAlarmEventYcList(params);
-    console.log("fetchData", data.list);
-    resolve(data);
+    if (!data) return resolve({ list: [] });
+    resolve({ list: data?.list });
   });
 };
 

@@ -178,8 +178,7 @@ onMounted(async () => {
 
   groupTree.value = getSubGroupTreeRes?.data;
   companyTree.value = getCompanyTreeRes?.data;
-
-  if (props.disableAll && getContextStationId() === undefined) {
+  if (props.disableAll && !getContextStationId()) {
     const { data } = await getSubstationListBySubGroupId({ pageNum: 1, pageSize: 10 });
     localSet("context-station", data.list[0]);
     stationSelected.value = data.list[0];
