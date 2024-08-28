@@ -35,6 +35,7 @@
               <el-tabs>
                 <el-tab-pane label="图表" class="chart-box">
                   <ECharts v-if="optionElectricData !== null" :option="optionElectricData" />
+                  <el-empty v-else description="暂无数据" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
                   <PaginationTable
@@ -75,7 +76,8 @@
               </el-form>
               <el-tabs>
                 <el-tab-pane label="图表" class="chart-box">
-                  <ECharts :option="optionElecMaxMinAvgValue" />
+                  <ECharts v-if="optionElecMaxMinAvgValue !== null" :option="optionElecMaxMinAvgValue" />
+                  <el-empty v-else description="暂无数据" />
                 </el-tab-pane>
                 <el-tab-pane label="数据" class="chart-box">
                   <PaginationTable
@@ -96,17 +98,15 @@
 
 <script setup lang="tsx" name="UnbMonitor">
 import { ref, reactive } from "vue";
-// import { ReqPage } from "@/api/interface/index";
 import moment from "moment";
 import { ElectricData, ElecMaxMinAvgValue } from "@/api/modules/main";
 import StationContext from "@/components/StationContext/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
-// import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import { getContextStationId } from "@/utils";
-// http://111.231.24.91/main/ElecMaxMinAvgValue
+
 const size = ref<"default" | "large" | "small">("default");
 const tableRef = ref<any>(null);
 const tableElecMaxMinAvgValueRef = ref<any>(null);
@@ -159,30 +159,7 @@ const PhaseMap = {
 const optionElectricData = ref<any>(null);
 const optionElecMaxMinAvgValue = ref<any>(null);
 const columnsElectricData = ref<any>([]);
-const columnsElecMaxMinAvgValue = [
-  { prop: "stationname", label: "回路名称" },
-  { prop: "transformername", label: "日期" },
-  {
-    label: "三相电流不平衡度(%)",
-    children: [
-      {
-        label: "最大值",
-        children: [
-          { prop: "text", label: "数值" },
-          { prop: "3sdf11", label: "发生时间" }
-        ]
-      },
-      {
-        label: "最小值",
-        children: [
-          { prop: "text", label: "数值" },
-          { prop: "3sdf11", label: "发生时间" }
-        ]
-      },
-      { prop: "3sdf", label: "平均值" }
-    ]
-  }
-];
+const columnsElecMaxMinAvgValue = ref<any>([]);
 
 const fetchElectricData = async (): Promise<any> => {
   return new Promise(async resolve => {
@@ -202,22 +179,29 @@ const fetchElectricData = async (): Promise<any> => {
     }
     const { data } = await ElectricData({
       stationid: getContextStationId(),
-      circuitids: circuit.value,
+      circuitids: circuit.value.circuitid,
       startTime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endTime: moment(formInline.range[1]).format("YYYY-MM-DD"),
       phase: formInline.phase
     });
-    if (!data.PowerValue) return resolve({ list: [] });
+    if (!data?.PowerValue || data?.PowerValue.length === 0) return resolve({ list: [] });
     else {
       optionElectricData.value = {
         title: {
-          text: PhaseMap[formInline.phase]
+          text: `${moment(formInline.range[0]).format("YYYY-MM-DD")}-${moment(formInline.range[1]).format("YYYY-MM-DD")} ${circuit.value.circuitname} ${PhaseMap[formInline.phase]}`,
+          left: "center",
+          textStyle: {
+            color: "rgb(31,125,195)",
+            fontSize: 14
+          }
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
-          data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"]
+          data: [formInline.phase],
+          left: "center",
+          top: "4%"
         },
         grid: {
           left: "3%",
@@ -239,41 +223,17 @@ const fetchElectricData = async (): Promise<any> => {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+          data: data?.PowerValue.map(({ date }: any) => date)
         },
         yAxis: {
           type: "value"
         },
         series: [
           {
-            name: "Email",
+            name: formInline.phase,
             type: "line",
             stack: "Total",
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: "Union Ads",
-            type: "line",
-            stack: "Total",
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: "Video Ads",
-            type: "line",
-            stack: "Total",
-            data: [150, 232, 201, 154, 190, 330, 410]
-          },
-          {
-            name: "Direct",
-            type: "line",
-            stack: "Total",
-            data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: "Search Engine",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
+            data: data?.PowerValue.map(({ data }: any) => data)
           }
         ]
       };
@@ -284,39 +244,84 @@ const fetchElectricData = async (): Promise<any> => {
 
 const fetchElecMaxMinAvgValue = async (): Promise<any> => {
   return new Promise(async resolve => {
-    // if (formInline.phase === "IUnB") {
-    //   columnsElectricData.value = [
-    //     { prop: "circuitname", label: "回路名称" },
-    //     { prop: "date", label: "采集时间" },
-    //     { prop: "data", label: "IUnB(%)" }
-    //   ];
-    // }
-    // if (formInline.phase === "UUnB") {
-    //   columnsElectricData.value = [
-    //     { prop: "circuitname", label: "回路名称" },
-    //     { prop: "date", label: "采集时间" },
-    //     { prop: "data", label: "UUnB(%)" }
-    //   ];
-    // }
+    if (formInline.phase === "IUnB") {
+      columnsElecMaxMinAvgValue.value = [
+        { prop: "objectname", label: "回路名称" },
+        { prop: "savetime", label: "日期" },
+        {
+          label: "三相电流不平衡度(%)",
+          children: [
+            {
+              label: "最大值",
+              children: [
+                { prop: "fIUnBmaxvalue", label: "数值" },
+                { prop: "fIUnBmaxtime", label: "发生时间" }
+              ]
+            },
+            {
+              label: "最小值",
+              children: [
+                { prop: "fIUnBminvalue", label: "数值" },
+                { prop: "fIUnBmintime", label: "发生时间" }
+              ]
+            },
+            { prop: "fIUnBavgvalue", label: "平均值" }
+          ]
+        }
+      ];
+    }
+    if (formInline.phase === "UUnB") {
+      columnsElecMaxMinAvgValue.value = [
+        { prop: "objectname", label: "回路名称" },
+        { prop: "savetime", label: "日期" },
+        {
+          label: "三相电压不平衡度(%)",
+          children: [
+            {
+              label: "最大值",
+              children: [
+                { prop: "fUUnBmaxvalue", label: "数值" },
+                { prop: "fUUnBmaxtime", label: "发生时间" }
+              ]
+            },
+            {
+              label: "最小值",
+              children: [
+                { prop: "fUUnBminvalue", label: "数值" },
+                { prop: "fUUnBmintime", label: "发生时间" }
+              ]
+            },
+            { prop: "fUUnBavgvalue", label: "平均值" }
+          ]
+        }
+      ];
+    }
     const { data } = await ElecMaxMinAvgValue({
       stationid: getContextStationId(),
-      circuitids: circuit.value,
+      circuitids: circuit.value.circuitid,
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
       param: "UnB",
       scheme: "day"
     });
-    if (!data.PowerValue) return resolve({ list: [] });
+    if (!data?.StatisticValue) return resolve({ list: [] });
     else {
       optionElecMaxMinAvgValue.value = {
         title: {
-          text: PhaseMap[formInline.phase]
+          text: `${moment(formInline.range[0]).format("YYYY-MM-DD")}-${moment(formInline.range[1]).format("YYYY-MM-DD")} ${circuit.value.circuitname} ${PhaseMap[formInline.phase]}`,
+          left: "center",
+          textStyle: {
+            color: "rgb(31,125,195)",
+            fontSize: 14
+          }
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
-          data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"]
+          data: ["最大值", "最小值", "平均值"],
+          left: "center",
+          top: "4%"
         },
         grid: {
           left: "3%",
@@ -338,45 +343,39 @@ const fetchElecMaxMinAvgValue = async (): Promise<any> => {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+          data: data?.StatisticValue.map(({ savetime }: any) => savetime)
         },
         yAxis: {
           type: "value"
         },
         series: [
           {
-            name: "Email",
+            name: "最大值",
             type: "line",
             stack: "Total",
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: data?.StatisticValue.map(({ fIUnBmaxvalue, fUUnBmaxvalue }: any) =>
+              formInline.phase === "IUnB" ? fIUnBmaxvalue : fUUnBmaxvalue
+            )
           },
           {
-            name: "Union Ads",
+            name: "最小值",
             type: "line",
             stack: "Total",
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: data?.StatisticValue.map(({ fIUnBminvalue, fUUnBminvalue }: any) =>
+              formInline.phase === "IUnB" ? fIUnBminvalue : fUUnBminvalue
+            )
           },
           {
-            name: "Video Ads",
+            name: "平均值",
             type: "line",
             stack: "Total",
-            data: [150, 232, 201, 154, 190, 330, 410]
-          },
-          {
-            name: "Direct",
-            type: "line",
-            stack: "Total",
-            data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: "Search Engine",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
+            data: data?.StatisticValue.map(({ fIUnBavgvalue, fUUnBavgvalue }: any) =>
+              formInline.phase === "IUnB" ? fIUnBavgvalue : fUUnBavgvalue
+            )
           }
         ]
       };
-      resolve({ list: data?.PowerValue });
+      resolve({ list: data?.StatisticValue });
     }
   });
 };
@@ -393,9 +392,11 @@ const onContextStationChange = async () => {
   circuitInfoTreeRef?.value?.resetData();
 };
 
-const onCircuitInfoTreeChange = (circuitids: string[]) => {
-  circuit.value = circuitids[0];
+const onCircuitInfoTreeChange = (circuitids: string[], circuitinfo: any[]) => {
+  console.log("circuitids", circuitids);
+  circuit.value = circuitinfo[0];
   tableRef?.value?.resetData();
+  tableElecMaxMinAvgValueRef?.value?.resetData();
 };
 </script>
 

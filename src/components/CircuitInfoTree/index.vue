@@ -38,7 +38,7 @@ const checkedAll = ref<boolean>(true);
 const treeProps = { children: "children", label: "circuitname" };
 
 const props = defineProps<{
-  onChange?: (param: any) => any;
+  onChange?: (param: any, fullParam?: any) => any;
   showCascade?: boolean;
   showAll?: boolean;
   isMultiple?: boolean;
@@ -63,7 +63,7 @@ onMounted(async () => {
 const nodeClick = (node: any) => {
   if (props.isMultiple) return false;
   if (props.onChange) {
-    props.onChange([node.circuitid]);
+    props.onChange([node.circuitid], [node]);
   }
 };
 

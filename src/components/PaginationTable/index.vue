@@ -5,7 +5,7 @@
       :span-method="spanMethod"
       :show-summary="showSummary"
       @selection-change="selectionChange"
-      :data="tableData"
+      :data="total > 0 ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
       style="width: 100%"
       :row-key="rowKey"
       v-loading="loading"
@@ -18,7 +18,6 @@
       </recursive-columns>
     </el-table>
     <el-pagination
-      v-if="total > 0"
       class="pagination"
       background
       @size-change="handleSizeChange"
@@ -26,7 +25,7 @@
       :current-page="currentPage"
       :page-size="pageSize"
       layout="total, prev, pager, next"
-      :total="total"
+      :total="total > 0 ? total : tableData.length"
     >
     </el-pagination>
   </div>
@@ -80,13 +79,20 @@ const currentPage = ref(1); // 当前页
 // 处理每页显示的数量变化
 const handleSizeChange = (val: number) => {
   pageSize.value = val;
-  refreshData();
+  if (total.value > 0) {
+    refreshData();
+  } else {
+    pageSize.value = val;
+    currentPage.value = 1;
+  }
 };
 
 // 处理当前页变化
 const handleCurrentChange = (val: number) => {
   currentPage.value = val;
-  refreshData();
+  if (total.value > 0) {
+    refreshData();
+  }
 };
 
 // 刷新数据

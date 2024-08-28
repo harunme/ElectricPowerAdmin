@@ -109,7 +109,7 @@
           </div>
           <div class="monthChart">
             <ECharts v-if="option !== null" :option="option" />
-            <el-empty v-elst description="暂无数据" />
+            <el-empty v-else description="暂无数据" />
           </div>
         </div>
       </div>
