@@ -676,9 +676,10 @@ export namespace Main {
     stationid: string;
     circuitids: string;
     starttime: string;
+    endtime?: string;
     // 电流 I，电压 U，功率 P，不平衡度 UnB，电压谐波 UHR，电流谐波 IHR。
     param: "I" | "U" | "P" | "UnB" | "UHR" | "IHR";
-    scheme: "day" | "month" | "custom";
+    scheme?: "day" | "month" | "custom";
   }
 
   export interface ResElectricReportNew {
