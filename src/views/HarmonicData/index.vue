@@ -115,7 +115,7 @@ const fetchData = async (): Promise<any> => {
       thdtype: formInline.thdtype.join("-"),
       phase: formInline.phase.join(",")
     });
-    resolve({ list: data?.PowerValue });
+    resolve({ list: data?.threePhaseHarmonicData });
   });
 };
 

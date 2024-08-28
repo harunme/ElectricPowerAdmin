@@ -1,6 +1,6 @@
 <template>
   <div class="SubGroup">
-    <div class="card content">
+    <div class="card content flex-column">
       <el-form :inline="true">
         <el-form-item>
           <el-button type="primary" @click="addCircuit">新增区域</el-button>

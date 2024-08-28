@@ -951,15 +951,17 @@ export namespace Main {
     phase: string;
   }
   export interface ResThreePhaseHarmonic {
-    PowerValue: {
+    threePhaseHarmonicData: {
+      collecttime: string;
+      metercode: string;
       stationid: string;
-      circuitid: string;
-      circuitname: string;
-      date: string;
-      energykind: string;
-      phase: string;
-      thdtype: string;
-      data: number;
+      valueList: {
+        circuitid: string;
+        circuitname: string;
+        phase: string;
+        Hr02: number;
+        Thd: number;
+      }[];
     }[];
   }
 

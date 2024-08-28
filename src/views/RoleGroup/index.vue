@@ -1,6 +1,6 @@
 <template>
   <div class="RoleGroup">
-    <div class="card content">
+    <div class="card content flex-column">
       <el-form :inline="true">
         <el-form-item>
           <el-button type="primary" @click="addDept">新增组织机构</el-button>

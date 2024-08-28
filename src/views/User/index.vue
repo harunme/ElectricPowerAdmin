@@ -4,7 +4,7 @@
       <CollapseBox>
         <DeptTree :on-change="onDeptTreeChange" />
       </CollapseBox>
-      <div class="card table-box">
+      <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="用户名">
             <el-input v-model="formInline.search" placeholder="请输入用户名或姓名" clearable />

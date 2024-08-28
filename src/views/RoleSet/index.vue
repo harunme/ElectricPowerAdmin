@@ -3,7 +3,7 @@
     <CollapseBox>
       <DeptTree :on-change="onDeptTreeChange" />
     </CollapseBox>
-    <div class="card">
+    <div class="card flex-column">
       <el-form :inline="true">
         <el-form-item>
           <el-button type="primary" @click="addUserRole">新增角色</el-button>
