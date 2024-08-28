@@ -12,12 +12,14 @@
             <span>报警类型分析</span>
             <div>
               <ECharts v-if="option !== null" :option="option" />
+              <el-empty v-else description="暂无数据" />
             </div>
           </div>
           <div>
             <span>报警等级分析</span>
             <div>
               <ECharts v-if="pieOption !== null" :option="pieOption" />
+              <el-empty v-else description="暂无数据" />
             </div>
           </div>
         </div>
@@ -147,7 +149,11 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     }
 
     const { data } = await getAlarmEventLogList(params);
-    resolve({ list: data.list, total: data.total });
+    if (!data) {
+      resolve({ list: [], total: 0 });
+    } else {
+      resolve({ list: data.list, total: data.total });
+    }
   });
 };
 

@@ -40,6 +40,7 @@
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
+          <el-empty v-else description="暂无数据" />
         </div>
         <PaginationTable
           ref="tableRef"
@@ -126,120 +127,125 @@ const fetchData = async (): Promise<any> => {
       starttime: formInline.starttime
     };
     const { data } = await AveragePowerReport(params);
-    const list =
-      data?.list.map(i => ({
-        ...i,
-        fPf: Number(i.fPF) / 1000
-      })) || [];
-    option.value = {
-      grid: {
-        left: 10,
-        right: 10,
-        bottom: 10,
-        top: 64,
-        containLabel: true
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "cross",
-          crossStyle: {
-            color: "#999"
-          }
-        }
-      },
-      toolbox: {
-        feature: {
-          dataView: { show: true, readOnly: false },
-          magicType: { show: true, type: ["line", "bar"] },
-          restore: { show: true },
-          saveAsImage: { show: true }
-        }
-      },
-      legend: {
-        data: ["正向有功电度", "反向有功电度", "正向无功电度", "反向无功电度", "功率因数"]
-      },
-      xAxis: [
-        {
-          type: "category",
-          data: list.map(({ collecttime }) => collecttime),
+    if (!data) {
+      resolve({ list: [] });
+      option.value = null;
+    } else {
+      const list =
+        data?.list.map(i => ({
+          ...i,
+          fPf: Number(i.fPF) / 1000
+        })) || [];
+      option.value = {
+        grid: {
+          left: 10,
+          right: 10,
+          bottom: 10,
+          top: 64,
+          containLabel: true
+        },
+        tooltip: {
+          trigger: "axis",
           axisPointer: {
-            type: "shadow"
+            type: "cross",
+            crossStyle: {
+              color: "#999"
+            }
           }
-        }
-      ],
-      yAxis: [
-        {
-          type: "value",
-          name: "有功电度/无功电度"
         },
-        {
-          type: "value",
-          name: "功率因数",
-          min: min(list.map(({ fPF }) => fPF)),
-          max: max(list.map(({ fPF }) => fPF))
-        }
-      ],
-      series: [
-        {
-          name: "正向有功电度",
-          type: "bar",
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + " ml";
-            }
-          },
-          data: list.map(({ fEpe }) => Number(fEpe))
+        toolbox: {
+          feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ["line", "bar"] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
         },
-        {
-          name: "反向有功电度",
-          type: "bar",
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + " ml";
-            }
-          },
-          data: list.map(({ fEpi }) => Number(fEpi))
+        legend: {
+          data: ["正向有功电度", "反向有功电度", "正向无功电度", "反向无功电度", "功率因数"]
         },
-        {
-          name: "正向无功电度",
-          type: "bar",
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + " ml";
+        xAxis: [
+          {
+            type: "category",
+            data: list.map(({ collecttime }) => collecttime),
+            axisPointer: {
+              type: "shadow"
             }
+          }
+        ],
+        yAxis: [
+          {
+            type: "value",
+            name: "有功电度/无功电度"
           },
-          data: list.map(({ fEqc }) => Number(fEqc))
-        },
-        {
-          name: "反向无功电度",
-          type: "bar",
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + " ml";
-            }
+          {
+            type: "value",
+            name: "功率因数",
+            min: min(list.map(({ fPF }) => fPF)),
+            max: max(list.map(({ fPF }) => fPF))
+          }
+        ],
+        series: [
+          {
+            name: "正向有功电度",
+            type: "bar",
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " ml";
+              }
+            },
+            data: list.map(({ fEpe }) => Number(fEpe))
           },
-          data: list.map(({ fEql }) => Number(fEql))
-        },
-        {
-          name: "功率因数",
-          type: "line",
-          yAxisIndex: 1,
-          smooth: 0.6,
-          lineStyle: {
-            color: "#ffba00",
-            width: 3
+          {
+            name: "反向有功电度",
+            type: "bar",
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " ml";
+              }
+            },
+            data: list.map(({ fEpi }) => Number(fEpi))
           },
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + " °C";
-            }
+          {
+            name: "正向无功电度",
+            type: "bar",
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " ml";
+              }
+            },
+            data: list.map(({ fEqc }) => Number(fEqc))
           },
-          data: list.map(({ fPf }) => Number(fPf))
-        }
-      ]
-    };
-    resolve({ list });
+          {
+            name: "反向无功电度",
+            type: "bar",
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " ml";
+              }
+            },
+            data: list.map(({ fEql }) => Number(fEql))
+          },
+          {
+            name: "功率因数",
+            type: "line",
+            yAxisIndex: 1,
+            smooth: 0.6,
+            lineStyle: {
+              color: "#ffba00",
+              width: 3
+            },
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + " °C";
+              }
+            },
+            data: list.map(({ fPf }) => Number(fPf))
+          }
+        ]
+      };
+      resolve({ list });
+    }
   });
 };
 

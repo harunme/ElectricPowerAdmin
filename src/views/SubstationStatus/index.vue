@@ -231,14 +231,17 @@
             <div class="chart-box" v-if="type === 'month'">
               <div class="line">
                 <ECharts v-if="option !== null" :option="option" />
+                <el-empty v-else description="暂无数据" />
               </div>
               <div class="pie">
                 <ECharts v-if="pieOption !== null" :option="pieOption" />
+                <!-- <el-empty v-else description="暂无数据" /> -->
               </div>
             </div>
             <div class="chart-box" v-else>
               <div class="line" style="width: 100%">
                 <ECharts v-if="totalOption !== null" :option="totalOption" />
+                <el-empty v-else description="暂无数据" />
               </div>
             </div>
           </div>
@@ -490,6 +493,11 @@ const GetMothJFPG = async (type = "month") => {
   let legend = [] as any;
   let xAxisData = [] as any;
   let series = [] as any;
+  if (!data) {
+    option.value = null;
+    pieOption.value = null;
+    return;
+  }
   if (type === "month") {
     const NameMap = {
       fEpijsum: "尖总电量",
@@ -593,17 +601,7 @@ const GetMothJFPG = async (type = "month") => {
         bottom: "3%",
         containLabel: true
       },
-      toolbox: {
-        feature: {
-          dataZoom: {
-            yAxisIndex: "none"
-          },
-          dataView: { readOnly: false },
-          magicType: { type: ["line", "bar"] },
-          restore: {},
-          saveAsImage: {}
-        }
-      },
+
       xAxis: {
         type: "category",
         boundaryGap: false,

@@ -44,6 +44,7 @@
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
+          <el-empty v-else description="暂无数据" />
         </div>
         <div class="table-box">
           <PaginationTable
@@ -151,48 +152,53 @@ const fetchData = async (): Promise<any> => {
       params.starttime = moment(formInline.starttime).format("YYYY-MM");
     }
     const { data } = await GetCirLoadRate(params);
-    const list = data?.PowerValue || [];
-    option.value = {
-      grid: {
-        left: 10,
-        right: 10,
-        bottom: 10,
-        top: 30,
-        containLabel: true
-      },
-      toolbox: {
-        feature: {
-          dataView: { show: true, readOnly: false },
-          restore: { show: true },
-          saveAsImage: { show: true }
-        }
-      },
-      xAxis: [
-        {
-          type: "category",
-          data: list.map(({ collecttime }) => collecttime),
-          axisPointer: {
-            type: "shadow"
+    if (!data) {
+      resolve({ list: [] });
+      option.value = null;
+    } else {
+      const list = data?.PowerValue || [];
+      option.value = {
+        grid: {
+          left: 10,
+          right: 10,
+          bottom: 10,
+          top: 30,
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
           }
-        }
-      ],
-      yAxis: {
-        name: "负荷率",
-        type: "value"
-      },
-      series: [
-        {
-          type: "line",
-          smooth: 0.6,
-          lineStyle: {
-            color: "#ffba00",
-            width: 3
-          },
-          data: list.map(({ fPLoadRate }) => Number(fPLoadRate))
-        }
-      ]
-    };
-    resolve({ list, total: 0 });
+        },
+        xAxis: [
+          {
+            type: "category",
+            data: list.map(({ collecttime }) => collecttime),
+            axisPointer: {
+              type: "shadow"
+            }
+          }
+        ],
+        yAxis: {
+          name: "负荷率",
+          type: "value"
+        },
+        series: [
+          {
+            type: "line",
+            smooth: 0.6,
+            lineStyle: {
+              color: "#ffba00",
+              width: 3
+            },
+            data: list.map(({ fPLoadRate }) => Number(fPLoadRate))
+          }
+        ]
+      };
+      resolve({ list, total: 0 });
+    }
   });
 };
 

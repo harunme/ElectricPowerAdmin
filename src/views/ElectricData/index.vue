@@ -36,6 +36,7 @@
           <el-tabs v-if="activeTab === 0">
             <el-tab-pane label="图表" class="chart-box">
               <ECharts v-if="option !== null" :option="option" />
+              <el-empty v-else description="暂无数据" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
               <PaginationTable ref="tableRef1" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
@@ -45,6 +46,7 @@
           <el-tabs v-if="activeTab === 1">
             <el-tab-pane label="图表" class="chart-box">
               <ECharts v-if="option !== null" :option="option" />
+              <el-empty v-else description="暂无数据" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
               <PaginationTable ref="tableRef2" :fetch-on-mounted="false" :columns="columns2" :fetch-data="fetchData">
@@ -73,8 +75,12 @@ import { getContextStationId } from "@/utils";
 import { columnsConfig, phaseConfig, energyKinds } from "./config";
 
 const size = ref<"default" | "large" | "small">("default");
+const end = new Date();
+const start = new Date();
+start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+
 const formInline = reactive({
-  range: ["2024-06-01", "2024-07-01"],
+  range: [moment(start).format("YYYY-MM-DD"), moment(end).format("YYYY-MM-DD")],
   energykind: "P",
   phase: ""
 });
@@ -136,51 +142,60 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     // http://111.231.24.91/main/ElecMaxMinAvgValue
     const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
     const { data: ElectricDataMonthData } = await ElectricDataMonth(ElectricDataMonthParams);
-    option.value = {
-      title: {
-        text: energyKinds.find(kind => kind.value === formInline.energykind).name
-      },
-      tooltip: {
-        trigger: "axis"
-      },
-      legend: {
-        data: energyKinds.find(kind => kind.value === formInline.energykind).chartkeys
-      },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true
-      },
-      toolbox: {
-        feature: {
-          dataZoom: {
-            yAxisIndex: "none"
-          },
-          dataView: { readOnly: false },
-          magicType: { type: ["line", "bar"] },
-          restore: {},
-          saveAsImage: {}
-        }
-      },
-      xAxis: {
-        type: "category",
-        boundaryGap: false,
-        data: ElectricDataMonthData?.times
-      },
-      yAxis: {
-        type: "value"
-      },
-      series: energyKinds
-        .find(kind => kind.value === formInline.energykind)
-        .chartkeys.map(key => ({
-          name: key,
-          type: "line",
-          stack: "Total",
-          data: ElectricDataMonthData ? ElectricDataMonthData[key].map(Number) : []
-        }))
-    };
-    resolve({ list: ElectricDataPagingData?.list, total: ElectricDataPagingData?.total });
+
+    if (!ElectricDataPagingData) {
+      resolve({ list: [], total: 0 });
+    } else {
+      resolve({ list: ElectricDataPagingData?.list, total: ElectricDataPagingData?.total });
+    }
+    if (!ElectricDataMonthData) {
+      option.value = null;
+    } else {
+      option.value = {
+        title: {
+          text: energyKinds.find(kind => kind.value === formInline.energykind).name
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        legend: {
+          data: energyKinds.find(kind => kind.value === formInline.energykind).chartkeys
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: "none"
+            },
+            dataView: { readOnly: false },
+            magicType: { type: ["line", "bar"] },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ElectricDataMonthData?.times
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: energyKinds
+          .find(kind => kind.value === formInline.energykind)
+          .chartkeys.map(key => ({
+            name: key,
+            type: "line",
+            stack: "Total",
+            data: ElectricDataMonthData ? ElectricDataMonthData[key].map(Number) : []
+          }))
+      };
+    }
   });
 };
 

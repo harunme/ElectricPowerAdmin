@@ -92,8 +92,11 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       eventtype,
       paramname
     });
-    console.log("fetchData", data.list);
-    resolve(data);
+    if (!data) {
+      resolve({ list: [] });
+    } else {
+      resolve(data);
+    }
   });
 };
 </script>

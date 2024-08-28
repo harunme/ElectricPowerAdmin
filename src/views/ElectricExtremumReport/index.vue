@@ -14,7 +14,7 @@
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
-            <el-select v-model="formInline.scheme">
+            <el-select v-model="formInline.scheme" style="width: 92px">
               <el-option label="日报" value="day" />
               <el-option label="月报" value="month" />
               <el-option label="自定义" value="custom" />
@@ -38,7 +38,7 @@
             <el-date-picker v-model="formInline.daterange" @change="changeDaterange" type="daterange" />
           </el-form-item>
           <el-form-item label="电力类别">
-            <el-select v-model="formInline.param">
+            <el-select v-model="formInline.param" style="width: 120px">
               <el-option label="功率" value="P" />
               <el-option label="电流" value="I" />
               <el-option label="相电压" value="U" />
@@ -49,7 +49,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button-group v-if="formInline.scheme === 'month'" type="primary">
+            <el-button-group v-if="formInline.scheme === 'month'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一月
               </el-button>
@@ -57,7 +57,7 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-if="formInline.scheme === 'day'" type="primary">
+            <el-button-group v-if="formInline.scheme === 'day'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一日
               </el-button>

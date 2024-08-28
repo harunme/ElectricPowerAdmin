@@ -58,18 +58,18 @@ const pieData = ref([
 const columns = [
   { prop: "stationname", label: "变配电站名称" },
   { prop: "transformername", label: "变压器" },
-  { prop: "voltagestep", label: "额定容量(kVA)" },
-  { prop: "regionname", label: "有功功率(kW)" },
-  { prop: "pf", label: "功率因数" },
-  { prop: "s", label: "视在功率(kVA)" },
-  { prop: "loadFactor", label: "负载率" },
+  { prop: "voltagestep", label: "额定容量(kVA)", width: 120 },
+  { prop: "p", label: "有功功率(kW)", width: 120 },
+  { prop: "pf", label: "功率因数", width: 92 },
+  { prop: "s", label: "视在功率(kVA)", width: 120 },
+  { prop: "loadFactor", label: "负载率", width: 82 },
   {
     label: "温度(℃)",
     children: [
-      { prop: "xx", label: "A" },
-      { prop: "2a", label: "B" },
-      { prop: "3sdf", label: "C" },
-      { prop: "gfg", label: "油浸" }
+      { prop: "A", label: "A", width: 62 },
+      { prop: "B", label: "B", width: 62 },
+      { prop: "C", label: "C", width: 62 },
+      { prop: "油浸", label: "油浸", width: 62 }
     ]
   }
 ];

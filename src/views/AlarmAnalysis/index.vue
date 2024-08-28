@@ -94,11 +94,13 @@
           <el-tabs type="card" class="tabs">
             <el-tab-pane label="站点报警排名列表">
               <div class="table-box">
-                <PaginationTable :columns="typeColumns" :fetch-data="GetMessInfoTypeAlarmLogNum"> </PaginationTable>
+                <PaginationTable :fetch-on-mounted="false" :columns="typeColumns" :fetch-data="GetMessInfoTypeAlarmLogNum">
+                </PaginationTable>
               </div>
             </el-tab-pane>
             <el-tab-pane label="站点报警排名图表" lazy>
-              <Pie :data="pieData" />
+              <Pie v-if="pieData.length !== 0" :data="pieData" />
+              <el-empty v-else description="暂无数据" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -168,15 +170,19 @@ const GetMessInfoTypeAlarmLogNum = async (): Promise<any> => {
   return new Promise(async resolve => {
     const colors = ["rgb(44,191,192)", "rgb(166,141,214)", "rgb(75,159,234)", "rgb(224,154,6)"];
     let { data } = await getMessInfoTypeAlarmLogNum();
-    if (data === null) data = [];
-    pieData.value = data.map(({ messinfotypeexplain, todaylognum }, index) => ({
-      value: todaylognum,
-      name: messinfotypeexplain,
-      itemStyle: {
-        color: colors[index]
-      }
-    }));
-    resolve({ list: data });
+    if (!data) {
+      resolve({ list: [] });
+      data = [];
+    } else {
+      pieData.value = data.map(({ messinfotypeexplain, todaylognum }, index) => ({
+        value: todaylognum,
+        name: messinfotypeexplain,
+        itemStyle: {
+          color: colors[index]
+        }
+      }));
+      resolve({ list: data });
+    }
   });
 };
 
