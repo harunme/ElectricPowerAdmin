@@ -184,8 +184,10 @@ const fetchElectricData = async (): Promise<any> => {
       endTime: moment(formInline.range[1]).format("YYYY-MM-DD"),
       phase: formInline.phase
     });
-    if (!data?.PowerValue || data?.PowerValue.length === 0) return resolve({ list: [] });
-    else {
+    if (!data?.PowerValue || data?.PowerValue.length === 0) {
+      optionElectricData.value = null;
+      return resolve({ list: [] });
+    } else {
       optionElectricData.value = {
         title: {
           text: `${moment(formInline.range[0]).format("YYYY-MM-DD")}-${moment(formInline.range[1]).format("YYYY-MM-DD")} ${circuit.value.circuitname} ${PhaseMap[formInline.phase]}`,
@@ -304,8 +306,10 @@ const fetchElecMaxMinAvgValue = async (): Promise<any> => {
       param: "UnB",
       scheme: "day"
     });
-    if (!data?.StatisticValue) return resolve({ list: [] });
-    else {
+    if (!data?.StatisticValue) {
+      optionElecMaxMinAvgValue.value = null;
+      return resolve({ list: [] });
+    } else {
       optionElecMaxMinAvgValue.value = {
         title: {
           text: `${moment(formInline.range[0]).format("YYYY-MM-DD")}-${moment(formInline.range[1]).format("YYYY-MM-DD")} ${circuit.value.circuitname} ${PhaseMap[formInline.phase]}`,
