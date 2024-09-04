@@ -72,10 +72,7 @@ export const deleteRole = (params: Org.ReqDeleteRole) => {
 export const updateRole = (params: Org.ReqUpdateRole) => {
   return http.postForm<Org.ResUpdateRole>(`/org/updateRole`, params);
 };
-// 角色 接口5 根据角色ID得到所有WEB菜单及选中项
-export const selectProjectRoleById = (params: Org.ReqSelectProjectRoleById) => {
-  return http.postForm<Org.ResSelectProjectRoleById>(`/org/selectProjectRoleById`, params);
-};
+
 // 角色 接口6 根据角色ID得到所有APP菜单及选中项
 export const listProjectRoleAppMenu = (params: Org.ReqListProjectRoleAppMenu) => {
   return http.postForm<Org.ResListProjectRoleAppMenu>(`/org/listProjectRoleAppMenu`, params);

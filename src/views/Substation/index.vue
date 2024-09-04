@@ -40,7 +40,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <!-- <el-button type="primary" @click="priceSetVisible = true">电价设置</el-button> -->
+              <el-button type="primary" @click="priceSetVisible = true">电价设置</el-button>
               <!-- <el-button @click="onSubmit">巡检配置</el-button>
               <el-button @click="onSubmit">现场图片</el-button>
               <el-button @click="onSubmit">读取工程</el-button> -->
@@ -206,41 +206,46 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="priceSetVisible" title="电价设置" width="640">
-      <el-form ref="substationFormRef" label-position="right" label-width="auto" style="padding: 16px 32px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="尖时段电价" prop="epijprice">
-              <el-input-number style="width: 100%" v-model="form.epijprice" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="峰时段电价" prop="epifprice">
-              <el-input-number style="width: 100%" v-model="form.epifprice" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="平时段电价" prop="epipprice">
-              <el-input-number style="width: 100%" v-model="form.epipprice" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="谷时段电价" prop="epigprice">
-              <el-input-number style="width: 100%" v-model="form.epigprice" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="深时段电价" prop="epi5price">
-              <el-input-number style="width: 100%" v-model="form.epi5price" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单一电价" prop="episingleprice">
-              <el-input-number style="width: 100%" v-model="form.episingleprice" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+    <el-dialog v-model="priceSetVisible" title="电价设置" width="360">
+      <div style="padding: 0 32px 16px">
+        <div style="margin-bottom: 16px">
+          <el-checkbox>时间段设置</el-checkbox>
+        </div>
+        <el-form ref="substationFormRef" label-position="left" label-width="auto">
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="尖时段电价" prop="epijprice">
+                <el-input-number style="width: 100%" v-model="form.epijprice" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="峰时段电价" prop="epifprice">
+                <el-input-number style="width: 100%" v-model="form.epifprice" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="平时段电价" prop="epipprice">
+                <el-input-number style="width: 100%" v-model="form.epipprice" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="谷时段电价" prop="epigprice">
+                <el-input-number style="width: 100%" v-model="form.epigprice" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="深时段电价" prop="epi5price">
+                <el-input-number style="width: 100%" v-model="form.epi5price" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="单一电价" prop="episingleprice">
+                <el-input-number style="width: 100%" v-model="form.episingleprice" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -283,7 +288,7 @@ const defaultForm = {
   epijprice: 0
 };
 const formVisible = ref(false);
-const priceSetVisible = ref(false);
+const priceSetVisible = ref(true);
 const isEdit = ref(false);
 const formInline = reactive({
   search: ""

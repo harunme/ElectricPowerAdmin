@@ -81,6 +81,14 @@ export namespace Sys {
   }
 }
 
+export namespace Menu {
+  export interface ReqSelectProjectRoleById {}
+  export interface ResSelectProjectRoleById {}
+
+  export interface ReqGetProjectRoleMenu {}
+  export interface ResGetProjectRoleMenu {}
+}
+
 export namespace Org {
   export interface ResGetSubGroupTree {}
 

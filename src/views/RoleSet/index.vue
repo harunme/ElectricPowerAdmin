@@ -12,6 +12,7 @@
       <div class="table-box">
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="roleid" :fetch-data="fetchData">
           <template #actions="{ row }">
+            <a class="mini-btn" @click="setRoleMenu(row)">设置菜单权限</a>
             <a class="mini-btn" @click="updateUserRole(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteUserRole(row.roleid)">
               <template #reference>
@@ -82,6 +83,26 @@
             </div>
           </template>
         </el-dialog>
+        <el-dialog v-model="menuVisible" title="菜单权限配置" width="600">
+          <div style="padding: 0 16px 16px">
+            <el-tree
+              :data="roleTree"
+              show-checkbox
+              node-key="menuid"
+              :default-checked-keys="roleCheckedKeys"
+              :props="{
+                children: 'children',
+                label: 'name'
+              }"
+            />
+          </div>
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="menuVisible = false">取消</el-button>
+              <el-button type="primary" @click="menuVisible = false"> 确定 </el-button>
+            </div>
+          </template>
+        </el-dialog>
       </div>
     </div>
   </div>
@@ -93,6 +114,7 @@ import { ElMessage } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
 import { getRolesListTree, insertRole, deleteRole, updateRole, getCompanyTree } from "@/api/modules/org";
+import { selectProjectRoleById } from "@/api/modules/menu";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import DeptTree from "@/components/DeptTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
@@ -107,10 +129,13 @@ const defaultForm = {
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const deptTree = ref<any>([]);
+const roleTree = ref<any>([]);
+const roleCheckedKeys = ref<any>([]);
 const userRoleTree = ref<any>([]);
 const deptid = ref<string | null>(null);
 
 const isEdit = ref(false);
+const menuVisible = ref(false);
 const roleFormRef = ref<FormInstance>();
 const form = ref<any>(defaultForm);
 
@@ -134,7 +159,7 @@ const columns: any = [
   { prop: "rolename", label: "角色名称" },
   { prop: "deptname", label: "组织机构" },
   { prop: "roledesc", label: "角色说明" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 178 }
 ];
 
 const fetchData = async (): Promise<any> => {
@@ -204,6 +229,22 @@ onMounted(async () => {
 const onDeptTreeChange = node => {
   deptid.value = node.deptid;
   tableRef?.value?.resetData();
+};
+
+const setRoleMenu = async row => {
+  const { data }: any = await selectProjectRoleById({ roleid: row.roleid });
+  const getMenuName = (menulist = [] as any) => {
+    return menulist.map(item => {
+      item.name = item.meta.title;
+      if (item.children) {
+        item.children = getMenuName(item.children);
+      }
+      return item;
+    });
+  };
+  roleTree.value = getMenuName(data.menulist);
+  roleCheckedKeys.value = data.role.permissionids.split(",");
+  menuVisible.value = true;
 };
 </script>
 

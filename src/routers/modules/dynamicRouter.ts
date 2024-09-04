@@ -17,7 +17,7 @@ export const initDynamicRouter = async () => {
 
   try {
     // 1.获取菜单列表
-    await authStore.searchRoleProjectMenu();
+    await authStore.getProjectRoleMenu();
 
     // 2.判断当前用户有没有菜单权限
     if (!authStore.authMenuListGet.length) {
