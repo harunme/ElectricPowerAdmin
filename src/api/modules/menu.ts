@@ -10,3 +10,8 @@ export const selectProjectRoleById = (params?: Menu.ReqSelectProjectRoleById) =>
 export const getProjectRoleMenu = (params?: Menu.ReqGetProjectRoleMenu) => {
   return http.postForm(`/menu/getProjectRoleMenu`, params);
 };
+
+// 角色 接口6 修改角色ID和WEB菜单关系表
+export const updateByPrimaryKeySelective = (params?: Menu.ReqUpdateByPrimaryKeySelective) => {
+  return http.postForm<Menu.ResUpdateByPrimaryKeySelective>(`/menu/updateByPrimaryKeySelective`, params);
+};

@@ -86,6 +86,7 @@
         <el-dialog v-model="menuVisible" title="菜单权限配置" width="600">
           <div style="padding: 0 16px 16px">
             <el-tree
+              ref="treeRef"
               :data="roleTree"
               show-checkbox
               node-key="menuid"
@@ -99,7 +100,7 @@
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="menuVisible = false">取消</el-button>
-              <el-button type="primary" @click="menuVisible = false"> 确定 </el-button>
+              <el-button type="primary" @click="updateUserRoleMenus"> 确定 </el-button>
             </div>
           </template>
         </el-dialog>
@@ -110,11 +111,11 @@
 
 <script setup lang="tsx" name="UserGroup">
 import { ref, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElTree } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
 import { getRolesListTree, insertRole, deleteRole, updateRole, getCompanyTree } from "@/api/modules/org";
-import { selectProjectRoleById } from "@/api/modules/menu";
+import { selectProjectRoleById, updateByPrimaryKeySelective } from "@/api/modules/menu";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import DeptTree from "@/components/DeptTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
@@ -128,6 +129,7 @@ const defaultForm = {
 
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
+const treeRef = ref<InstanceType<typeof ElTree>>();
 const deptTree = ref<any>([]);
 const roleTree = ref<any>([]);
 const roleCheckedKeys = ref<any>([]);
@@ -138,6 +140,7 @@ const isEdit = ref(false);
 const menuVisible = ref(false);
 const roleFormRef = ref<FormInstance>();
 const form = ref<any>(defaultForm);
+const roleid = ref<any>(null);
 
 const rules = reactive<FormRules<Org.ReqInsertDeptInfo>>({
   rolename: [
@@ -245,6 +248,16 @@ const setRoleMenu = async row => {
   roleTree.value = getMenuName(data.menulist);
   roleCheckedKeys.value = data.role.permissionids.split(",");
   menuVisible.value = true;
+  roleid.value = row.roleid;
+};
+
+const updateUserRoleMenus = async () => {
+  const { msg } = await updateByPrimaryKeySelective({
+    roleid: roleid.value,
+    menuids: treeRef.value!.getCheckedKeys(true).join(",")
+  });
+  ElMessage.success(msg);
+  menuVisible.value = false;
 };
 </script>
 

@@ -44,6 +44,7 @@
         </el-form>
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="userid" :fetch-data="fetchData">
           <template #actions="{ row }">
+            <a class="mini-btn" @click="roleDialogVisible = true">权限设置</a>
             <a class="mini-btn" @click="updateUserAction(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteUserAction(row.userid)">
               <template #reference>
@@ -162,11 +163,66 @@
         </div>
       </template>
     </el-dialog>
+    <el-dialog v-model="roleDialogVisible" title="权限设置" width="1200">
+      <el-container class="select-modal">
+        <el-aside width="280px" style="padding: 0 16px">
+          <el-tabs stretch>
+            <el-tab-pane label="组织机构">
+              <el-tree
+                default-expand-all
+                style="max-width: 600px"
+                :data="companyTree"
+                node-key="deptid"
+                :props="companyProps"
+                @node-click="nodeClick"
+                :highlight-current="true"
+                :expand-on-click-node="false"
+              />
+            </el-tab-pane>
+            <el-tab-pane label="区域">
+              <el-tree
+                default-expand-all
+                style="max-width: 600px"
+                :data="groupTree"
+                node-key="regionid"
+                :props="groupProps"
+                @node-click="nodeClick"
+                :highlight-current="true"
+                :expand-on-click-node="false"
+              />
+            </el-tab-pane>
+          </el-tabs>
+        </el-aside>
+        <el-main class="main">
+          <div class="form">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+              <el-form-item label="关键字">
+                <el-input style="width: 300px" v-model="formInline.search" placeholder="请输入站点名称或编号" clearable />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!-- <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+            <template #actions="{ row }">
+              <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
+            </template>
+          </PaginationTable> -->
+        </el-main>
+      </el-container>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="roleDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="updateUserSubstations()">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
-
+<!-- http://111.231.24.91/org/updateUserAndSub -->
 <script setup lang="tsx" name="User">
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import {
@@ -176,7 +232,8 @@ import {
   insertUser,
   getCompanyTree,
   selectUserGroupTree,
-  getRolesListTree
+  getRolesListTree,
+  getSubGroupTree
 } from "@/api/modules/org";
 import DeptTree from "@/components/DeptTree/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
@@ -190,8 +247,13 @@ const deptTree = ref<any>([]);
 const userGroupTree = ref<any>([]);
 const userRoleTree = ref<any>([]);
 const formVisible = ref(false);
+const roleDialogVisible = ref(false);
 const isEdit = ref(false);
 const userFormRef = ref<FormInstance>();
+// 组织机构树
+const companyTree = ref([] as any);
+// 区域树
+const groupTree = ref([] as any);
 const formInline = reactive({
   deptid: "",
   groupid: "",
@@ -210,7 +272,8 @@ const form = ref<any>({
   telephone: "",
   title: ""
 });
-
+const companyProps = { children: "children", label: "deptname" };
+const groupProps = { children: "children", label: "regionname" };
 const columns: any = [
   { prop: "username", label: "用户名" },
   { prop: "name", label: "姓名" },
@@ -220,7 +283,7 @@ const columns: any = [
   { prop: "telephone", label: "手机号", width: 132 },
   { prop: "email", label: "邮箱" },
   { prop: "title", label: "备注" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 172 }
 ];
 
 const rules = reactive<FormRules<Org.ReqInsertDeptInfo>>({
@@ -255,6 +318,14 @@ const fetchData = async (): Promise<any> => {
     const { data } = await getUserCommonInfo(params);
     resolve({ list: data });
   });
+};
+
+const nodeClick = () => {
+  console.log("111");
+};
+
+const updateUserSubstations = () => {
+  console.log("111");
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -336,6 +407,15 @@ const onDeptTreeChange = async node => {
 const onSubmit = () => {
   tableRef?.value?.resetData();
 };
+
+watch(roleDialogVisible, async () => {
+  if (roleDialogVisible.value) {
+    const getCompanyTreeRes = await getCompanyTree();
+    const getSubGroupTreeRes = await getSubGroupTree();
+    groupTree.value = getSubGroupTreeRes?.data;
+    companyTree.value = getCompanyTreeRes?.data;
+  }
+});
 </script>
 
 <style scoped lang="scss">

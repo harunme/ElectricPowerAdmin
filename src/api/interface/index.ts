@@ -87,6 +87,12 @@ export namespace Menu {
 
   export interface ReqGetProjectRoleMenu {}
   export interface ResGetProjectRoleMenu {}
+
+  export interface ReqUpdateByPrimaryKeySelective {
+    roleid: number;
+    menuids: string;
+  }
+  export interface ResUpdateByPrimaryKeySelective {}
 }
 
 export namespace Org {
