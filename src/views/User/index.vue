@@ -44,7 +44,7 @@
         </el-form>
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="userid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="roleDialogVisible = true">权限设置</a>
+            <a class="mini-btn" @click="setRole(row)">权限设置</a>
             <a class="mini-btn" @click="updateUserAction(row)">修改</a>
             <el-popconfirm title="确认删除?" @confirm="deleteUserAction(row.userid)">
               <template #reference>
@@ -163,12 +163,13 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="roleDialogVisible" title="权限设置" width="1200">
+    <el-dialog v-model="roleDialogVisible" :destroy-on-close="true" title="权限设置" width="1200">
       <el-container class="select-modal">
         <el-aside width="280px" style="padding: 0 16px">
           <el-tabs stretch>
             <el-tab-pane label="组织机构">
               <el-tree
+                :current-node-key="selectedUser.deptid"
                 default-expand-all
                 style="max-width: 600px"
                 :data="companyTree"
@@ -195,20 +196,20 @@
         </el-aside>
         <el-main class="main">
           <div class="form">
-            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form :inline="true" :model="roleFormInline" class="demo-form-inline">
               <el-form-item label="关键字">
-                <el-input style="width: 300px" v-model="formInline.search" placeholder="请输入站点名称或编号" clearable />
+                <el-input style="width: 300px" v-model="roleFormInline.search" placeholder="请输入站点名称或编号" clearable />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
+                <el-button type="primary" @click="onSearchStation">查询</el-button>
               </el-form-item>
             </el-form>
           </div>
-          <!-- <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
-            <template #actions="{ row }">
-              <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
-            </template>
-          </PaginationTable> -->
+          <div class="content" v-loading="loadingStation">
+            <el-checkbox-group v-model="checkStationList">
+              <el-checkbox :key="item.stationid" v-for="item in stationList" :label="item.stationname" :value="item.stationid" />
+            </el-checkbox-group>
+          </div>
         </el-main>
       </el-container>
       <template #footer>
@@ -221,6 +222,7 @@
   </div>
 </template>
 <!-- http://111.231.24.91/org/updateUserAndSub -->
+<!-- http://111.231.24.91/org/getSubstationListOfSelected -->
 <script setup lang="tsx" name="User">
 import { reactive, ref, watch } from "vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
@@ -233,7 +235,10 @@ import {
   getCompanyTree,
   selectUserGroupTree,
   getRolesListTree,
-  getSubGroupTree
+  getSubGroupTree,
+  updateUserAndSub,
+  getSubstationListUnderCompanyOrSubgroup,
+  getSubstationListOfSelected
 } from "@/api/modules/org";
 import DeptTree from "@/components/DeptTree/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
@@ -243,6 +248,7 @@ import { ElMessage } from "element-plus";
 const formLabelWidth = "90px";
 const tableRef = ref<any>(null);
 const deptid = ref<any>(null);
+const selectedUser = ref<any>(null);
 const deptTree = ref<any>([]);
 const userGroupTree = ref<any>([]);
 const userRoleTree = ref<any>([]);
@@ -250,6 +256,10 @@ const formVisible = ref(false);
 const roleDialogVisible = ref(false);
 const isEdit = ref(false);
 const userFormRef = ref<FormInstance>();
+const checkStationList = ref<string[]>([]);
+const stationList = ref<any>([]);
+const loadingStation = ref<boolean>(true);
+const getSubstationListUnderCompanyOrSubgroupParams = ref<any>({});
 // 组织机构树
 const companyTree = ref([] as any);
 // 区域树
@@ -258,6 +268,9 @@ const formInline = reactive({
   deptid: "",
   groupid: "",
   roleid: "",
+  search: ""
+});
+const roleFormInline = reactive({
   search: ""
 });
 const form = ref<any>({
@@ -320,12 +333,32 @@ const fetchData = async (): Promise<any> => {
   });
 };
 
-const nodeClick = () => {
-  console.log("111");
+const nodeClick = async node => {
+  const params: any = {};
+  if (node.regionid) {
+    params.regionid = node.regionid;
+  }
+  if (node.deptid) {
+    params.deptid = node.deptid;
+  }
+  loadingStation.value = true;
+  const { data } = await getSubstationListUnderCompanyOrSubgroup({ ...params, search: roleFormInline.search });
+  stationList.value = data;
+  loadingStation.value = false;
+  getSubstationListUnderCompanyOrSubgroupParams.value = params;
 };
 
-const updateUserSubstations = () => {
-  console.log("111");
+const updateUserSubstations = async () => {
+  const { msg, code } = await updateUserAndSub({
+    userid: selectedUser.value.userid,
+    stationid: checkStationList.value.join(";")
+  });
+  if (code === 1) {
+    ElMessage.success(msg);
+  } else {
+    ElMessage.warning(msg);
+  }
+  roleDialogVisible.value = false;
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -408,12 +441,39 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
+const onSearchStation = async () => {
+  loadingStation.value = true;
+  const { data } = await getSubstationListUnderCompanyOrSubgroup({
+    search: roleFormInline.search,
+    ...getSubstationListUnderCompanyOrSubgroupParams.value
+  });
+  stationList.value = data;
+  loadingStation.value = false;
+};
+
+const setRole = async (row: any) => {
+  const { data }: any = await getSubstationListOfSelected({
+    userid: row.userid
+  });
+  checkStationList.value = data.map(({ stationid }) => stationid);
+  selectedUser.value = row;
+  roleDialogVisible.value = true;
+};
+
 watch(roleDialogVisible, async () => {
   if (roleDialogVisible.value) {
+    stationList.value = [];
+    loadingStation.value = true;
     const getCompanyTreeRes = await getCompanyTree();
     const getSubGroupTreeRes = await getSubGroupTree();
     groupTree.value = getSubGroupTreeRes?.data;
     companyTree.value = getCompanyTreeRes?.data;
+    const { data } = await getSubstationListUnderCompanyOrSubgroup({
+      deptid: selectedUser.value.deptid
+    });
+
+    stationList.value = data;
+    loadingStation.value = false;
   }
 });
 </script>

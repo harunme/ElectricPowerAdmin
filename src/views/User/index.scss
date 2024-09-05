@@ -6,5 +6,9 @@
   }
   .select-modal {
     height: 500px;
+    .content {
+      height: 410px;
+      overflow-y: auto;
+    }
   }
 }

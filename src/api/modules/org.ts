@@ -89,7 +89,7 @@ export const getSubstationListOfSelected = (params: Org.ReqGetSubstationListOfSe
 };
 
 // 角色 接口3  用户ID所属组织或区域的所有变电站
-export const getSubstationListUnderCompanyOrSubgroup = (params: Org.ReqGetSubstationListUnderCompanyOrSubgroup) => {
+export const getSubstationListUnderCompanyOrSubgroup = (params?: Org.ReqGetSubstationListUnderCompanyOrSubgroup) => {
   return http.postForm<Org.ResGetSubstationListUnderCompanyOrSubgroup>(`/org/getSubstationListUnderCompanyOrSubgroup`, params);
 };
 

@@ -169,7 +169,11 @@ export namespace Org {
   }
   export interface ReqGetSubstationListOfSelected {}
   export interface ResGetSubstationListOfSelected {}
-  export interface ReqGetSubstationListUnderCompanyOrSubgroup {}
+  export interface ReqGetSubstationListUnderCompanyOrSubgroup {
+    deptid?: string;
+    regionid?: string;
+    search?: string;
+  }
   export interface ResGetSubstationListUnderCompanyOrSubgroup {}
   export interface ReqUpdateUserAndSub {}
   export interface ResUpdateUserAndSub {}
