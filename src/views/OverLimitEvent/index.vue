@@ -13,8 +13,8 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="事件类型" prop="eventtype">
-          <el-select v-model="formInline.eventtype">
+        <el-form-item label="事件类型" prop="statedes">
+          <el-select v-model="formInline.statedes">
             <el-option label="全部" value="全部" />
             <el-option label="高限报警" value="高限报警" />
             <el-option label="高高限报警" value="高高限报警" />
@@ -34,7 +34,11 @@
           <!-- <el-button @click="onExport">导出</el-button> -->
         </el-form-item>
       </el-form>
-      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
+        <template #alarmtime="{ row }">
+          <span>{{ moment(row.alarmtime).format("YYYY-MM-DD HH:mm:ss") }}</span>
+        </template>
+      </PaginationTable>
     </div>
   </div>
 </template>
@@ -43,7 +47,7 @@
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { ReqPage } from "@/api/interface";
-import { GetAlarmEventYcList } from "@/api/modules/main";
+import { OverLimitEvent } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import { getContextStationId } from "@/utils";
@@ -55,7 +59,7 @@ const start = new Date();
 start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
 const formInline = reactive({
-  eventtype: "全部",
+  statedes: "全部",
   metername: "",
   paramname: "",
   date: [start, end]
@@ -65,25 +69,21 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
-// const onExport = () => {
-//   console.log("onExport");
-// };
-
 const columns = [
-  { prop: "stationname", label: "变配电站名称", width: 300 },
-  { prop: "alarmtime", label: "开始时间", width: 200 },
-  { prop: "voltagestep", label: "报警类型", width: 120 },
-  { prop: "metername", label: "仪表名称", width: 180 },
-  { prop: "paramname", label: "参数名称", width: 180 },
-  { prop: "statefloat", label: "报警值", width: 180 },
-  { prop: "limitvalue", label: "限定值", width: 180 },
+  { prop: "stationname", label: "变配电站名称", width: 200 },
+  { prop: "customDom", slotName: "alarmtime", label: "开始时间", width: 132 },
+  { prop: "alarmtype", label: "报警类型", width: 100 },
+  { prop: "metername", label: "仪表名称", width: 142 },
+  { prop: "paramname", label: "参数名称", width: 120 },
+  { prop: "statefloat", label: "报警值", width: 80 },
+  { prop: "limitvalue", label: "限定值", width: 80 },
   { prop: "eventdescription", label: "详情" }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
   const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
-  const eventtype = formInline.eventtype;
+  const statedes = formInline.statedes;
   const metername = formInline.metername;
   const paramname = formInline.paramname;
 
@@ -93,12 +93,12 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     starttime,
     endtime,
     metername,
-    eventtype,
+    statedes,
     paramname
   };
   if (getContextStationId()) params.stationid = getContextStationId();
   return new Promise(async resolve => {
-    const { data } = await GetAlarmEventYcList(params);
+    const { data } = await OverLimitEvent(params);
     resolve(data);
   });
 };

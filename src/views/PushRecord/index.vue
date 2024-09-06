@@ -8,15 +8,15 @@
         <el-form-item label="用户名">
           <el-input v-model="formInline.metername" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="推送类型" prop="eventtype">
-          <el-select v-model="formInline.eventtype">
+        <el-form-item label="推送类型" prop="statedes">
+          <el-select v-model="formInline.statedes">
             <el-option label="全部" value="全部" />
             <el-option label="通知" value="通知" />
             <el-option label="消息" value="消息" />
           </el-select>
         </el-form-item>
-        <el-form-item label="目标类型" prop="eventtype">
-          <el-select v-model="formInline.eventtype">
+        <el-form-item label="目标类型" prop="statedes">
+          <el-select v-model="formInline.statedes">
             <el-option label="全部" value="全部" />
             <el-option label="Android" value="Android" />
             <el-option label="IOS" value="IOS" />
@@ -45,7 +45,7 @@
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { ReqPage } from "@/api/interface";
-import { GetAlarmEventYcList } from "@/api/modules/main";
+import { OverLimitEvent } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const tableRef = ref<any>(null);
@@ -55,7 +55,7 @@ const start = new Date();
 start.setTime(start.getTime() - 3600 * 1000 * 24);
 
 const formInline = reactive({
-  eventtype: "全部",
+  statedes: "全部",
   metername: "",
   paramname: "",
   date: [start, end]
@@ -79,17 +79,17 @@ const columns = [
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
   const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
-  const eventtype = formInline.eventtype;
+  const statedes = formInline.statedes;
   const metername = formInline.metername;
   const paramname = formInline.paramname;
   return new Promise(async resolve => {
-    const { data } = await GetAlarmEventYcList({
+    const { data } = await OverLimitEvent({
       pageNum,
       pageSize,
       starttime,
       endtime,
       metername,
-      eventtype,
+      statedes,
       paramname
     });
     if (!data) {

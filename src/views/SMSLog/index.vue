@@ -36,7 +36,7 @@
 import { ref, reactive } from "vue";
 import moment from "moment";
 import { ReqPage } from "@/api/interface";
-import { GetAlarmEventYcList } from "@/api/modules/main";
+import { OverLimitEvent } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import { getContextStationId } from "@/utils";
@@ -85,7 +85,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     };
     if (getContextStationId()) params.stationid = getContextStationId();
 
-    const { data } = await GetAlarmEventYcList(params);
+    const { data } = await OverLimitEvent(params);
+
     if (!data) return resolve({ list: [] });
     resolve({ list: data?.list });
   });

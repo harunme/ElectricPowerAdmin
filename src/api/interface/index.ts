@@ -497,15 +497,15 @@ export namespace Main {
       statedes: string;
     }> {}
 
-  export interface ReqGetAlarmEventYcList extends ReqPage {
+  export interface ReqOverLimitEvent extends ReqPage {
+    stationid?: string;
     starttime?: string;
     endtime?: string;
-    stationid?: string;
     metername?: string;
     paramname?: string;
-    eventtype?: string;
+    statedes?: string;
   }
-  export interface ResGetAlarmEventYcList
+  export interface ResOverLimitEvent
     extends ResPage<{
       eventname0: string;
       alarmtime: string;

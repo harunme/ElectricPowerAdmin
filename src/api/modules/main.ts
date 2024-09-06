@@ -17,8 +17,8 @@ export const GetAlarmEventYxList = (params: Main.ReqGetAlarmEventYxList) => {
 };
 
 // 事件记录-越限事件
-export const GetAlarmEventYcList = (params: Main.ReqGetAlarmEventYcList) => {
-  return http.postForm<Main.ResGetAlarmEventYcList>("/main/getAlarmEventYcList", params);
+export const OverLimitEvent = (params: Main.ReqOverLimitEvent) => {
+  return http.postForm<Main.ResOverLimitEvent>("/main/OverLimitEvent", params);
 };
 
 // 事件记录-平台运行日志

@@ -33,6 +33,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     css: {
       preprocessorOptions: {
         scss: {
+          // 忽略Sass警告
+          sassOptions: {
+            quietDeps: true
+          },
           additionalData: `@import "@/styles/var.scss";`
         }
       }
