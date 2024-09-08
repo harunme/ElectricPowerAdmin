@@ -79,7 +79,7 @@ export const listProjectRoleAppMenu = (params: Org.ReqListProjectRoleAppMenu) =>
 };
 
 // 角色 接口1 根据组织机构ID查询用户信息
-export const getUserCommonInfo = (params: Org.ReqGetUserCommonInfo) => {
+export const getUserCommonInfo = (params?: Org.ReqGetUserCommonInfo) => {
   return http.postForm<Org.ResGetUserCommonInfo[]>(`/org/getUserCommonInfo`, params);
 };
 

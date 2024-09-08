@@ -21,6 +21,7 @@
     </div>
     <el-dialog v-model="formVisible" :title="isEdit ? '修改组织机构' : '新增组织机构'" width="500">
       <el-form
+        v-loading="loadingUsers"
         ref="deptFormRef"
         :model="form"
         label-position="right"
@@ -71,6 +72,13 @@
               <el-input-number v-model="form.meternum" />
             </el-form-item>
           </el-col>
+          <el-col v-if="isEdit" :span="24">
+            <el-form-item label="负责人" prop="userid">
+              <el-select v-model="form.userid" style="width: 100%" clearable>
+                <el-option :key="user.userid" v-for="user in users" :label="user.username" :value="user.userid" />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <template #footer>
@@ -88,7 +96,8 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Org } from "@/api/interface/index";
-import { getCompanyTree, insertDeptInfo, deleteDeptById, updateDeptById } from "@/api/modules/org";
+import { getCompanyTree, insertDeptInfo, deleteDeptById, updateDeptById, getUserCommonInfo } from "@/api/modules/org";
+
 import PaginationTable from "@/components/PaginationTable/index.vue";
 
 const defaultForm = {
@@ -97,12 +106,15 @@ const defaultForm = {
   code: "",
   address: "",
   stationnum: 0,
-  meternum: 0
+  meternum: 0,
+  userid: undefined
 };
 
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const deptTree = ref<any>([]);
+const users = ref<any>([]);
+const loadingUsers = ref<boolean>(false);
 
 const isEdit = ref(false);
 const deptFormRef = ref<FormInstance>();
@@ -131,6 +143,7 @@ const columns: any = [
   { prop: "address", label: "地址" },
   { prop: "meternum", label: "可接入变配电站个数" },
   { prop: "stationnum", label: "可接入仪表个数" },
+  { prop: "username", label: "负责人" },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 
@@ -177,7 +190,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 const updateDept = async row => {
   isEdit.value = true;
   formVisible.value = true;
-  form.value = { ...row, parentid: String(row.parentid) === "0" ? -1 : row.parentid };
+
+  loadingUsers.value = true;
+  const { data } = await getUserCommonInfo({ deptid: row.deptid });
+  users.value = data;
+  loadingUsers.value = false;
+
+  form.value = {
+    ...row,
+    parentid: String(row.parentid) === "0" ? -1 : row.parentid,
+    userid: row.userid === -1 ? undefined : row.userid
+  };
   setTimeout(() => deptFormRef.value?.clearValidate());
 };
 
@@ -190,6 +213,12 @@ const deleteDept = async (deptid: string) => {
     ElMessage.error({ message: res.msg });
   }
 };
+
+// onMounted(async () => {
+//   const { data } = await getUserCommonInfo();
+//   console.log("data", data);
+//   users.value = data;
+// });
 </script>
 
 <style scoped lang="scss">
