@@ -163,7 +163,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const { meter, ...params } = form.value;
-      params.meter = meter.join(",");
+      params.meter = meter.join(";");
       if (isEdit.value) {
         const res = await updateTransformerInfoById({ ...params, stationid: getContextStationId() });
         if (res.code === 1) {
@@ -204,7 +204,7 @@ const addTransformer = () => {
 const updateTransformer = async row => {
   isEdit.value = true;
   formVisible.value = true;
-  form.value = { ...row, meter: row.meter.split(",") };
+  form.value = { ...row, meter: row.meter.split(";") };
   setTimeout(() => transformerFormRef.value?.clearValidate());
 };
 

@@ -475,27 +475,6 @@ export namespace Main {
       s_Unit: string;
     }>;
   }
-  export interface ReqGetAlarmEventYxList extends ReqPage {
-    starttime?: string;
-    endtime?: string;
-    stationid?: string;
-    metername?: string;
-    paramname?: string;
-  }
-  export interface ResGetAlarmEventYxList
-    extends ResPage<{
-      eventname0: string;
-      alarmtime: string;
-      stationid: string;
-      stationname: string;
-      meter: string;
-      metername: string;
-      paramname: string;
-      eventdescription: string;
-      codetype: string;
-      stateint: number;
-      statedes: string;
-    }> {}
 
   export interface ReqOverLimitEvent extends ReqPage {
     stationid?: string;

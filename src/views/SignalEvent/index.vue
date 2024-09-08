@@ -34,7 +34,7 @@ import { ref, reactive } from "vue";
 import moment from "moment";
 import StationContext from "@/components/StationContext/index.vue";
 import { ReqPage } from "@/api/interface";
-import { GetAlarmEventYxList } from "@/api/modules/main";
+import { EnergyLineLoss } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import { getContextStationId } from "@/utils";
 
@@ -86,7 +86,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       metername
     };
     if (getContextStationId()) params.stationid = getContextStationId();
-    const { data } = await GetAlarmEventYxList(params);
+    const { data } = await EnergyLineLoss(params);
     resolve(data);
   });
 };
