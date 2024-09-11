@@ -13,4 +13,17 @@
 
     // font-weight: 600;
   }
+  .time-setting {
+    display: flex;
+    align-items: center;
+    width: 296px;
+    > i {
+      margin-left: 8px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  }
+  .add-time {
+    margin-bottom: 16px;
+  }
 }

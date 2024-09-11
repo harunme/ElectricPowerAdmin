@@ -18,9 +18,9 @@ export const insertSubstationInfo = (params: Meter.ReqInsertSubstationInfo) => {
 };
 
 // 系统设置-变配电站 接口4   改电价
-export const pdateByPrimaryKeySelectiveBatchByfSubid = (params: Meter.ReqPdateByPrimaryKeySelectiveBatchByfSubid) => {
-  return http.postForm<Meter.ResPdateByPrimaryKeySelectiveBatchByfSubid>(
-    `/meter/pdateByPrimaryKeySelectiveBatchByfSubid`,
+export const updateByPrimaryKeySelectiveBatchByfSubid = (params: Meter.ReqUpdateByPrimaryKeySelectiveBatchByfSubid) => {
+  return http.postForm<Meter.ResUpdateByPrimaryKeySelectiveBatchByfSubid>(
+    `/meter/updateByPrimaryKeySelectiveBatchByfSubid`,
     params
   );
 };

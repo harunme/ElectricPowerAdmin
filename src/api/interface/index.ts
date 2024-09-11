@@ -311,8 +311,8 @@ export namespace Meter {
     transformerid: string;
   }
   export interface ResDeleteTransformerInfoById {}
-  export interface ReqPdateByPrimaryKeySelectiveBatchByfSubid {}
-  export interface ResPdateByPrimaryKeySelectiveBatchByfSubid {}
+  export interface ReqUpdateByPrimaryKeySelectiveBatchByfSubid {}
+  export interface ResUpdateByPrimaryKeySelectiveBatchByfSubid {}
   export interface ReqUpdateSubstationInfoById {}
   export interface ResUpdateSubstationInfoById {}
   export interface ReqUploadSvgMultiFile {}

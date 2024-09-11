@@ -40,7 +40,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="priceSetVisible = true">电价设置</el-button>
+              <el-button type="primary" @click="showPriceSetModal">电价设置</el-button>
               <!-- <el-button @click="onSubmit">巡检配置</el-button>
               <el-button @click="onSubmit">现场图片</el-button>
               <el-button @click="onSubmit">读取工程</el-button> -->
@@ -48,7 +48,7 @@
           </el-form>
           <el-button type="primary" @click="newSubstation">新增变配电站</el-button>
         </div>
-        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+        <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData" :selection-change="handleSelectionChange">
           <template #voltagelevel="{ row }">
             <span>{{ row.voltagelevel }}kV</span>
           </template>
@@ -209,43 +209,137 @@
     <el-dialog v-model="priceSetVisible" title="电价设置" width="360">
       <div style="padding: 0 32px 16px">
         <div style="margin-bottom: 16px">
-          <el-checkbox>时间段设置</el-checkbox>
+          <el-checkbox v-model="showTimeSetting">时间段设置</el-checkbox>
         </div>
-        <el-form ref="substationFormRef" label-position="left" label-width="auto">
+        <el-form ref="substationPriceFormRef" label-position="left" label-width="auto">
           <el-row :gutter="20">
             <el-col :span="24">
               <el-form-item label="尖时段电价" prop="epijprice">
-                <el-input-number style="width: 100%" v-model="form.epijprice" />
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.epijprice" />
               </el-form-item>
+              <template v-if="showTimeSetting">
+                <el-form-item
+                  v-for="(time, index) in dynamicValidateForm.epijtime"
+                  :key="time.key"
+                  :prop="'epijtime.' + index + '.value'"
+                >
+                  <div class="time-setting">
+                    <el-time-picker
+                      format="HH:mm"
+                      value-format="HH:mm"
+                      disabled-seconds
+                      v-model="time.value"
+                      is-range
+                      range-separator="至"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间"
+                    />
+                    <el-icon @click.prevent="removeTime(time, 'epijtime')"><RemoveFilled /></el-icon>
+                  </div>
+                </el-form-item>
+                <el-button class="add-time" @click="addTime('epijtime')">添加</el-button>
+              </template>
             </el-col>
             <el-col :span="24">
               <el-form-item label="峰时段电价" prop="epifprice">
-                <el-input-number style="width: 100%" v-model="form.epifprice" />
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.epifprice" />
               </el-form-item>
+              <template v-if="showTimeSetting">
+                <el-form-item
+                  v-for="(time, index) in dynamicValidateForm.epiftime"
+                  :key="time.key"
+                  :prop="'epiftime.' + index + '.value'"
+                >
+                  <div class="time-setting">
+                    <el-time-picker
+                      format="HH:mm"
+                      value-format="HH:mm"
+                      disabled-seconds
+                      v-model="time.value"
+                      is-range
+                      range-separator="至"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间"
+                    />
+                    <el-icon @click.prevent="removeTime(time, 'epiftime')"><RemoveFilled /></el-icon>
+                  </div>
+                </el-form-item>
+                <el-button class="add-time" @click="addTime('epiftime')">添加</el-button>
+              </template>
             </el-col>
             <el-col :span="24">
               <el-form-item label="平时段电价" prop="epipprice">
-                <el-input-number style="width: 100%" v-model="form.epipprice" />
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.epipprice" />
               </el-form-item>
+              <template v-if="showTimeSetting">
+                <el-form-item
+                  v-for="(time, index) in dynamicValidateForm.epiptime"
+                  :key="time.key"
+                  :prop="'epiptime.' + index + '.value'"
+                >
+                  <div class="time-setting">
+                    <el-time-picker
+                      format="HH:mm"
+                      value-format="HH:mm"
+                      disabled-seconds
+                      v-model="time.value"
+                      is-range
+                      range-separator="至"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间"
+                    />
+                    <el-icon @click.prevent="removeTime(time, 'epiptime')"><RemoveFilled /></el-icon>
+                  </div>
+                </el-form-item>
+                <el-button class="add-time" @click="addTime('epiptime')">添加</el-button>
+              </template>
             </el-col>
             <el-col :span="24">
               <el-form-item label="谷时段电价" prop="epigprice">
-                <el-input-number style="width: 100%" v-model="form.epigprice" />
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.epigprice" />
               </el-form-item>
+              <template v-if="showTimeSetting">
+                <el-form-item
+                  v-for="(time, index) in dynamicValidateForm.epigtime"
+                  :key="time.key"
+                  :prop="'epigtime.' + index + '.value'"
+                >
+                  <div class="time-setting">
+                    <el-time-picker
+                      format="HH:mm"
+                      value-format="HH:mm"
+                      disabled-seconds
+                      v-model="time.value"
+                      is-range
+                      range-separator="至"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间"
+                    />
+                    <el-icon @click.prevent="removeTime(time, 'epigtime')"><RemoveFilled /></el-icon>
+                  </div>
+                </el-form-item>
+                <el-button class="add-time" @click="addTime('epigtime')">添加</el-button>
+              </template>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="深时段电价" prop="epi5price">
-                <el-input-number style="width: 100%" v-model="form.epi5price" />
+              <el-form-item label="深圳电价" prop="epi5price">
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.epi5price" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="单一电价" prop="episingleprice">
-                <el-input-number style="width: 100%" v-model="form.episingleprice" />
+                <el-input-number style="width: 100%" v-model="dynamicValidateForm.episingleprice" />
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="priceSetVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitPriceForm(substationPriceFormRef)">确定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -253,19 +347,20 @@
 <script setup lang="tsx" name="Substation">
 import { reactive, ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
-import { Search } from "@element-plus/icons-vue";
+import { Search, RemoveFilled } from "@element-plus/icons-vue";
 import {
   getSubstationPageInfo,
   insertSubstationInfo,
   deleteSubstationInfoById,
-  updateSubstationInfoById
+  updateSubstationInfoById,
+  updateByPrimaryKeySelectiveBatchByfSubid
 } from "@/api/modules/meter";
 import { Meter } from "@/api/interface/index";
 import { getCompanyTree, getSubGroupTree } from "@/api/modules/org";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
-// import { number } from "echarts";
+// import moment from "moment";
 
 const defaultForm = {
   stationname: "",
@@ -288,19 +383,34 @@ const defaultForm = {
   epijprice: 0
 };
 const formVisible = ref(false);
-const priceSetVisible = ref(true);
+const priceSetVisible = ref(false);
 const isEdit = ref(false);
 const formInline = reactive({
   search: ""
 });
 const substationFormRef = ref<FormInstance>();
+const substationPriceFormRef = ref<FormInstance>();
 const tableRef = ref<any>(null);
 // 组织机构树
 const deptTree = ref([] as any);
 // 区域树
 const regionTree = ref([] as any);
+const selectedRows = ref<any>([]);
+const showTimeSetting = ref(false);
 const deptProps = { children: "children", label: "deptname" };
 const regionProps = { children: "children", label: "regionname" };
+const dynamicValidateForm = reactive({
+  epijprice: 0,
+  epifprice: 0,
+  epipprice: 0,
+  epigprice: 0,
+  epi5price: 0,
+  episingleprice: 0,
+  epiftime: [] as any[],
+  epigtime: [] as any[],
+  epiptime: [] as any[],
+  epijtime: [] as any[]
+});
 
 const deptid = ref<number | null>(null);
 const regionid = ref<number | null>(null);
@@ -369,12 +479,61 @@ const fetchData = async ({ pageNum, pageSize }): Promise<any> => {
   });
 };
 
+const submitPriceForm = async (formEl: FormInstance | undefined) => {
+  console.log("submitPriceForm", dynamicValidateForm.epijtime);
+
+  if (!formEl) return;
+  const epijtime = dynamicValidateForm.epijtime
+    .filter(({ value }) => value[0] && value[1])
+    .map(({ value }) => {
+      return `${value[0]}-${value[1]}`;
+    })
+    .join(";");
+
+  const epiftime = dynamicValidateForm.epiftime
+    .filter(({ value }) => value[0] && value[1])
+    .map(({ value }) => {
+      return `${value[0]}-${value[1]}`;
+    })
+    .join(";");
+
+  const epigtime = dynamicValidateForm.epigtime
+    .filter(({ value }) => value[0] && value[1])
+    .map(({ value }) => {
+      return `${value[0]}-${value[1]}`;
+    })
+    .join(";");
+
+  const epiptime = dynamicValidateForm.epiptime
+    .filter(({ value }) => value[0] && value[1])
+    .map(({ value }) => {
+      return `${value[0]}-${value[1]}`;
+    })
+    .join(";");
+
+  const { code, msg } = await updateByPrimaryKeySelectiveBatchByfSubid({
+    stationid: selectedRows.value.map(({ stationid }) => stationid).join(";"),
+    epijprice: dynamicValidateForm.epijprice,
+    epifprice: dynamicValidateForm.epifprice,
+    epipprice: dynamicValidateForm.epipprice,
+    epigprice: dynamicValidateForm.epigprice,
+    epi5price: dynamicValidateForm.epi5price,
+    episingleprice: dynamicValidateForm.episingleprice,
+    epijtime,
+    epiftime,
+    epigtime,
+    epiptime
+  });
+  if (code === 1) ElMessage.success({ message: msg });
+  else ElMessage.error({ message: msg });
+  priceSetVisible.value = false;
+};
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const { deptid, regionid, ...params } = form.value;
-      console.log(params, "epitimelist");
       if (isEdit.value) {
         const res = await updateSubstationInfoById({ ...params, deptid: Number(deptid), regionid: Number(regionid) });
         if (res.code === 1) {
@@ -445,6 +604,74 @@ const nodeClick = (node: any) => {
     regionid.value = null;
   }
   tableRef?.value?.resetData();
+};
+
+const removeTime = (item: any, type: string) => {
+  const index = dynamicValidateForm[type].indexOf(item);
+  if (index !== -1) {
+    dynamicValidateForm[type].splice(index, 1);
+  }
+};
+
+const addTime = type => {
+  dynamicValidateForm[type].push({
+    key: Date.now(),
+    value: [,]
+  });
+};
+
+const handleSelectionChange = rows => {
+  selectedRows.value = rows;
+  if (rows.length === 1) {
+    dynamicValidateForm.epi5price = rows[0].epi5price;
+    dynamicValidateForm.epifprice = rows[0].epifprice;
+    dynamicValidateForm.epigprice = rows[0].epigprice;
+    dynamicValidateForm.epijprice = rows[0].epijprice;
+    dynamicValidateForm.epipprice = rows[0].epipprice;
+    dynamicValidateForm.episingleprice = rows[0].episingleprice;
+    dynamicValidateForm.epijtime = rows[0].epitimelist
+      .filter(({ type }) => type === 1)
+      .map(({ epitime }) => ({
+        key: Date.now(),
+        value: epitime.split("-")
+      }));
+    dynamicValidateForm.epiftime = rows[0].epitimelist
+      .filter(({ type }) => type === 2)
+      .map(({ epitime }) => ({
+        key: Date.now(),
+        value: epitime.split("-")
+      }));
+    dynamicValidateForm.epiptime = rows[0].epitimelist
+      .filter(({ type }) => type === 3)
+      .map(({ epitime }) => ({
+        key: Date.now(),
+        value: epitime.split("-")
+      }));
+    dynamicValidateForm.epigtime = rows[0].epitimelist
+      .filter(({ type }) => type === 4)
+      .map(({ epitime }) => ({
+        key: Date.now(),
+        value: epitime.split("-")
+      }));
+  } else {
+    dynamicValidateForm.epi5price = 0;
+    dynamicValidateForm.epifprice = 0;
+    dynamicValidateForm.epigprice = 0;
+    dynamicValidateForm.epijprice = 0;
+    dynamicValidateForm.epipprice = 0;
+    dynamicValidateForm.episingleprice = 0;
+    dynamicValidateForm.epiftime = [];
+    dynamicValidateForm.epigtime = [];
+    dynamicValidateForm.epiptime = [];
+    dynamicValidateForm.epijtime = [];
+  }
+};
+
+const showPriceSetModal = () => {
+  if (selectedRows.value.length === 0) {
+    return ElMessage.info({ message: "请至少选择一个变配电站" });
+  }
+  priceSetVisible.value = true;
 };
 </script>
 
