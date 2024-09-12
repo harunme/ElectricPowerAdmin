@@ -49,7 +49,7 @@ const loadTree = async () => {
   const res = await getCircuitInfoTree({
     stationid: getContextStationId()
   });
-  tree.value = res?.data;
+  tree.value = res?.data || [];
   loading.value = false;
 };
 onMounted(async () => {

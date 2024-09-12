@@ -131,7 +131,7 @@ const activeTab = ref<"D" | "M" | "Y">("D");
 // const props = { children: "children", label: "circuitname" };
 
 const lineForm = reactive({
-  date: "2024-06-30",
+  date: moment().format("YYYY-MM-DD"),
   starttime: 0,
   endtime: 23
 });

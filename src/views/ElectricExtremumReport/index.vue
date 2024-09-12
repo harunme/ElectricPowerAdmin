@@ -132,7 +132,7 @@ const formInline = reactive<{
 }>({
   param: "I",
   scheme: "day",
-  starttime: "2024-06-01",
+  starttime: moment().format("YYYY-MM-DD"),
   daterange: [start, end]
 });
 

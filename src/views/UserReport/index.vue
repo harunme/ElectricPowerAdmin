@@ -223,7 +223,7 @@ onMounted(async () => {
 });
 
 const dayForm = reactive({
-  date: "2024-06-30",
+  date: moment().format("YYYY-MM-DD"),
   startTime: "0",
   endTime: "23"
 });

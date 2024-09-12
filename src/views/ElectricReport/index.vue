@@ -74,7 +74,7 @@ const formInline = reactive<{
   voltageType: "all" | "pv" | "lv";
 }>({
   timeinterval: "1",
-  starttime: "2024-06-01",
+  starttime: moment().format("YYYY-MM-DD"),
   voltageType: "all"
 });
 

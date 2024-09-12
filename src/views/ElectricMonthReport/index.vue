@@ -14,7 +14,7 @@
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" type="date" @change="changeStartTime" />
+            <el-date-picker v-model="formInline.starttime" type="month" @change="changeStartTime" />
           </el-form-item>
           <el-form-item label="电压类别">
             <el-select v-model="formInline.voltageType" @change="changeVoltageType">
