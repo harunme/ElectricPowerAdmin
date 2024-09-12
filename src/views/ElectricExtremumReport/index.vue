@@ -68,7 +68,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <!-- <el-button>导出</el-button> -->
+            <el-button>导出</el-button>
           </el-form-item>
         </el-form>
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">

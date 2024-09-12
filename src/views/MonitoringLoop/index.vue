@@ -75,8 +75,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item required label="仪表编号" prop="meter">
-              <el-input v-model="form.meter" placeholder="关联仪表编号，最多15位字符" />
+            <el-form-item required label="关联仪表" prop="meter">
+              <el-select v-model="form.meter" multiple placeholder="请选择关联仪表" style="width: 100%">
+                <el-option v-for="item in meterList" :key="item.metercode" :label="item.meterdesc" :value="item.metercode" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -97,6 +99,8 @@ import { ElMessage } from "element-plus";
 import type { FormRules, FormInstance } from "element-plus";
 import { Sys } from "@/api/interface/index";
 import { getContextStationId, getContextStationName } from "@/utils";
+import { Meter } from "@/api/interface/index";
+import { getMeterListByStationId } from "@/api/modules/meter";
 import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById, updateCircuitById } from "@/api/modules/sys";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
@@ -113,6 +117,7 @@ const defaultForm = {
 const formVisible = ref(false);
 const tableRef = ref<any>(null);
 const circuitInfoTree = ref<any>([]);
+const meterList = ref<Meter.ResGetMeterListByStationId[]>([]);
 
 const isEdit = ref(false);
 const circuitFormRef = ref<FormInstance>();
@@ -129,6 +134,7 @@ const rules = reactive<FormRules<Sys.ReqInsertCircuitInfo>>({
 });
 
 const addCircuit = () => {
+  if (meterList.value.length === 0) return ElMessage.warning({ message: "当前站点无仪表，请先配置仪表" });
   isEdit.value = false;
   formVisible.value = true;
   circuitFormRef.value?.resetFields();
@@ -212,6 +218,13 @@ const deleteCircuit = async (circuitid: string) => {
 };
 
 const onContextStationChange = async () => {
+  const { data, msg } = await getMeterListByStationId({
+    stationid: getContextStationId()
+  });
+  if (!data) {
+    ElMessage.warning({ message: msg });
+  }
+  meterList.value = data || [];
   tableRef?.value?.resetData();
 };
 </script>

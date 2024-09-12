@@ -99,7 +99,7 @@
                 </el-col>
               </el-row>
               <el-row class="bottom">
-                <el-col :span="6">
+                <el-col :span="6" @click="router.push('/DistributDiagram')">
                   <div class="after">
                     <img
                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAAdCAYAAAA3i0VNAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfdJREFUeNrsVz1LxEAQ3TsOtBAMNtqIARu7u067i92VZ2dn/AfptPM6LeM/uNbu/oF7YG8sBDuDWCiIRBALQeIsvMUh5C6bcyE5uIGXzcfs5mVmdmbSSNNUkLhA3SQhRC06dAiSsCrqKcdNWLCuBJUEDbjbB7Q4hDYz+Z3BYrPMaWOegH6S425fKJI58NI/kRN0bMyRbI43Sa8p5kAWJBck54FkSOhl7g2R9GtlyRN2vkM4yslhlZIMCGPCN67XVWkixAVrPRK+cP5gleWEBOoQnpBkLwwTeUL4IIxZQndsJnMnw13V801Ys5fznMuAcA1LqzLXJRwghiMbsaxJxtgcgnVFqpbugnA4ZY0zwiXmnRLeEb8djIEtd/sweUAYEWLmKr/IHdDVrvvBOLBVu/nFEMrnBDej2J8SXzoeP9kLnzGOCuKyNEk9Sb2wY9jFCLZJDjNdUB9rhba7oD6LT8cwYvYJHuElc3+EuAxt58kEza+Ll5j898gpz2KD/DpTMo9g0S6ScmXl0LTBWLLhrv9Kq6qfK8S87gdeUTQ8hFlUNUkHZPTGvAfZPRbHpUm6KH0meqY//D7LIG+ZlnBo6u4Vdr6F0ldGNgyIypw0l5SJyRvU4LVZKq3hR8nMpowQj8Yk1RdtY5EyeW6ZcEu4MtSXRVZU8ivAAFl68Cvx8AyXAAAAAElFTkSuQmCC"
@@ -121,7 +121,7 @@
                     <h5>视频</h5>
                   </div>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" @click="router.push('/TransformerMonitor')">
                   <div class="after">
                     <img
                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAjCAYAAAANDvOtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgpJREFUeNrUWEFOwzAQNFVvIOEbHIvEveEFzQ/ID8gPyBPCD8oP0hcQfhB+EO5I9AgnUokjUljDWqxWjmPAJmakkWpnsx2v1/bGou974cgMKB1tc0c7iX6dNIhv/LlC6yC4QtvKQWiLtrlPsU3/hXTElsJmlxK7xofYHB29EMcqGrUhwms2KC1ibYhoTaLao/9mLMJjOWpDTWzLEdtyYJZMSH8iVrLRU3TAxNGW53mC75tQ/SYNJI6UCimAC4PtguWhjpLJNkE/dEDp2OL1FVlbtLhtbkkB624zE8NIgcuBZ4fAnLRz7BuyTZjfISxtz/c+wvsJCcyQEvuOgUfAA+Ac+16BO+AD83UK3CfvKnTAZ+CTwfYQ/Sq8oV9qq96tgRUXm2DnUsSHe4x2p8W2kQrVuFOClVg17TfkwYaGfkKodXBB2mdzlvwbtnCmRANcAFfYzvhusI1s+hvamIl/hHkgvzXZwtTiLWIVuwae4++dL6Eh0kDtLJdsRbcxipVsy7vGdIgyZ2tWHyRkNXvJW19iS7IfaqzIcVnGFtkrUlWt+Lkek1gauTaE0BC7ga6Bb30LDSG2xPoi8y3Ut9gUa4tghZBPsV3ois2n2FYERuxVl+RiO3aWy4iE0rTaqs8aVY0/ks7dX0ypAxJ2fJ+43lVNjYLfyBSWW5Wp0GmhivSSw+XGZNJvsHcBBgAMXBINXZ1c3AAAAABJRU5ErkJggg=="
@@ -325,8 +325,10 @@ import overview3 from "./images/overview-3.png";
 import overview4 from "./images/overview-4.png";
 import overview5 from "./images/overview-5.png";
 import overview6 from "./images/overview-6.png";
+import { useRouter } from "vue-router";
 
 import { getSubstationStatus } from "@/api/modules/main";
+const router = useRouter();
 
 const dialogVisible = ref<boolean>(false);
 const option = ref<ECOption | null>(null);

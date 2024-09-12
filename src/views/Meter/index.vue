@@ -272,7 +272,6 @@ const submitStatusForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log("selectedRows.value", selectedRows.value);
       const res = await updateMultiMeterStatus({
         metercode: selectedRows.value.map(({ metercode }) => metercode).join(";"),
         useflag: statusForm.value.useflag

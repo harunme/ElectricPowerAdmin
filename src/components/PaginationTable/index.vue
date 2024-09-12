@@ -5,6 +5,7 @@
       :span-method="spanMethod"
       :show-summary="showSummary"
       @selection-change="selectionChange"
+      @row-dblclick="row => rowDbclick && rowDbclick(row)"
       :data="total > 0 ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
       style="width: 100%"
       :row-key="rowKey"
@@ -57,6 +58,7 @@ interface SummaryMethodProps<T = any> {
 const props = defineProps<{
   summaryMethod?: (param: SummaryMethodProps) => (string | VNode)[];
   showSummary?: boolean;
+  rowDbclick?: (param: any) => void;
   spanMethod?: (param: SpanMethodProps) =>
     | {
         rowspan: number;

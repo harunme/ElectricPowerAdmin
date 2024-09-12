@@ -535,6 +535,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const { deptid, regionid, ...params } = form.value;
       if (isEdit.value) {
+        delete params.epitimelist;
         const res = await updateSubstationInfoById({ ...params, deptid: Number(deptid), regionid: Number(regionid) });
         if (res.code === 1) {
           ElMessage.success({ message: res.msg });

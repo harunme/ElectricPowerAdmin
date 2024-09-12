@@ -49,7 +49,7 @@
               </el-form-item>
             </el-form>
           </div>
-          <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+          <PaginationTable :row-dbclick="row => onSelect(row)" ref="tableRef" :columns="columns" :fetch-data="fetchData">
             <template #actions="{ row }">
               <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
             </template>

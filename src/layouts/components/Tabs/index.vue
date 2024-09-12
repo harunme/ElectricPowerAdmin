@@ -27,6 +27,7 @@
           <span>{{ level.text }}</span>
         </el-badge>
       </div>
+
       <div class="user">
         <el-popover placement="bottom" trigger="click">
           <template #reference>
@@ -42,8 +43,9 @@
 <script setup lang="ts">
 import { LOGIN_URL } from "@/config";
 import Sortable from "sortablejs";
+import { localClear } from "@/utils";
 // import router from "@/routers";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useTabsStore } from "@/stores/modules/tabs";
@@ -61,6 +63,7 @@ const userStore = useUserStore();
 const globalStore = useGlobalStore();
 
 const tabsMenuValue = ref(route.fullPath);
+const interval = ref<any>(null);
 const alarmInfo = ref<{ text: string; count: number; color: string }[]>([]);
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsIcon = computed(() => globalStore.tabsIcon);
@@ -70,7 +73,11 @@ onMounted(() => {
   initTabs();
   GetUnConfirmedEventsByCache();
 
-  window.setInterval(GetUnConfirmedEventsByCache, 5000);
+  interval.value = window.setInterval(GetUnConfirmedEventsByCache, 5000);
+});
+
+onUnmounted(() => {
+  window.clearInterval(interval.value);
 });
 
 // 监听路由的变化（防止浏览器后退/前进不变化 tabsMenuValue）
@@ -99,6 +106,7 @@ const logout = () => {
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
+    localClear();
     // 1.执行退出登录接口
     // await logoutApi();
 

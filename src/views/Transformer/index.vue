@@ -76,7 +76,7 @@
           <el-col :span="24">
             <el-form-item required label="关联仪表" prop="meter">
               <el-select v-model="form.meter" multiple placeholder="请选择关联仪表" style="width: 100%">
-                <el-option v-for="item in meterList" :key="item.metercode" :label="item.metertypename" :value="item.metercode" />
+                <el-option v-for="item in meterList" :key="item.metercode" :label="item.meterdesc" :value="item.metercode" />
               </el-select>
             </el-form-item>
           </el-col>
