@@ -29,8 +29,8 @@
           <el-form-item label="确认状态">
             <el-select v-model="formInline.confirmstatus">
               <el-option label="全部" value="all" />
-              <el-option label="未确认" value="Y" />
-              <el-option label="已确认" value="Y" />
+              <el-option label="未确认" value="0" />
+              <el-option label="已确认" value="1" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
@@ -52,7 +52,7 @@
             <el-input v-model="formInline.metersearch" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
           </el-form-item>
         </el-form>
         <el-tabs type="card" class="tabs" v-model="formInline.messinfolevel" @tab-change="alarmTypeTabChange">
@@ -254,6 +254,10 @@ const tabChange = () => {
 
 const alarmTypeTabChange = value => {
   formInline.messinfolevel = value;
+  tableRef?.value?.resetData();
+};
+
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 </script>

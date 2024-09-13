@@ -1,6 +1,6 @@
 // import qs from "qs";
 import { Login } from "@/api/interface/index";
-import { PORT1 } from "@/api/config/servicePort";
+// import { PORT1 } from "@/api/config/servicePort";
 // import authMenuList from "@/assets/json/authMenuList.json";
 import http from "@/api";
 
@@ -18,6 +18,6 @@ export const searchRoleProjectMenu = () => {
 };
 
 // 用户退出登录
-export const logoutApi = () => {
-  return http.post(PORT1 + `/logout`);
+export const logout = () => {
+  return http.post(`/api/logout`);
 };

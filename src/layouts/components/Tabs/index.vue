@@ -74,6 +74,7 @@ import { TabsPaneContext, TabPaneName } from "element-plus";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 import { getUnConfirmedEventsByCache } from "@/api/modules/main";
+import { logout as logoutApi } from "@/api/modules/login";
 
 const route = useRoute();
 const router = useRouter();
@@ -137,7 +138,7 @@ const logout = () => {
   }).then(async () => {
     localClear();
     // 1.执行退出登录接口
-    // await logoutApi();
+    await logoutApi();
 
     // 2.清除 Token
     userStore.setToken("");
