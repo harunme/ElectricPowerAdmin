@@ -37,7 +37,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <!-- <el-button @click="onExport">导出</el-button> -->
+          <el-button @click="onExport">导出</el-button>
         </el-form-item>
       </el-form>
       <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
@@ -53,6 +53,7 @@ import { GetAlarmEventLogListHis } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
 
@@ -72,17 +73,53 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
-// const onExport = () => {
-//   console.log("onExport");
-// };
+const onExport = async () => {
+  const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
+  const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
+  const messinfolevel = formInline.messinfolevel;
+  const metersearch = formInline.metersearch;
+  const alarmtype = formInline.alarmtype;
+  const messinfotype = formInline.messinfotype;
+  const params: any = {
+    pageNum: 1,
+    pageSize: 99999,
+    starttime,
+    endtime,
+    metersearch,
+    alarmtype,
+    messinfotype
+  };
+  if (messinfolevel !== "0") {
+    params.messinfolevel = messinfolevel;
+  }
+  if (getContextStationId()) params.stationid = getContextStationId();
+
+  const textKeyMaps = [
+    { 变配电站名称: "stationname" },
+    { 设备名称: "metername" },
+    { 报警类型分类: "alarmtype" },
+    { 事件类型: "messinfotypetext" },
+    { 发生时间: "alarmtime" },
+    { 报警等级: "messinfoleveltext" },
+    { 详情: "eventdescription" }
+  ];
+
+  const { data } = await GetAlarmEventLogListHis(params);
+
+  exportExcel({
+    data: data.list,
+    textKeyMaps,
+    filename: `${starttime}_${endtime}_报警历史信息.xlsx`
+  });
+};
 
 const columns = [
-  { prop: "stationname", label: "变配电站名称", width: 300 },
-  { prop: "alarmtime", label: "设备名称", width: 200 },
-  { prop: "messinfotype", label: "报警类型分类", width: 120 },
-  { prop: "metername", label: "事件类型", width: 180 },
-  { prop: "alarttime", label: "发生时间", width: 180 },
-  { prop: "statefloat", label: "报警等级", width: 180 },
+  { prop: "stationname", label: "变配电站名称" },
+  { prop: "metername", label: "设备名称" },
+  { prop: "alarmtype", label: "报警类型分类", width: 120 },
+  { prop: "messinfotypetext", label: "事件类型", width: 80 },
+  { prop: "alarmtime", label: "发生时间", width: 200 },
+  { prop: "messinfoleveltext", label: "报警等级", width: 80 },
   { prop: "eventdescription", label: "详情" }
 ];
 

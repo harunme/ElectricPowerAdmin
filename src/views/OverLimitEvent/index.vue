@@ -31,7 +31,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <!-- <el-button @click="onExport">导出</el-button> -->
+          <el-button @click="onExport">导出</el-button>
         </el-form-item>
       </el-form>
       <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
@@ -51,6 +51,7 @@ import { OverLimitEvent } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
 
@@ -79,6 +80,44 @@ const columns = [
   { prop: "limitvalue", label: "限定值", width: 80 },
   { prop: "eventdescription", label: "详情" }
 ];
+
+const onExport = async () => {
+  const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
+  const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
+  const statedes = formInline.statedes;
+  const metername = formInline.metername;
+  const paramname = formInline.paramname;
+
+  const params: any = {
+    pageNum: 1,
+    pageSize: 99999,
+    starttime,
+    endtime,
+    metername,
+    statedes,
+    paramname
+  };
+  if (getContextStationId()) params.stationid = getContextStationId();
+
+  const textKeyMaps = [
+    { 变配电站名称: "stationname" },
+    { 开始时间: "alarmtime" },
+    { 报警类型: "alarmtype" },
+    { 仪表名称: "metername" },
+    { 参数名称: "paramname" },
+    { 报警值: "statefloat" },
+    { 限定值: "limitvalue" },
+    { 详情: "eventdescription" }
+  ];
+
+  const { data } = await OverLimitEvent(params);
+
+  exportExcel({
+    data: data.list,
+    textKeyMaps,
+    filename: `${starttime}_${endtime}_越限事件.xlsx`
+  });
+};
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");

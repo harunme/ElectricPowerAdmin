@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <!-- <el-button @click="onExport">导出</el-button> -->
+          <el-button @click="onExport">导出</el-button>
         </el-form-item>
       </el-form>
       <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
@@ -32,6 +32,7 @@
 <script setup lang="tsx" name="SignalEvent">
 import { ref, reactive } from "vue";
 import moment from "moment";
+import { exportExcel } from "@/utils/exportExcel";
 import StationContext from "@/components/StationContext/index.vue";
 import { ReqPage } from "@/api/interface";
 import { EnergyLineLoss } from "@/api/modules/main";
@@ -54,9 +55,42 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
-// const onExport = () => {
-//   console.log("onExport");
-// };
+const onExport = async () => {
+  const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
+  const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
+  const metername = formInline.metername;
+  const paramname = formInline.paramname;
+
+  const params: any = {
+    pageNum: 1,
+    pageSize: 99999,
+    starttime,
+    endtime,
+    paramname,
+    metername
+  };
+  if (getContextStationId()) params.stationid = getContextStationId();
+
+  const textKeyMaps = [
+    { 变配电站名称: "stationname" },
+    { 开始时间: "alarmtime" },
+    { 仪表编号: "meter" },
+    { 仪表名称: "metername" },
+    { 参数编号: "eventname0" },
+    { 参数名称: "paramname" },
+    { 报警类型: "codetype" },
+    { 类型: "alarmtype" },
+    { 详情: "eventdescription" }
+  ];
+
+  const { data } = await EnergyLineLoss(params);
+
+  exportExcel({
+    data: data.list,
+    textKeyMaps,
+    filename: `${starttime}_${endtime}_遥信事件.xlsx`
+  });
+};
 
 const columns = [
   { prop: "stationname", label: "变配电站名称" },

@@ -123,7 +123,7 @@ function transformDataToSheetCells(dataList, textKeyMaps, headerFirstRow = 0) {
     dataList.forEach(dataItem => {
       const cells = []
       englishKeysList.forEach(keyLevel => {
-        const value = keyLevel.reduce((dataItem, key) => dataItem[key] || '', dataItem).toString()
+        const value = keyLevel.reduce((dataItem, key) => (dataItem[key]===0?dataItem[key]:dataItem[key]|| '') , dataItem).toString()
         cells.push(value)
       })
       dataRows.push(cells)

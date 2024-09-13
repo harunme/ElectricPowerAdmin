@@ -1,5 +1,5 @@
 <template>
-  <div class="EnergyReportOfCollection">
+  <div class="SystemDaily">
     <div class="card flex-column">
       <el-form :inline="true" :model="formInline">
         <el-form-item label="关键字">
@@ -25,9 +25,10 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="EnergyReportOfCollection">
+<script setup lang="tsx" name="SystemDaily">
 import { ref, reactive } from "vue";
 import moment from "moment";
+import { exportExcel } from "@/utils/exportExcel";
 import { ReqPage } from "@/api/interface";
 import { GetLogPageInfo } from "@/api/modules/main";
 import PaginationTable from "@/components/PaginationTable/index.vue";
@@ -47,8 +48,44 @@ const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
-const onExport = () => {
-  console.log("onExport");
+const onExport = async () => {
+  const starttime = moment(formInline.date[0]).format("YYYY-MM-DD");
+  const endtime = moment(formInline.date[1]).format("YYYY-MM-DD");
+  const selectedname = formInline.selectedname;
+  const textKeyMaps = [
+    {
+      用户名: "userid"
+    },
+    {
+      变配电站名称: "stationname"
+    },
+    {
+      用户IP: "ip"
+    },
+    {
+      时间: "datetime"
+    },
+    {
+      用户地址: "useaddress"
+    },
+    {
+      操作内容: "content"
+    }
+  ];
+
+  const { data } = await GetLogPageInfo({
+    pageNum: 1,
+    pageSize: 99999,
+    starttime,
+    endtime,
+    selectedname
+  });
+
+  exportExcel({
+    data: data.list,
+    textKeyMaps,
+    filename: `${starttime}_${endtime}_操作日志.xlsx`
+  });
 };
 
 const columns = [
