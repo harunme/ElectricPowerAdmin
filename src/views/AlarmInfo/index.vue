@@ -63,9 +63,9 @@
         </el-tabs>
         <div class="table-box">
           <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
-            <template #alarmtime="{ row }">
+            <!-- <template #alarmtime="{ row }">
               {{ moment(row.alarmtime).format("YYYY-MM-DD HH:mm:ss") }}
-            </template>
+            </template> -->
             <template #messinfoleveltext="{ row }">
               <span :class="`messinfoleveltext messinfoleveltext-${row.messinfolevel}`">{{ row.messinfoleveltext }}</span>
             </template>
@@ -74,7 +74,7 @@
             </template>
             <template #actions="">
               <el-button type="text" size="mini">标记为已确认</el-button>
-              <el-button type="text" size="mini">查看详情</el-button>
+              <!-- <el-button type="text" size="mini">查看详情</el-button> -->
             </template>
           </PaginationTable>
         </div>
@@ -127,7 +127,7 @@ const columns = [
   { prop: "eventdescription", label: "报警描述" },
   { prop: "customDom", slotName: "messinfoleveltext", label: "报警等级", width: 94 },
   { prop: "customDom", slotName: "confirmstatus", label: "确认状态", width: 84 },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 184 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 114 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {

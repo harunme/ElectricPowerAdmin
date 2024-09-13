@@ -226,6 +226,7 @@ export namespace Meter {
     }> {}
 
   export interface ReqInsertSubstationInfo {
+    stationid?: string;
     stationname: string;
     deptid: number | undefined;
     regionid: number | undefined;

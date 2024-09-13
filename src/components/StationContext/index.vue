@@ -172,6 +172,8 @@ watch(dialogVisible, async () => {
   }
 });
 onMounted(async () => {
+  // @ts-expect-error test
+  window.SETCONTEXTSTATION = () => (stationSelected.value = localGet("context-station"));
   tableRef?.value?.resetData();
   const getCompanyTreeRes = await getCompanyTree();
   const getSubGroupTreeRes = await getSubGroupTree();

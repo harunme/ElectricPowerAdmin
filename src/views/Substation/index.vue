@@ -347,6 +347,7 @@
 <script setup lang="tsx" name="Substation">
 import { reactive, ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
+import { localGet, localSet } from "@/utils";
 import { Search, RemoveFilled } from "@element-plus/icons-vue";
 import {
   getSubstationPageInfo,
@@ -363,6 +364,7 @@ import type { FormRules, FormInstance } from "element-plus";
 // import moment from "moment";
 
 const defaultForm = {
+  stationid: undefined,
   stationname: "",
   deptid: undefined,
   regionid: undefined,
@@ -544,6 +546,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           ElMessage.error({ message: res.msg });
         }
         formVisible.value = false;
+
+        const contextStation = localGet("context-station");
+        if (contextStation.stationid === params.stationid) {
+          localSet("context-station", { ...contextStation, stationname: params.stationname });
+          // @ts-expect-error test
+          window.SETCONTEXTSTATION();
+        }
       } else {
         const res = await insertSubstationInfo({ ...params, deptid: Number(deptid), regionid: Number(regionid) });
         if (res.code === 1) {

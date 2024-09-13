@@ -15,19 +15,36 @@
     <div class="tool-box">
       <div class="alarm">
         <el-badge
-          v-for="level in alarmInfo"
-          :key="level.text"
-          :style="`background-color: ${level.color};`"
-          :value="level.count"
+          :style="`background-color: #13ce66;`"
+          :value="alarmInfo[1]"
           :max="10"
+          :hidden="!Number(alarmInfo[1])"
           class="item"
-          :hidden="Number(level.count) === 0"
-          @click="toAlarmInfo(level.eventtype)"
+          @click="toAlarmInfo(1)"
         >
-          <span>{{ level.text }}</span>
+          <span>普通</span>
+        </el-badge>
+        <el-badge
+          :style="`background-color:#ffba00;`"
+          :value="alarmInfo[2]"
+          :max="10"
+          :hidden="!Number(alarmInfo[2])"
+          class="item"
+          @click="toAlarmInfo(2)"
+        >
+          <span>严重</span>
+        </el-badge>
+        <el-badge
+          :style="`background-color: #ff4949;`"
+          :value="alarmInfo[3]"
+          :max="10"
+          :hidden="!Number(alarmInfo[3])"
+          class="item"
+          @click="toAlarmInfo(3)"
+        >
+          <span>事故</span>
         </el-badge>
       </div>
-
       <div class="user">
         <el-popover placement="bottom" trigger="click">
           <template #reference>
@@ -37,6 +54,9 @@
         </el-popover>
       </div>
     </div>
+    <audio ref="audioRef" src="/warning.mp3" loop></audio>
+    <!-- <button @click="playAudio">start</button>
+    <button @click="pauseAudio">stop</button> -->
   </div>
 </template>
 
@@ -64,7 +84,8 @@ const globalStore = useGlobalStore();
 
 const tabsMenuValue = ref(route.fullPath);
 const interval = ref<any>(null);
-const alarmInfo = ref<{ text: string; count: number; color: string }[]>([]);
+const audioRef = ref<any>(null);
+const alarmInfo = ref<any>({});
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsIcon = computed(() => globalStore.tabsIcon);
 
@@ -79,6 +100,14 @@ onMounted(() => {
 onUnmounted(() => {
   window.clearInterval(interval.value);
 });
+
+// const playAudio = () => {
+//   audioRef.value.play();
+// };
+
+// const pauseAudio = () => {
+//   audioRef.value.pause();
+// };
 
 // 监听路由的变化（防止浏览器后退/前进不变化 tabsMenuValue）
 watch(
@@ -163,13 +192,11 @@ const tabRemove = (fullPath: TabPaneName) => {
 
 const GetUnConfirmedEventsByCache = async () => {
   const { numsByLevel }: any = await getUnConfirmedEventsByCache();
-  const colors = ["#13ce66", "#ffba00", "#ff4949"];
-  alarmInfo.value = numsByLevel?.map(({ eventname, eventcount, eventtype }, index) => ({
-    text: eventname,
-    count: eventcount,
-    color: colors[index],
-    eventtype: eventtype
-  }));
+  const info = {};
+  numsByLevel?.forEach(({ eventcount, eventtype }) => {
+    info[eventtype] = eventcount;
+  });
+  alarmInfo.value = info;
 };
 
 const toAlarmInfo = eventtype => {
