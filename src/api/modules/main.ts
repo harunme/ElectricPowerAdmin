@@ -62,7 +62,7 @@ export const ElectricMonthReport = (params: Main.ReqElectricMonthReport) => {
 };
 
 // 电力监测-变压器温度月报
-export const transformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport[]) => {
+export const transformerTempMonthReport = (params: Main.ReqTransformerTempMonthReport) => {
   return http.post<Main.ResTransformerTempMonthReport>("/main/transformerTempMonthReport", params);
 };
 

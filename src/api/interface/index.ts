@@ -592,7 +592,7 @@ export namespace Main {
 
   export interface ReqGetCirLoadRate {
     stationid: string;
-    circuitid: string;
+    circuitids: string;
     starttime: string;
     scheme: "M" | "Y";
   }

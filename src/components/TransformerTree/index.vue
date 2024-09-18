@@ -62,7 +62,7 @@ const loadTree = async () => {
 
 const handleCheck = () => {
   if (props.onChange) {
-    if (props.isMultiple) props.onChange(treeRef.value!.getCheckedKeys(true));
+    if (props.isMultiple) props.onChange(treeRef.value!.getCheckedKeys(true), treeRef.value!.getCheckedNodes(true));
     else props.onChange([singleSelected.value.transformerid], [singleSelected.value]);
   }
 };

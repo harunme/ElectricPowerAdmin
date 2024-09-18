@@ -144,7 +144,7 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params: any = {
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       scheme: formInline.scheme
     };
     if (formInline.scheme === "Y") {
@@ -206,7 +206,7 @@ const fetchData = async (): Promise<any> => {
 const onExport = async () => {
   const params: any = {
     stationid: getContextStationId(),
-    circuitid: circuit.value,
+    circuitids: circuit.value,
     scheme: formInline.scheme
   };
   if (formInline.scheme === "Y") {
@@ -219,12 +219,13 @@ const onExport = async () => {
   let textKeyMaps = [] as any;
   columns.forEach(({ children, label, prop }) => {
     if (children) {
-      children.forEach(({ label, prop }) => {
-        textKeyMaps.push({ [label]: prop });
+      children.forEach(item => {
+        textKeyMaps.push({ [`${label}.${item.label}`]: item.prop });
       });
-    }
-    textKeyMaps.push({ [label]: prop });
+    } else textKeyMaps.push({ [label]: prop });
   });
+
+  console.log("textKeyMaps", textKeyMaps);
 
   exportExcel({
     data: data?.PowerValue || [],

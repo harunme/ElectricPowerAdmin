@@ -8,10 +8,13 @@
       <div class="card table-box flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" type="month" @change="changeStartTime" />
+            <el-date-picker v-model="formInline.starttime" type="month" :clearable="false" />
           </el-form-item>
           <el-form-item>
-            <el-button>导出</el-button>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
         <PaginationTable
@@ -36,10 +39,10 @@ import StationContext from "@/components/StationContext/index.vue";
 import TransformerTree from "@/components/TransformerTree/index.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { ElMessage } from "element-plus";
-import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
-const transformer = ref<any>(null);
+const transformer = ref<any>([]);
 const transformerInfoTreeRef = ref<any>(null);
 
 const formInline = reactive<{
@@ -71,55 +74,97 @@ const columns = ref([
   { prop: "paramsName", label: "" }
 ]);
 
-const changeStartTime = value => {
-  formInline.starttime = moment(value).format("YYYY-MM");
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
 const fetchData = async (): Promise<any> => {
+  if (transformer?.value?.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
   return new Promise(async resolve => {
-    const { data }: any = await transformerTempMonthReport([
-      {
-        stationid: getContextStationId(),
-        transformerid: transformer.value,
-        starttime: formInline.starttime
-      }
-    ]);
+    const { data }: any = await transformerTempMonthReport(
+      transformer.value.map(({ stationid, transformerid }) => ({
+        stationid,
+        transformerid,
+        starttime: moment(formInline.starttime).format("YYYY-MM")
+      }))
+    );
     if (!data) {
       return resolve({ list: [], total: 0 });
     }
-    const circuitnames: any[] = [];
-    for (let index = 0; index < data.PowerValue.length; index++) {
-      if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
-        circuitnames.push(data.PowerValue[index].circuitname);
-      }
-    }
+    const { timeColumns, circuitUIPQPfEpis } = getData(data);
 
-    const params = [
-      { name: "A相", value: "fTempA" },
-      { name: "B相", value: "fTempB" },
-      { name: "C相", value: "fTempC" }
-    ];
-
-    const circuitUIPQPfEpis: any[] = [];
-    const timeColumns = [] as any[];
-    let rowsIndex = 0;
-    circuitnames.forEach(() => {
-      params.forEach((param, i) => {
-        circuitUIPQPfEpis[rowsIndex] = { paramsName: param.name };
-        rowsIndex = rowsIndex + 1;
-        for (let index = 0; index < data.PowerValue.length; index++) {
-          const time = moment(data.PowerValue[index].collecttime).format("MM-DD");
-          timeColumns.push({ prop: time, label: time });
-          circuitUIPQPfEpis[i][time] = data.PowerValue[index][param.value];
-          circuitUIPQPfEpis[i].stationname = data.PowerValue[index]["stationname"];
-          circuitUIPQPfEpis[i].objectname = data.PowerValue[index]["objectname"];
-          circuitUIPQPfEpis[i].temp = "温度(℃)";
-        }
-      });
-    });
     columns.value = [...columns.value, ...timeColumns];
     resolve({ list: circuitUIPQPfEpis, total: 0 });
+  });
+};
+
+const getData = data => {
+  const circuitnames: any[] = [];
+  const timeColumns = [] as any[];
+  const timesMap: any = {};
+  for (let index = 0; index < data.PowerValue.length; index++) {
+    const time = moment(data.PowerValue[index].collecttime).format("MM-DD");
+
+    if (!circuitnames.includes(data.PowerValue[index].circuitname)) {
+      circuitnames.push(data.PowerValue[index].circuitname);
+    }
+    if (!timesMap[time]) {
+      timesMap[time] = { prop: time, label: time };
+      timeColumns.push(timesMap[time]);
+    }
+    // timeColumns.push({ prop: time, label: time });
+  }
+
+  const params = [
+    { name: "A相", value: "fTempA" },
+    { name: "B相", value: "fTempB" },
+    { name: "C相", value: "fTempC" }
+  ];
+  const circuitUIPQPfEpis: any[] = [];
+
+  let rowsIndex = 0;
+  circuitnames.forEach(() => {
+    params.forEach((param, i) => {
+      circuitUIPQPfEpis[rowsIndex] = { paramsName: param.name };
+      rowsIndex = rowsIndex + 1;
+      for (let index = 0; index < data.PowerValue.length; index++) {
+        const time = moment(data.PowerValue[index].collecttime).format("MM-DD");
+
+        circuitUIPQPfEpis[i][time] = data.PowerValue[index][param.value];
+        circuitUIPQPfEpis[i].stationname = data.PowerValue[index]["stationname"];
+        circuitUIPQPfEpis[i].objectname = data.PowerValue[index]["objectname"];
+        circuitUIPQPfEpis[i].temp = "温度(℃)";
+      }
+    });
+  });
+
+  return { timeColumns, circuitUIPQPfEpis };
+};
+
+const onExport = async () => {
+  if (transformer.value.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
+
+  const { data }: any = await transformerTempMonthReport(
+    transformer.value.map(({ stationid, transformerid }) => ({
+      stationid,
+      transformerid,
+      starttime: moment(formInline.starttime).format("YYYY-MM")
+    }))
+  );
+
+  const { circuitUIPQPfEpis } = getData(data);
+
+  let textKeyMaps = [] as any;
+  columns.value.forEach(({ label, prop }) => {
+    textKeyMaps.push({ [label]: prop });
+  });
+
+  console.log("textKeyMaps", textKeyMaps);
+
+  exportExcel({
+    data: circuitUIPQPfEpis,
+    textKeyMaps,
+    filename: `${moment(formInline.starttime).format("YYYY-MM")}_变压器温度报表.xlsx`
   });
 };
 
@@ -127,9 +172,10 @@ const onContextStationChange = async () => {
   transformerInfoTreeRef?.value?.resetData();
 };
 
-const onTransformerTreeChange = (transformerids: string[]) => {
+const onTransformerTreeChange = (transformerids: string[], transformers: any) => {
   if (transformerids.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
-  transformer.value = transformerids.join("-");
+  transformer.value = transformers;
+  console.log("transformers", transformerids);
   tableRef?.value?.resetData();
 };
 </script>
