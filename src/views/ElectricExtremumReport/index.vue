@@ -68,7 +68,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button>导出</el-button>
+            <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
@@ -114,6 +114,7 @@ import columnsConfig from "./config";
 import { ElMessage } from "element-plus";
 import { getContextStationId } from "@/utils";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { exportExcel } from "@/utils/exportExcel";
 
 const end = new Date();
 const start = new Date();
@@ -178,6 +179,43 @@ const fetchData = async (): Promise<any> => {
     columns.value = columnsConfig[formInline.param];
     const list = data?.StatisticValue || [];
     resolve({ list, total: 0 });
+  });
+};
+const onExport = async () => {
+  const params: any = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    scheme: formInline.scheme,
+    starttime: formInline.starttime,
+    param: formInline.param === "ABCU" ? "U" : formInline.param
+  };
+  if (formInline.scheme === "custom") {
+    params.starttime = moment(formInline.daterange[0]).format("YYYY-MM-DD");
+    params.endtime = moment(formInline.daterange[1]).format("YYYY-MM-DD");
+  } else {
+    params.starttime = formInline.starttime;
+  }
+  const { data } = await ElecMaxMinAvgValue(params);
+
+  let textKeyMaps = [] as any;
+  columns.value.forEach(({ children, label, prop, slotName }) => {
+    if (children) {
+      children.forEach(item => {
+        if (item.children) {
+          item.children.forEach(subitem => {
+            textKeyMaps.push({ [`${label}.${item.label}.${subitem.label}`]: subitem.slotName || subitem.prop });
+          });
+        } else textKeyMaps.push({ [`${label}.${item.label}`]: item.slotName || item.prop });
+      });
+    } else textKeyMaps.push({ [label]: slotName || prop });
+  });
+  exportExcel({
+    data: data?.StatisticValue || [],
+    textKeyMaps,
+    filename:
+      formInline.scheme === "custom"
+        ? `${params.starttime}-${params.endtime}_电力极值报表.xlsx`
+        : `${params.starttime}_电力极值报表.xlsx`
   });
 };
 
