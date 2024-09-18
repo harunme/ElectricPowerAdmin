@@ -16,12 +16,12 @@
           <el-form-item label="日期">
             <el-date-picker
               v-model="formInline.starttime"
-              @change="changeStartTime"
               :type="formInline.scheme === 'M' ? 'month' : 'year'"
+              :clearable="false"
             />
           </el-form-item>
           <el-form-item>
-            <el-button-group v-if="formInline.scheme === 'M'" type="primary">
+            <el-button-group v-if="formInline.scheme === 'M'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一月
               </el-button>
@@ -29,7 +29,7 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-else type="primary">
+            <el-button-group v-else>
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
@@ -38,9 +38,12 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-button>导出</el-button>
-          </el-form-item> -->
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="onExport">导出</el-button>
+          </el-form-item>
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
@@ -71,6 +74,7 @@ import ECharts from "@/components/Charts/echarts.vue";
 import { GetCirLoadRate } from "@/api/modules/main";
 import { getContextStationId } from "@/utils";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { exportExcel } from "@/utils/exportExcel";
 
 const formInline = reactive<{
   scheme: "M" | "Y";
@@ -120,23 +124,20 @@ const changeScheme = value => {
   } else {
     formInline.starttime = moment().format("YYYY");
   }
-  tableRef?.value?.resetData();
 };
 
-const changeStartTime = () => {
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 
 const clickPrev = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).subtract(1, "M").format("YYYY-MM");
   else formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const clickNext = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).add(1, "M").format("YYYY-MM");
   if (formInline.scheme === "Y") formInline.starttime = moment(formInline.starttime).add(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const fetchData = async (): Promise<any> => {
@@ -199,6 +200,36 @@ const fetchData = async (): Promise<any> => {
       };
       resolve({ list, total: 0 });
     }
+  });
+};
+
+const onExport = async () => {
+  const params: any = {
+    stationid: getContextStationId(),
+    circuitid: circuit.value,
+    scheme: formInline.scheme
+  };
+  if (formInline.scheme === "Y") {
+    params.starttime = moment(formInline.starttime).format("YYYY");
+  } else {
+    params.starttime = moment(formInline.starttime).format("YYYY-MM");
+  }
+  const { data } = await GetCirLoadRate(params);
+
+  let textKeyMaps = [] as any;
+  columns.forEach(({ children, label, prop }) => {
+    if (children) {
+      children.forEach(({ label, prop }) => {
+        textKeyMaps.push({ [label]: prop });
+      });
+    }
+    textKeyMaps.push({ [label]: prop });
+  });
+
+  exportExcel({
+    data: data?.PowerValue || [],
+    textKeyMaps,
+    filename: `${params.starttime}_负荷率${formInline.scheme === "M" ? "月" : "年"}报.xlsx`
   });
 };
 
