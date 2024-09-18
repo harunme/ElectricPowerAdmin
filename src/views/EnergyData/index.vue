@@ -20,7 +20,7 @@
         <div>
           <el-form :inline="true" class="table-form-inline">
             <el-form-item v-if="activeTab === 'D'" label="时间范围">
-              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="date" />
+              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="date" :clearable="false" />
               <el-select v-model="lineForm.starttime" style="width: 70px; margin-right: 4px">
                 <el-option v-for="item in [...Array(24).keys()]" :key="item" :label="item" :value="item" />
               </el-select>
@@ -41,7 +41,7 @@
               </el-button-group>
             </el-form-item>
             <el-form-item v-if="activeTab === 'M'" label="时间范围">
-              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="month" />
+              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="month" :clearable="false" />
               <el-select v-model="lineForm.starttime" style="width: 70px; margin-right: 4px">
                 <el-option v-for="item in moment(lineForm.date).daysInMonth()" :key="item" :label="item" :value="item" />
               </el-select>
@@ -62,7 +62,7 @@
               </el-button-group>
             </el-form-item>
             <el-form-item v-if="activeTab === 'Y'" label="时间范围">
-              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="year" />
+              <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="year" :clearable="false" />
               <el-select v-model="lineForm.starttime" style="width: 70px; margin-right: 4px">
                 <el-option v-for="item in Array.from({ length: 12 }, (_, i) => i + 1)" :key="item" :label="item" :value="item" />
               </el-select>
@@ -84,9 +84,9 @@
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
-              <el-button type="primary" @click="showChart">图表</el-button>
-              <el-button type="primary" @click="showPie">饼图</el-button>
-              <!-- <el-button type="primary">导出</el-button> -->
+              <el-button @click="showChart">图表</el-button>
+              <el-button @click="showPie">饼图</el-button>
+              <el-button @click="onExport">导出</el-button>
               <div style="margin-left: 8px; color: var(--el-text-color-regular)">(*为进线回路)</div>
             </el-form-item>
           </el-form>
@@ -120,6 +120,7 @@ import StationContext from "@/components/StationContext/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const circuit = ref<any>(null);
 const option = ref<any>(null);
@@ -192,31 +193,37 @@ const fetchData = async (): Promise<any> => {
       starttime,
       endtime
     });
-    ElectricityFeesNoHjResponse.value = data?.EnergyReport;
-    let _columns: any = [];
-    const list =
-      data?.EnergyReport?.map((row: any, index) => {
-        let data: any = {};
-        let total: number = 0;
-        if (index === 0) {
-          data.circuitname = row[0].circuitname;
-          _columns.push({ prop: "circuitname", label: "回路名称 / kW·h", width: 160 });
-          row.forEach(item => {
-            _columns.push({
-              prop: item.collecttime,
-              label: item.collecttime
-            });
-            data[item.collecttime] = item.data;
-            total += item.data;
-          });
-          _columns.push({ prop: "total", label: "合计" });
-          data.total = total;
-        }
-        return data;
-      }) || [];
-    columns.value = _columns;
-    resolve({ list });
+    ElectricityFeesNoHjResponse.value = data?.EnergyReport || [];
+    const EnergyReport = getData(data?.EnergyReport || []);
+    columns.value = EnergyReport.columns;
+
+    resolve({ list: EnergyReport.list });
   });
+};
+
+const getData = data => {
+  let columns: any = [];
+  const list =
+    data.map((row: any, index) => {
+      let data: any = {};
+      let total: number = 0;
+      if (index === 0) {
+        data.circuitname = row[0].circuitname;
+        columns.push({ prop: "circuitname", label: "回路名称 / kW·h", width: 160 });
+        row.forEach(item => {
+          columns.push({
+            prop: item.collecttime,
+            label: item.collecttime
+          });
+          data[item.collecttime] = item.data;
+          total += item.data;
+        });
+        columns.push({ prop: "total", label: "合计" });
+        data.total = total;
+      }
+      return data;
+    }) || [];
+  return { columns, list };
 };
 
 const handleSelectionChange = rows => {
@@ -283,6 +290,52 @@ const showChart = () => {
   };
 };
 
+const onExport = async () => {
+  const typeMap = {
+    D: "用能日报",
+    M: "用能月报",
+    Y: "用能年报"
+  };
+  if (lineForm.starttime > lineForm.endtime) {
+    return ElMessage.info({ message: "开始时间必须小于截止时间" });
+  }
+  let starttime, endtime;
+  if (activeTab.value === "D") {
+    starttime = `${lineForm.date} ${Number(lineForm.starttime) < 10 ? `0${lineForm.starttime}` : lineForm.starttime}:00:00`;
+    endtime = `${lineForm.date} ${Number(lineForm.endtime) < 10 ? `0${lineForm.endtime}` : lineForm.endtime}:00:00`;
+  }
+  if (activeTab.value === "M" || activeTab.value === "Y") {
+    starttime = `${lineForm.date}-${lineForm.starttime < 10 ? `0${lineForm.starttime}` : lineForm.starttime}`;
+    endtime = `${lineForm.date}-${lineForm.endtime < 10 ? `0${lineForm.endtime}` : lineForm.endtime}`;
+  }
+  const { data } = await ElectricityFeesNoHj({
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    scheme: activeTab.value,
+    starttime,
+    endtime
+  });
+
+  const EnergyReport = getData(data.EnergyReport);
+
+  let textKeyMaps = [] as any;
+  columns.value.forEach(({ children, label, prop, slotName }) => {
+    if (children) {
+      children.forEach(item => {
+        if (item.children) {
+          item.children.forEach(subitem => {
+            textKeyMaps.push({ [`${label}.${item.label}.${subitem.label}`]: subitem.slotName || subitem.prop });
+          });
+        } else textKeyMaps.push({ [`${label}.${item.label}`]: item.slotName || item.prop });
+      });
+    } else textKeyMaps.push({ [label]: slotName || prop });
+  });
+  exportExcel({
+    data: EnergyReport.list,
+    textKeyMaps,
+    filename: `${starttime}-${endtime}_${typeMap[activeTab.value]}.xlsx`
+  });
+};
 const showPie = () => {
   console.log("showPie");
 };
