@@ -34,9 +34,9 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-button>导出</el-button>
-          </el-form-item> -->
+          <el-form-item>
+            <el-button @click="onExport">导出</el-button>
+          </el-form-item>
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
@@ -65,6 +65,7 @@ import CollapseBox from "@/components/CollapseBox/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
 const formInline = reactive<{
@@ -122,7 +123,7 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       scheme: formInline.scheme,
       starttime: formInline.starttime
     };
@@ -246,6 +247,36 @@ const fetchData = async (): Promise<any> => {
       };
       resolve({ list });
     }
+  });
+};
+
+const onExport = async () => {
+  const typeString = {
+    M: "月报",
+    Y: "年报"
+  };
+  const params = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    scheme: formInline.scheme,
+    starttime: formInline.starttime
+  };
+  const textKeyMaps = columns.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+
+  const { data } = await AveragePowerReport(params);
+
+  const list =
+    data?.list.map(i => ({
+      ...i,
+      fPf: Number(i.fPF) / 1000
+    })) || [];
+
+  exportExcel({
+    data: list,
+    textKeyMaps,
+    filename: `${formInline.starttime}_四象限电能${typeString[formInline.scheme]}.xlsx`
   });
 };
 

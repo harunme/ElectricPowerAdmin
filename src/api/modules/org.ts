@@ -1,9 +1,15 @@
 import http from "@/api";
+import { localGet } from "@/utils";
 import { Org } from "@/api/interface/index";
 
 // 组织机构 接口1 查询组织机构
 export const getCompanyTree = () => {
-  return http.postForm<Org.ResGetCompanyTree>(`/org/getCompanyTree`);
+  const currentUser = localGet("user");
+  let params = {} as any;
+  if (currentUser) {
+    params = { deptid: currentUser.userInfo.deptid };
+  }
+  return http.postForm<Org.ResGetCompanyTree>(`/org/getCompanyTree`, params);
 };
 // 组织机构 接口2 新增一个组织
 export const insertDeptInfo = (params: Org.ReqInsertDeptInfo) => {

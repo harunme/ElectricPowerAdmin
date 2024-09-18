@@ -194,8 +194,8 @@ const tabRemove = (fullPath: TabPaneName) => {
 const GetUnConfirmedEventsByCache = async () => {
   const { numsByLevel }: any = await getUnConfirmedEventsByCache();
   const info = {};
-  numsByLevel?.forEach(({ eventcount, eventtype }) => {
-    info[eventtype] = eventcount;
+  numsByLevel?.forEach(({ unconfirmcount, eventtype }) => {
+    info[eventtype] = unconfirmcount;
   });
   alarmInfo.value = info;
 };

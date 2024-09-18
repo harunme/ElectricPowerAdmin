@@ -122,7 +122,7 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       scheme: formInline.scheme,
       starttime: formInline.starttime
     };

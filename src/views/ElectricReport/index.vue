@@ -37,7 +37,7 @@
             </el-button-group>
           </el-form-item>
           <el-form-item>
-            <el-button>导出</el-button>
+            <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
         <PaginationTable
@@ -63,6 +63,7 @@ import StationContext from "@/components/StationContext/index.vue";
 import { ElMessage } from "element-plus";
 import { getContextStationId } from "@/utils";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
 const circuit = ref<any>(null);
@@ -160,7 +161,6 @@ const changeStartTime = value => {
 };
 
 const changeVoltageType = value => {
-  console.log("changeVoltageType", value);
   if (value === "pv") {
     columns.value = PvColumns;
   }
@@ -176,7 +176,7 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const params = {
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       starttime: formInline.starttime,
       timeinterval: formInline.timeinterval
     };
@@ -184,6 +184,26 @@ const fetchData = async (): Promise<any> => {
     const list = data?.PowerValue || [];
 
     resolve({ list, total: 0 });
+  });
+};
+
+const onExport = async () => {
+  const params = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    starttime: formInline.starttime,
+    timeinterval: formInline.timeinterval
+  };
+  const textKeyMaps = columns.value.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+
+  const { data } = await ElectricReport(params);
+
+  exportExcel({
+    data: data?.PowerValue || [],
+    textKeyMaps,
+    filename: `${formInline.starttime}_电力运行报表.xlsx`
   });
 };
 

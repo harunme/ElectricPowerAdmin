@@ -69,7 +69,7 @@ const nodeClick = (node: any) => {
 
 const handleCheck = () => {
   if (props.onChange) {
-    props.onChange(treeRef.value!.getCheckedKeys(true));
+    props.onChange(treeRef.value!.getCheckedKeys());
   }
 };
 

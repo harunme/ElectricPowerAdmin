@@ -38,8 +38,10 @@ export namespace Login {
     password: string;
   }
   export interface ResLogin {
-    homeUrl: string;
+    userid: string;
+    username: string;
     token: string;
+    deptid: string;
   }
 }
 
@@ -597,7 +599,7 @@ export namespace Main {
 
   export interface ReqAveragePowerReport {
     stationid?: string;
-    circuitid?: string;
+    circuitids?: string;
     starttime?: string;
     scheme: "M" | "Y";
   }
@@ -639,7 +641,7 @@ export namespace Main {
   }
   export interface ReqElectricReport {
     stationid: string;
-    circuitid: string;
+    circuitids: string;
     starttime: string;
     timeinterval: string;
   }
@@ -704,7 +706,7 @@ export namespace Main {
   }
   export interface ReqElectricReportNew {
     stationid: string;
-    circuitid: string;
+    circuitids: string;
     starttime: string;
   }
 
@@ -733,7 +735,7 @@ export namespace Main {
 
   export interface ReqElectricMonthReport {
     stationid: string;
-    circuitid: string;
+    circuitids: string;
     starttime: string;
   }
 

@@ -68,6 +68,7 @@ const login = (formEl: FormInstance | undefined) => {
       const { data } = await loginApi({ ...loginForm });
 
       userStore.setToken(data.token);
+      userStore.setUserInfo(data);
 
       await initDynamicRouter();
 

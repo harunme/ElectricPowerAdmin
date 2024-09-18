@@ -121,7 +121,7 @@ const fetchData = async (): Promise<any> => {
     loading.value = true;
     const { data }: any = await ElectricMonthReport({
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       starttime: formInline.starttime
     });
     const lineParams = [

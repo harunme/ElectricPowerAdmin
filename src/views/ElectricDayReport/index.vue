@@ -113,7 +113,7 @@ const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
     const { data }: any = await ElectricReportNew({
       stationid: getContextStationId(),
-      circuitid: circuit.value,
+      circuitids: circuit.value,
       starttime: formInline.starttime
     });
     const lineParams = [

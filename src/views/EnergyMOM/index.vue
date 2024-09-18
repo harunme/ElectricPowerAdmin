@@ -16,10 +16,13 @@
           <el-tab-pane lazy label="按日" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
-                <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
+                <el-date-picker v-model="formInline.starttime" type="date" />
               </el-form-item>
               <el-form-item>
-                <!-- <el-button type="primary">导出</el-button> -->
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="onExport(dayColumns, '日')">导出</el-button>
               </el-form-item>
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="dayColumns" :fetch-data="fetchData">
@@ -31,10 +34,13 @@
           <el-tab-pane lazy label="按周" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
-                <el-date-picker v-model="formInline.starttime" type="date" @change="onTimeChange" />
+                <el-date-picker v-model="formInline.starttime" type="date" />
               </el-form-item>
               <el-form-item>
-                <!-- <el-button type="primary">导出</el-button> -->
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="onExport(weekColumns, '周')">导出</el-button>
               </el-form-item>
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="weekColumns" :fetch-data="fetchData">
@@ -46,16 +52,19 @@
           <el-tab-pane lazy label="按月" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
-                <el-date-picker v-model="formInline.starttime" type="month" @change="onTimeChange" />
+                <el-date-picker v-model="formInline.starttime" type="month" />
               </el-form-item>
               <el-form-item>
-                <!-- <el-button type="primary">导出</el-button> -->
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="onExport(monthColumns, '月')">导出</el-button>
               </el-form-item>
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="monthColumns" :fetch-data="fetchData">
-              <template #actions="">
+              <!-- <template #actions="">
                 <el-button link size="small">查看图表</el-button>
-              </template>
+              </template> -->
             </PaginationTable>
           </el-tab-pane>
         </el-tabs>
@@ -81,6 +90,7 @@ import ECharts from "@/components/Charts/echarts.vue";
 import { ElMessage } from "element-plus";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
 const dialogVisible = ref(false);
@@ -102,8 +112,8 @@ const dayColumns = [
   { prop: "curvalue", label: "当日用电 / kW·h" },
   { prop: "beforevalue", label: "上日用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" }
+  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const weekColumns = [
@@ -111,8 +121,8 @@ const weekColumns = [
   { prop: "curvalue", label: "当周用电 / kW·h" },
   { prop: "beforevalue", label: "上周用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" }
+  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
 
 const monthColumns = [
@@ -120,14 +130,9 @@ const monthColumns = [
   { prop: "curvalue", label: "当月用电 / kW·h" },
   { prop: "beforevalue", label: "上月用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" }
+  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
 ];
-
-const onTimeChange = value => {
-  formInline.starttime = moment(value).format("YYYY-MM-DD");
-  tableRef?.value?.resetData();
-};
 
 const showChart = value => {
   dialogVisible.value = true;
@@ -197,10 +202,10 @@ const showChart = value => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    const params = {
+    const params: any = {
       stationid: getContextStationId(),
       circuitids: circuit.value,
-      starttime: formInline.starttime,
+      starttime: moment(formInline.starttime).format("YYYY-MM-DD"),
       scheme: formInline.scheme
     };
     const { data } = await energyReportMOM(params);
@@ -210,6 +215,27 @@ const fetchData = async (): Promise<any> => {
       resolve({ list: data.PowerValue });
     }
     // console.log("dataa", data);
+  });
+};
+
+const onExport = async (columns, type) => {
+  const params: any = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    starttime: moment(formInline.starttime).format("YYYY-MM-DD"),
+    scheme: formInline.scheme
+  };
+
+  const textKeyMaps = columns.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+
+  const { data } = await energyReportMOM(params);
+
+  exportExcel({
+    data: data?.PowerValue || [],
+    textKeyMaps,
+    filename: `${moment(formInline.starttime).format("YYYY-MM-DD")}_${type}数据.xlsx`
   });
 };
 
@@ -224,6 +250,10 @@ const onCircuitInfoTreeChange = (circuitids: string[]) => {
 };
 
 const tabClick = () => {
+  tableRef?.value?.resetData();
+};
+
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 </script>

@@ -22,7 +22,7 @@
             </el-button-group>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">导出</el-button>
+            <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
         <div class="chart-box" v-if="option !== null">
@@ -47,6 +47,7 @@ import { getMonthMom } from "@/api/modules/main";
 import ECharts from "@/components/Charts/echarts.vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import { getContextStationId } from "@/utils";
+import { exportExcel } from "@/utils/exportExcel";
 
 const tableRef = ref<any>(null);
 const circuitInfoTreeRef = ref<any>(null);
@@ -144,6 +145,25 @@ const fetchData = async (): Promise<any> => {
       };
       resolve({ list: data?.PowerValue || [] });
     }
+  });
+};
+
+const onExport = async () => {
+  const params = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    starttime: `${formInline.starttime}-01-01`
+  };
+  const textKeyMaps = columns.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+
+  const { data } = await getMonthMom(params);
+
+  exportExcel({
+    data: data?.PowerValue || [],
+    textKeyMaps,
+    filename: `${formInline.starttime}_同比分析.xlsx`
   });
 };
 
