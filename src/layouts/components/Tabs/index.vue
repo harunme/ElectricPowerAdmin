@@ -13,14 +13,13 @@
       </el-tabs>
     </div>
     <div class="tool-box">
-      <div class="alarm">
+      <div class="alarm" @click="toAlarmInfo">
         <el-badge
           :style="`background-color: #13ce66;`"
           :value="alarmInfo[1]"
           :max="10"
           :hidden="!Number(alarmInfo[1])"
           class="item"
-          @click="toAlarmInfo(1)"
         >
           <span>普通</span>
         </el-badge>
@@ -30,7 +29,6 @@
           :max="10"
           :hidden="!Number(alarmInfo[2])"
           class="item"
-          @click="toAlarmInfo(2)"
         >
           <span>严重</span>
         </el-badge>
@@ -40,7 +38,6 @@
           :max="10"
           :hidden="!Number(alarmInfo[3])"
           class="item"
-          @click="toAlarmInfo(3)"
         >
           <span>事故</span>
         </el-badge>
@@ -55,8 +52,6 @@
       </div>
     </div>
     <audio ref="audioRef" src="/warning.mp3" loop></audio>
-    <!-- <button @click="playAudio">start</button>
-    <button @click="pauseAudio">stop</button> -->
   </div>
 </template>
 
@@ -102,13 +97,14 @@ onUnmounted(() => {
   window.clearInterval(interval.value);
 });
 
-// const playAudio = () => {
-//   audioRef.value.play();
-// };
+const playAudio = () => {
+  console.log("playAudioplayAudio");
+  audioRef.value.play();
+};
 
-// const pauseAudio = () => {
-//   audioRef.value.pause();
-// };
+const pauseAudio = () => {
+  audioRef.value.pause();
+};
 
 // 监听路由的变化（防止浏览器后退/前进不变化 tabsMenuValue）
 watch(
@@ -194,14 +190,22 @@ const tabRemove = (fullPath: TabPaneName) => {
 const GetUnConfirmedEventsByCache = async () => {
   const { numsByLevel }: any = await getUnConfirmedEventsByCache();
   const info = {};
+  let count = 0;
   numsByLevel?.forEach(({ unconfirmcount, eventtype }) => {
     info[eventtype] = unconfirmcount;
+    count += unconfirmcount;
   });
+  console.log("countcount", count);
+  if (count) {
+    playAudio();
+  } else {
+    pauseAudio();
+  }
   alarmInfo.value = info;
 };
 
-const toAlarmInfo = eventtype => {
-  router.push(`/AlarmInfo?messinfolevel=${eventtype}`);
+const toAlarmInfo = () => {
+  router.push(`/AlarmInfo`);
 };
 </script>
 

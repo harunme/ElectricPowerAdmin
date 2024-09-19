@@ -185,3 +185,18 @@ export const EnergyLineLoss = (params: Main.ReqEnergyLineLoss) => {
 export const ElectricityFeesNoHj = (params: Main.ReqElectricityFeesNoHj) => {
   return http.postForm<Main.ResElectricityFeesNoHj>("/main/ElectricityFeesNoHj", params);
 };
+
+// 事件记录-报警信息 接口4 一个事件标记成  确认
+export const setAlarmEventConfirmed = (params: Main.ReqSetAlarmEventConfirmed) => {
+  return http.postForm<Main.ResSetAlarmEventConfirmed>("/main/setAlarmEventConfirmed", params);
+};
+
+// 事件记录-报警信息 接口5 一个事件标记成 未确认
+export const setAlarmEventUnConfirmed = (params: Main.ReqSetAlarmEventUnConfirmed) => {
+  return http.postForm<Main.ResSetAlarmEventUnConfirmed>("/main/setAlarmEventUnConfirmed", params);
+};
+// http://111.231.24.91/main/oneClickConfirmAlarmEvents
+// 事件记录-报警信息 接口3 一键确认
+export const oneClickConfirmAlarmEvents = () => {
+  return http.postForm<Main.ResoOneClickConfirmAlarmEvents>("/main/oneClickConfirmAlarmEvents");
+};

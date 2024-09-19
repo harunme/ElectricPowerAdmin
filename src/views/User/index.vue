@@ -55,7 +55,7 @@
         </PaginationTable>
       </div>
     </div>
-    <el-dialog v-model="formVisible" :title="isEdit ? '修改用户' : '新增用户'" width="860">
+    <el-dialog v-model="formVisible" :title="isEdit ? '修改用户' : '新增用户'" width="860" :destroy-on-close="true">
       <el-form
         ref="userFormRef"
         :model="form"
@@ -67,17 +67,17 @@
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item required label="用户名" :label-width="formLabelWidth">
+            <el-form-item required label="用户名" prop="username" :label-width="formLabelWidth">
               <el-input v-model="form.username" autocomplete="off" placeholder="用户名仅支持英文和数字(最多20位)" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="姓名" :label-width="formLabelWidth">
+            <el-form-item required label="姓名" prop="name" :label-width="formLabelWidth">
               <el-input v-model="form.name" autocomplete="off" placeholder="请填写真实姓名" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="密码" :label-width="formLabelWidth">
+            <el-form-item required label="密码" prop="password" :label-width="formLabelWidth">
               <el-input
                 v-model="form.password"
                 autocomplete="off"
@@ -87,13 +87,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="密码确认" :label-width="formLabelWidth">
+            <el-form-item required label="密码确认" prop="passwordconfirm" :label-width="formLabelWidth">
               <el-input v-model="form.passwordconfirm" autocomplete="off" type="password" placeholder="请再次输入密码" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="组织机构" :label-width="formLabelWidth">
+            <el-form-item required label="组织机构" prop="deptid" :label-width="formLabelWidth">
               <el-cascader
+                @change="changeDept"
                 v-model="form.deptid"
                 style="width: 100%"
                 :options="deptTree"
@@ -108,7 +109,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="角色" :label-width="formLabelWidth">
+            <el-form-item required label="角色" prop="roleid" :label-width="formLabelWidth">
               <el-cascader
                 v-model="form.roleid"
                 style="width: 100%"
@@ -124,7 +125,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item required label="用户组" :label-width="formLabelWidth">
+            <el-form-item required label="用户组" prop="groupid" :label-width="formLabelWidth">
               <el-cascader
                 v-model="form.groupid"
                 style="width: 100%"
@@ -140,17 +141,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="用户手机号" :label-width="formLabelWidth">
+            <el-form-item label="用户手机号" prop="telephone" :label-width="formLabelWidth">
               <el-input v-model="form.telephone" autocomplete="off" placeholder="请填写11位手机号" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="邮箱" :label-width="formLabelWidth">
+            <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
               <el-input v-model="form.email" autocomplete="off" placeholder="请填写邮箱" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="标题" :label-width="formLabelWidth">
+            <el-form-item label="标题" prop="title" :label-width="formLabelWidth">
               <el-input v-model="form.title" autocomplete="off" placeholder="请输入平台名称" />
             </el-form-item>
           </el-col>
@@ -158,7 +159,7 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="formVisible = false">取消</el-button>
+          <el-button @click="onCancel">取消</el-button>
           <el-button type="primary" @click="submitForm(userFormRef)">确定</el-button>
         </div>
       </template>
@@ -221,8 +222,7 @@
     </el-dialog>
   </div>
 </template>
-<!-- http://111.231.24.91/org/updateUserAndSub -->
-<!-- http://111.231.24.91/org/getSubstationListOfSelected -->
+
 <script setup lang="tsx" name="User">
 import { reactive, ref, watch } from "vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
@@ -273,7 +273,8 @@ const formInline = reactive({
 const roleFormInline = reactive({
   search: ""
 });
-const form = ref<any>({
+
+const defaultForm = {
   username: "",
   name: "",
   password: "",
@@ -284,7 +285,8 @@ const form = ref<any>({
   email: "",
   telephone: "",
   title: ""
-});
+};
+const form = ref<any>(defaultForm);
 const companyProps = { children: "children", label: "deptname" };
 const groupProps = { children: "children", label: "regionname" };
 const columns: any = [
@@ -348,6 +350,19 @@ const nodeClick = async node => {
   getSubstationListUnderCompanyOrSubgroupParams.value = params;
 };
 
+const changeDept = async deptid => {
+  const userGroupRes = await selectUserGroupTree({
+    deptid: deptid
+  });
+
+  const roleRes = await getRolesListTree({
+    deptid: deptid
+  });
+  userRoleTree.value = roleRes.data;
+
+  userGroupTree.value = userGroupRes.data;
+};
+
 const updateUserSubstations = async () => {
   const { msg, code } = await updateUserAndSub({
     userid: selectedUser.value.userid,
@@ -359,6 +374,11 @@ const updateUserSubstations = async () => {
     ElMessage.warning(msg);
   }
   roleDialogVisible.value = false;
+};
+
+const onCancel = () => {
+  setTimeout(() => userFormRef.value?.resetFields());
+  formVisible.value = false;
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -424,17 +444,6 @@ const onDeptTreeChange = async node => {
 
   const companyRes = await getCompanyTree();
   deptTree.value = companyRes.data;
-
-  const userGroupRes = await selectUserGroupTree({
-    deptid: deptid.value
-  });
-
-  const roleRes = await getRolesListTree({
-    deptid: deptid.value
-  });
-  userRoleTree.value = roleRes.data;
-
-  userGroupTree.value = userGroupRes.data;
 };
 
 const onSubmit = () => {

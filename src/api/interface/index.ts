@@ -1365,4 +1365,17 @@ export namespace Main {
       starttime: string;
       value: string;
     }> {}
+
+  export interface ReqSetAlarmEventConfirmed {
+    alarmeventlogid: string;
+  }
+  export interface ReqSetAlarmEventUnConfirmed {
+    alarmeventlogid: string;
+  }
+
+  export interface ResSetAlarmEventConfirmed {}
+  export interface ResSetAlarmEventUnConfirmed {}
+
+  export interface ReqOneClickConfirmAlarmEvents {}
+  export interface ResoOneClickConfirmAlarmEvents {}
 }
