@@ -14,10 +14,14 @@
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" :type="formInline.scheme === 'M' ? 'month' : 'year'" />
+            <el-date-picker
+              v-model="formInline.starttime"
+              :type="formInline.scheme === 'M' ? 'month' : 'year'"
+              :clearable="false"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button-group v-if="formInline.scheme === 'M'" type="primary">
+            <el-button-group v-if="formInline.scheme === 'M'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一月
               </el-button>
@@ -25,7 +29,7 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-else type="primary">
+            <el-button-group v-else>
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
@@ -34,15 +38,17 @@
               </el-button>
             </el-button-group>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-button>导出</el-button>
-          </el-form-item> -->
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
         </el-form>
         <div class="chart-box">
           <ECharts v-if="option !== null" :option="option" />
           <el-empty v-else description="暂无数据" />
         </div>
         <PaginationTable
+          show-summary
+          :summary-method="getSummaries"
           ref="tableRef"
           :fetch-on-mounted="false"
           :span-method="objectSpanMethod"
@@ -56,7 +62,7 @@
 </template>
 
 <script setup lang="tsx" name="AveragePowerReport">
-import { ref, reactive } from "vue";
+import { ref, reactive, h } from "vue";
 import { min, max } from "lodash";
 import moment from "moment";
 import { AveragePowerReport } from "@/api/modules/main";
@@ -99,13 +105,11 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 const clickPrev = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).subtract(1, "M").format("YYYY-MM");
   else formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const clickNext = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).add(1, "M").format("YYYY-MM");
   if (formInline.scheme === "Y") formInline.starttime = moment(formInline.starttime).add(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const columns = [
@@ -115,8 +119,35 @@ const columns = [
   { prop: "fEpi", label: "反向有功电度" },
   { prop: "fEqc", label: "正向无功电度" },
   { prop: "fEql", label: "反向无功电度" },
-  { prop: "fPf", label: "平均功率因数" }
+  { prop: "fPF", label: "平均功率因数" }
 ];
+
+const getSummaries = (param: any) => {
+  const { columns, data } = param;
+  const sums: any[] = [];
+
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = h("div", { style: { fontWeight: "bolder" } }, ["合计"]);
+      return;
+    }
+    if (index === 1) {
+      sums[index] = h("div", { style: {} }, ["-"]);
+      return;
+    }
+    const values = data.map(item => Number(item[column.property]));
+    sums[index] = `${values.reduce((prev, curr) => {
+      const value = Number(curr);
+      if (!Number.isNaN(value)) {
+        return prev + curr;
+      } else {
+        return prev;
+      }
+    }, 0)}`;
+  });
+
+  return sums;
+};
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
@@ -124,7 +155,7 @@ const fetchData = async (): Promise<any> => {
       stationid: getContextStationId(),
       circuitids: circuit.value,
       scheme: formInline.scheme,
-      starttime: formInline.starttime
+      starttime: moment(formInline.starttime).format(formInline.scheme === "M" ? "YYYY-MM" : "YYYY")
     };
     const { data } = await AveragePowerReport(params);
     if (!data) {
@@ -134,7 +165,11 @@ const fetchData = async (): Promise<any> => {
       const list =
         data?.list.map(i => ({
           ...i,
-          fPf: Number(i.fPF) / 1000
+          fEpe: i.fEpe || 0,
+          fEpi: i.fEpi || 0,
+          fEqc: i.fEqc || 0,
+          fEql: i.fEql || 0,
+          fPF: i.fPF ? Number(i.fPF) / 1000 : 0
         })) || [];
       option.value = {
         grid: {
@@ -181,8 +216,8 @@ const fetchData = async (): Promise<any> => {
           {
             type: "value",
             name: "功率因数",
-            min: min(list.map(({ fPF }) => fPF)),
-            max: max(list.map(({ fPF }) => fPF))
+            min: min(list.map(({ fPF }) => fPF || 0)),
+            max: max(list.map(({ fPF }) => fPF || 0))
           }
         ],
         series: [
@@ -240,7 +275,7 @@ const fetchData = async (): Promise<any> => {
                 return value + " °C";
               }
             },
-            data: list.map(({ fPf }) => Number(fPf))
+            data: list.map(({ fPF }) => (fPF ? Number(fPF) : 0))
           }
         ]
       };
@@ -255,6 +290,10 @@ const onContextStationChange = () => {
 
 const onCircuitInfoTreeChange = (circuitids: string[]) => {
   circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
+};
+
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 </script>

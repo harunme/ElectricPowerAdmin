@@ -108,6 +108,7 @@ const clickNext = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
+    columns.value = [];
     const { data }: any = await ElectricReportNew({
       stationid: getContextStationId(),
       circuitids: circuit.value,

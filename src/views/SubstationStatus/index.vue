@@ -297,7 +297,7 @@
       </el-row>
     </div>
     <el-dialog v-model="dialogVisible" :title="title" width="800">
-      <div class="chart-box" style="height: 600px">
+      <div class="chart-box" style="height: 600px; padding: 0 32px 32px 18px">
         <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
       </div>
     </el-dialog>
@@ -429,8 +429,8 @@ const fetchData = async ({ pageSize, pageNum }): Promise<any> => {
     if (url.value === "CommunicationStatusNew") res = await CommunicationStatusNew(params);
     if (url.value === "OverLimitEventNew") res = await OverLimitEventNew(params);
     if (url.value === "EnergyLineLoss") res = await EnergyLineLoss(params);
-
-    resolve({ list: res.data.list, total: res.data.total });
+    console.log("res", res);
+    resolve({ list: res?.data?.list, total: res?.data?.total });
   });
 };
 

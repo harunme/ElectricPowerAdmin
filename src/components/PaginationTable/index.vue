@@ -1,6 +1,7 @@
 <template>
   <div class="PaginationTable">
     <el-table
+      :scrollbar-always-on="true"
       :summary-method="summaryMethod"
       :span-method="spanMethod"
       :show-summary="showSummary"
@@ -99,14 +100,19 @@ const handleCurrentChange = (val: number) => {
 
 // 刷新数据
 const refreshData = async () => {
-  loading.value = true;
-  const res = await props.fetchData({
-    pageSize: pageSize.value,
-    pageNum: currentPage.value
-  });
-  tableData.value = res?.list || [];
-  total.value = res?.total;
-  loading.value = false;
+  try {
+    loading.value = true;
+    const res = await props.fetchData({
+      pageSize: pageSize.value,
+      pageNum: currentPage.value
+    });
+    tableData.value = res?.list || [];
+    total.value = res?.total;
+    loading.value = false;
+  } catch (error) {
+    console.log(error);
+    loading.value = false;
+  }
 };
 
 // 重置表格数据

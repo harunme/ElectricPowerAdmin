@@ -17,7 +17,7 @@
             <el-date-picker v-model="formInline.starttime" :type="formInline.scheme === 'M' ? 'month' : 'year'" />
           </el-form-item>
           <el-form-item>
-            <el-button-group v-if="formInline.scheme === 'M'" type="primary">
+            <el-button-group v-if="formInline.scheme === 'M'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一月
               </el-button>
@@ -25,7 +25,7 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-else type="primary">
+            <el-button-group v-else>
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
@@ -35,6 +35,7 @@
             </el-button-group>
           </el-form-item>
           <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
             <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
@@ -100,13 +101,11 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 const clickPrev = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).subtract(1, "M").format("YYYY-MM");
   else formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const clickNext = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).add(1, "M").format("YYYY-MM");
   if (formInline.scheme === "Y") formInline.starttime = moment(formInline.starttime).add(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const columns = [
@@ -125,7 +124,7 @@ const fetchData = async (): Promise<any> => {
       stationid: getContextStationId(),
       circuitids: circuit.value,
       scheme: formInline.scheme,
-      starttime: formInline.starttime
+      starttime: moment(formInline.starttime).format(formInline.scheme === "M" ? "YYYY-MM" : "YYYY")
     };
     const { data } = await AveragePowerReport(params);
     if (!data) {
@@ -282,6 +281,10 @@ const onExport = async () => {
 
 const onContextStationChange = () => {
   circuitInfoTreeRef?.value?.resetData();
+};
+
+const onSubmit = () => {
+  tableRef?.value?.resetData();
 };
 
 const onCircuitInfoTreeChange = (circuitids: string[]) => {

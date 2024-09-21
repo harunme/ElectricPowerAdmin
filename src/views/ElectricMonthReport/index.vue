@@ -119,6 +119,7 @@ const changeVoltageType = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
+    columns.value = [];
     loading.value = true;
     const { data }: any = await ElectricMonthReport({
       stationid: getContextStationId(),

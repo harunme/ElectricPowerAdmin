@@ -34,11 +34,7 @@
           <el-button @click="onExport">导出</el-button>
         </el-form-item>
       </el-form>
-      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
-        <template #alarmtime="{ row }">
-          <span>{{ moment(row.alarmtime).format("YYYY-MM-DD HH:mm:ss") }}</span>
-        </template>
-      </PaginationTable>
+      <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
     </div>
   </div>
 </template>
@@ -72,7 +68,7 @@ const onSubmit = () => {
 
 const columns = [
   { prop: "stationname", label: "变配电站名称", width: 200 },
-  { prop: "customDom", slotName: "alarmtime", label: "开始时间", width: 132 },
+  { prop: "alarmtime", label: "开始时间", width: 200 },
   { prop: "alarmtype", label: "报警类型", width: 100 },
   { prop: "metername", label: "仪表名称", width: 142 },
   { prop: "paramname", label: "参数名称", width: 120 },

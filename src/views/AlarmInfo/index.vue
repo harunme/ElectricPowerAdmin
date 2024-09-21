@@ -34,7 +34,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.range" type="range" />
+            <el-date-picker v-model="formInline.range" type="daterange" />
           </el-form-item>
           <el-form-item label="报警类型分类">
             <el-select v-model="formInline.messinfotype">
@@ -136,7 +136,7 @@ const formInline = reactive<{
   messinfotype?: "2" | "3" | "4" | "0";
   confirmstatus?: "0" | "1" | "2";
 }>({
-  range: [start, end],
+  range: [moment(start).format("YYYY-MM-DD"), moment(end).format("YYYY-MM-DD")],
   confirmstatus: "0",
   messinfotype: "0",
   messinfolevel: "all"
