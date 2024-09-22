@@ -179,12 +179,16 @@ const fetchData = async (): Promise<any> => {
     }
     let starttime, endtime;
     if (activeTab.value === "D") {
-      starttime = `${lineForm.date} ${Number(lineForm.starttime) < 10 ? `0${lineForm.starttime}` : lineForm.starttime}:00:00`;
-      endtime = `${lineForm.date} ${Number(lineForm.endtime) < 10 ? `0${lineForm.endtime}` : lineForm.endtime}:00:00`;
+      starttime = `${moment(lineForm.date).format("YYYY-MM-DD")} ${Number(lineForm.starttime) < 10 ? `0${lineForm.starttime}` : lineForm.starttime}:00:00`;
+      endtime = `${moment(lineForm.date).format("YYYY-MM-DD")} ${Number(lineForm.endtime) < 10 ? `0${lineForm.endtime}` : lineForm.endtime}:00:00`;
     }
-    if (activeTab.value === "M" || activeTab.value === "Y") {
-      starttime = `${lineForm.date}-${lineForm.starttime < 10 ? `0${lineForm.starttime}` : lineForm.starttime}`;
-      endtime = `${lineForm.date}-${lineForm.endtime < 10 ? `0${lineForm.endtime}` : lineForm.endtime}`;
+    if (activeTab.value === "M") {
+      starttime = `${moment(lineForm.date).format("YYYY-MM")}-${lineForm.starttime < 10 ? `0${lineForm.starttime}` : lineForm.starttime}`;
+      endtime = `${moment(lineForm.date).format("YYYY-MM")}-${lineForm.endtime < 10 ? `0${lineForm.endtime}` : lineForm.endtime}`;
+    }
+    if (activeTab.value === "Y") {
+      starttime = `${moment(lineForm.date).format("YYYY")}-${lineForm.starttime < 10 ? `0${lineForm.starttime}` : lineForm.starttime}`;
+      endtime = `${moment(lineForm.date).format("YYYY")}-${lineForm.endtime < 10 ? `0${lineForm.endtime}` : lineForm.endtime}`;
     }
     const { data } = await ElectricityFeesNoHj({
       stationid: getContextStationId(),

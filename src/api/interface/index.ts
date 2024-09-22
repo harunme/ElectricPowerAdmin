@@ -601,7 +601,7 @@ export namespace Main {
     stationid?: string;
     circuitids?: string;
     starttime?: string;
-    scheme: "M" | "Y";
+    scheme: "D" | "M" | "Y";
   }
   export interface ResAveragePowerReport {
     list: {

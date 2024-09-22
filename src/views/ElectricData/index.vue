@@ -25,9 +25,19 @@
               />
             </el-form-item>
             <el-form-item label="电力类别">
-              <el-select v-model="formInline.energykind">
+              <el-select v-model="formInline.energykind" @change="changeEnergykind">
                 <el-option v-for="kind in energyKinds" :key="kind.value" :label="kind.name" :value="kind.value" />
               </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-checkbox-group v-model="formInline.phase">
+                <el-checkbox
+                  :key="key"
+                  v-for="key in phaseConfig[formInline.energykind].split('-')"
+                  :label="phaseMap[key]"
+                  :value="key"
+                />
+              </el-checkbox-group>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -35,10 +45,17 @@
           </el-form>
           <el-tabs v-if="activeTab === 0">
             <el-tab-pane label="图表" class="chart-box">
+              <el-popover v-if="option !== null" placement="right" :width="620" trigger="click">
+                <template #reference>
+                  <el-button class="button" type="primary" text @click="fetchMaxMinData">最值分析</el-button>
+                </template>
+                <PaginationTable :no-pagination="true" :columns="MaxMinColumns" :fetch-data="fetchMaxMinData"> </PaginationTable>
+              </el-popover>
               <ECharts v-if="option !== null" :option="option" />
               <el-empty v-else description="暂无数据" />
             </el-tab-pane>
             <el-tab-pane label="数据" class="chart-box">
+              <el-button type="primary" style="margin-bottom: 8px" @click="onExport">导出</el-button>
               <PaginationTable ref="tableRef1" :fetch-on-mounted="false" :columns="columns" :fetch-data="fetchData">
               </PaginationTable>
             </el-tab-pane>
@@ -67,12 +84,12 @@ import CollapseBox from "@/components/CollapseBox/index.vue";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 import { ReqPage } from "@/api/interface/index";
 import StationContext from "@/components/StationContext/index.vue";
-import { ECOption } from "@/components/Charts/config";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { ElMessage } from "element-plus";
 import { getContextStationId } from "@/utils";
-import { columnsConfig, phaseConfig, energyKinds } from "./config";
+import { columnsConfig, phaseConfig, energyKinds, phaseMap } from "./config";
+import { exportExcel } from "@/utils/exportExcel";
 
 const size = ref<"default" | "large" | "small">("default");
 const end = new Date();
@@ -82,15 +99,46 @@ start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 const formInline = reactive({
   range: [moment(start).format("YYYY-MM-DD"), moment(end).format("YYYY-MM-DD")],
   energykind: "P",
-  phase: ""
+  phase: phaseConfig["P"].split("-")
 });
 const tableRef1 = ref<any>(null);
 const tableRef2 = ref<any>(null);
 const circuitInfoTreeRef = ref<any>(null);
-const option = ref<ECOption | null>(null);
+const option = ref<any | null>(null);
 const columns = ref<any>([]);
 const activeTab = ref<0 | 1>(0);
 const circuit = ref<any>(null);
+
+const maxMinData = ref<any>([]);
+
+const indexOfMaxMin = (arr, type) => {
+  if (arr.length === 0) {
+    return -1;
+  }
+
+  let max = arr[0];
+  let maxIndex = 0;
+
+  for (let i = 1; i < arr.length; i++) {
+    if (type === "max")
+      if (Number(arr[i]) > max) {
+        maxIndex = i;
+        max = Number(arr[i]);
+      }
+
+    if (type === "min")
+      if (Number(arr[i]) < max) {
+        maxIndex = i;
+        max = Number(arr[i]);
+      }
+  }
+  return maxIndex;
+};
+
+const average = array => {
+  if (array.length) return array.reduce((a, b) => a + b) / array.length;
+  else return undefined;
+};
 
 const columns2 = [
   { prop: "circuitname", label: "回路名称" },
@@ -117,6 +165,57 @@ const columns2 = [
   }
 ];
 
+const MaxMinColumns = [
+  { prop: "param", label: "参数" },
+  {
+    label: "最大值",
+    children: [
+      { prop: "maxValue", label: "数值" },
+      { prop: "maxTime", label: "发生时间", width: 110 }
+    ]
+  },
+  {
+    label: "最小值",
+    children: [
+      { prop: "minValue", label: "数值" },
+      { prop: "maxTime", label: "发生时间", width: 110 }
+    ]
+  },
+  { prop: "avgValue", label: "平均值" }
+];
+
+const fetchMaxMinData = async () => {
+  return new Promise(async resolve => {
+    resolve({ list: maxMinData.value });
+  });
+};
+
+const changeEnergykind = value => {
+  formInline.phase = phaseConfig[value].split("-");
+};
+
+const onExport = async () => {
+  const params: any = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    pageNum: 1,
+    pageSize: 99999,
+    starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
+    endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
+    phase: formInline.phase.join("-"),
+    energykind: formInline.energykind
+  };
+  const { data } = await ElectricDataPaging(params);
+  const textKeyMaps = columns.value.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+  exportExcel({
+    data: data.list,
+    textKeyMaps,
+    filename: `${params.starttime}_${params.endtime}_电力数据.xlsx`
+  });
+};
+
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
     columns.value = columnsConfig[formInline.energykind];
@@ -127,7 +226,7 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       pageSize,
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
-      phase: phaseConfig[formInline.energykind],
+      phase: formInline.phase.join("-"),
       energykind: formInline.energykind
     };
 
@@ -137,12 +236,25 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endtime: moment(formInline.range[1]).format("YYYY-MM-DD"),
       energykind: formInline.energykind,
-      phase: phaseConfig[formInline.energykind]
+      phase: formInline.phase.join("-")
     };
-    // http://111.231.24.91/main/ElecMaxMinAvgValue
+
     const { data: ElectricDataPagingData } = await ElectricDataPaging(ElectricDataPagingParams);
     const { data: ElectricDataMonthData } = await ElectricDataMonth(ElectricDataMonthParams);
 
+    maxMinData.value = formInline.phase.map(key => {
+      const maxIndex = indexOfMaxMin(ElectricDataMonthData[key], "max");
+      const minIndex = indexOfMaxMin(ElectricDataMonthData[key], "min");
+      return {
+        param: key,
+        maxValue: ElectricDataMonthData[key][maxIndex],
+        maxTime: ElectricDataMonthData["times"][maxIndex],
+        avgValue: average(ElectricDataMonthData ? ElectricDataMonthData[key].map(Number) : []),
+        minValue: ElectricDataMonthData[key][minIndex],
+        minTime: ElectricDataMonthData["times"][minIndex]
+      };
+    });
+    console.log("maxMinData", maxMinData.value);
     if (!ElectricDataPagingData) {
       resolve({ list: [], total: 0 });
     } else {
@@ -153,12 +265,18 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
     } else {
       option.value = {
         title: {
-          text: energyKinds.find(kind => kind.value === formInline.energykind).name
+          textStyle: {
+            color: "#1890ff"
+          },
+          x: "center",
+          // textAlign: "center",
+          text: `${ElectricDataMonthParams.starttime}-${ElectricDataMonthParams.endtime} ${energyKinds.find(kind => kind.value === formInline.energykind).name}`
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
+          top: "3%",
           data: energyKinds.find(kind => kind.value === formInline.energykind).chartkeys
         },
         grid: {

@@ -14,7 +14,15 @@
         :deep(.el-tabs__content) {
           flex: 1;
           .chart-box {
-            height: calc(100% - 55px);
+            position: relative;
+            .button {
+              position: absolute;
+              z-index: 9999;
+
+              // border: 1px solid;
+            }
+
+            height: calc(100% - 36px);
           }
         }
       }

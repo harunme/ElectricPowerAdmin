@@ -9,12 +9,13 @@
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="报表类型">
             <el-select v-model="formInline.scheme">
+              <el-option label="日报" value="D" />
               <el-option label="月报" value="M" />
               <el-option label="年报" value="Y" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" :type="formInline.scheme === 'M' ? 'month' : 'year'" />
+            <el-date-picker v-model="formInline.starttime" :type="SchemeMap[formInline.scheme].type" />
           </el-form-item>
           <el-form-item>
             <el-button-group v-if="formInline.scheme === 'M'">
@@ -25,12 +26,20 @@
                 下一月<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button-group v-else>
+            <el-button-group v-if="formInline.scheme === 'Y'">
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
               <el-button @click="clickNext">
                 下一年<el-icon class="el-icon--right"><ArrowRight /></el-icon>
+              </el-button>
+            </el-button-group>
+            <el-button-group v-if="formInline.scheme === 'D'">
+              <el-button @click="clickPrev">
+                <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一日
+              </el-button>
+              <el-button @click="clickNext">
+                下一日<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
           </el-form-item>
@@ -69,12 +78,27 @@ import { getContextStationId } from "@/utils";
 import { exportExcel } from "@/utils/exportExcel";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
 
+const SchemeMap = {
+  D: {
+    type: "day",
+    format: "YYYY-MM-DD"
+  },
+  M: {
+    type: "month",
+    format: "YYYY-MM"
+  },
+  Y: {
+    type: "year",
+    format: "YYYY"
+  }
+};
+
 const formInline = reactive<{
-  scheme: "M" | "Y";
+  scheme: "D" | "M" | "Y";
   starttime: string;
 }>({
-  scheme: "M",
-  starttime: moment().format("YYYY-MM")
+  scheme: "D",
+  starttime: moment().format("YYYY-MM-DD")
 });
 
 const tableRef = ref<any>(null);
@@ -100,12 +124,14 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 
 const clickPrev = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).subtract(1, "M").format("YYYY-MM");
-  else formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
+  if (formInline.scheme === "Y") formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
+  if (formInline.scheme === "D") formInline.starttime = moment(formInline.starttime).subtract(1, "d").format("YYYY-MM-DD");
 };
 
 const clickNext = () => {
   if (formInline.scheme === "M") formInline.starttime = moment(formInline.starttime).add(1, "M").format("YYYY-MM");
   if (formInline.scheme === "Y") formInline.starttime = moment(formInline.starttime).add(1, "y").format("YYYY");
+  if (formInline.scheme === "D") formInline.starttime = moment(formInline.starttime).add(1, "d").format("YYYY-MM-DD");
 };
 
 const columns = [
@@ -124,7 +150,7 @@ const fetchData = async (): Promise<any> => {
       stationid: getContextStationId(),
       circuitids: circuit.value,
       scheme: formInline.scheme,
-      starttime: moment(formInline.starttime).format(formInline.scheme === "M" ? "YYYY-MM" : "YYYY")
+      starttime: moment(formInline.starttime).format(SchemeMap[formInline.scheme].format)
     };
     const { data } = await AveragePowerReport(params);
     if (!data) {

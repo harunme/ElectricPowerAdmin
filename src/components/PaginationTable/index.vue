@@ -1,25 +1,29 @@
 <template>
   <div class="PaginationTable">
-    <el-table
-      :scrollbar-always-on="true"
-      :summary-method="summaryMethod"
-      :span-method="spanMethod"
-      :show-summary="showSummary"
-      @selection-change="selectionChange"
-      @row-dblclick="row => rowDbclick && rowDbclick(row)"
-      :data="total > 0 ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-      style="width: 100%"
-      :row-key="rowKey"
-      v-loading="loading"
-    >
-      <el-table-column v-if="tableData.length !== 0 && selectionChange" type="selection" width="55"></el-table-column>
-      <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
-        <template v-for="slotName in Object.keys(slots)" #[slotName]="{ row }">
-          <slot :name="slotName" :row="row"></slot>
-        </template>
-      </recursive-columns>
-    </el-table>
+    <div class="table">
+      <el-table
+        height="100%"
+        :scrollbar-always-on="true"
+        :summary-method="summaryMethod"
+        :span-method="spanMethod"
+        :show-summary="showSummary"
+        @selection-change="selectionChange"
+        @row-dblclick="row => rowDbclick && rowDbclick(row)"
+        :data="total > 0 ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+        style="width: 100%"
+        :row-key="rowKey"
+        v-loading="loading"
+      >
+        <el-table-column v-if="tableData.length !== 0 && selectionChange" type="selection" width="55"></el-table-column>
+        <recursive-columns v-for="(item, index) in columns" :key="index" :column="item">
+          <template v-for="slotName in Object.keys(slots)" #[slotName]="{ row }">
+            <slot :name="slotName" :row="row"></slot>
+          </template>
+        </recursive-columns>
+      </el-table>
+    </div>
     <el-pagination
+      v-if="!noPagination"
       class="pagination"
       background
       @size-change="handleSizeChange"
@@ -71,6 +75,7 @@ const props = defineProps<{
   selectionChange?: (param: any[]) => void;
   rowKey?: any;
   fetchOnMounted?: any;
+  noPagination?: boolean;
   // fetchData: (params?: ReqPage) => Promise<ResPage<any>>;
 }>();
 

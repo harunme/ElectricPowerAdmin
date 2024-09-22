@@ -40,6 +40,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
         <div class="chart-box">
@@ -72,6 +73,7 @@ import CollapseBox from "@/components/CollapseBox/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { getContextStationId } from "@/utils";
 import CircuitInfoTree from "@/components/CircuitInfoTree/index.vue";
+import { exportExcel } from "@/utils/exportExcel";
 
 const formInline = reactive<{
   scheme: "M" | "Y";
@@ -147,6 +149,35 @@ const getSummaries = (param: any) => {
   });
 
   return sums;
+};
+
+const onExport = async () => {
+  const params = {
+    stationid: getContextStationId(),
+    circuitids: circuit.value,
+    scheme: formInline.scheme,
+    starttime: moment(formInline.starttime).format(formInline.scheme === "M" ? "YYYY-MM" : "YYYY")
+  };
+  const { data }: any = await AveragePowerReport(params);
+  const list =
+    data?.list.map(i => ({
+      ...i,
+      fEpe: i.fEpe || 0,
+      fEpi: i.fEpi || 0,
+      fEqc: i.fEqc || 0,
+      fEql: i.fEql || 0,
+      fPF: i.fPF ? Number(i.fPF) / 1000 : 0
+    })) || [];
+
+  const textKeyMaps = columns.map(({ label, prop }) => {
+    return { [label]: prop };
+  });
+
+  exportExcel({
+    data: list,
+    textKeyMaps,
+    filename: `${moment(formInline.starttime).format(formInline.scheme === "M" ? "YYYY-MM" : "YYYY")}_平均功率因数${formInline.scheme === "M" ? "月报" : "年报"}.xlsx`
+  });
 };
 
 const fetchData = async (): Promise<any> => {

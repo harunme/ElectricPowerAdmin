@@ -82,6 +82,38 @@ const phaseConfig = {
   LF: "Lf"
 };
 
+const phaseMap = {
+  Pa: "A相",
+  Pb: "B相",
+  Pc: "C相",
+  P: "总有功功率",
+  Ia: "A相",
+  Ib: "B相",
+  Ic: "C相",
+  Ua: "A相",
+  Ub: "B相",
+  Uc: "C相",
+  Uab: "Uab",
+  Ubc: "Ubc",
+  Uca: "Uca",
+  Fr: "Fr",
+  Pfa: "A相",
+  Pfb: "B相",
+  Pfc: "C相",
+  Pf: "总功率因数",
+  Qa: "A相",
+  Qb: "B相",
+  Qc: "C相",
+  Q: "总无功功率",
+  Sa: "A相",
+  Sb: "B相",
+  Sc: "C相",
+  S: "总视在功率",
+  IUnB: "三相电流不平衡度",
+  UUnB: "三相电压不平衡度",
+  Lf: "负载率"
+};
+
 const energyKinds = [
   { name: "有功功率", value: "P", chartkeys: ["P", "Pa", "Pb", "Pc"] },
   { name: "电流", value: "I", chartkeys: ["Ia", "Ib", "Ic"] },
@@ -95,4 +127,4 @@ const energyKinds = [
   { name: "负载率", value: "LF", chartkeys: ["LF"] }
 ];
 
-export { columnsConfig, phaseConfig, energyKinds };
+export { columnsConfig, phaseConfig, energyKinds, phaseMap };

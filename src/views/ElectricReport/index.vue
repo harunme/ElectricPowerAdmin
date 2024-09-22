@@ -8,7 +8,7 @@
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" type="date" @change="changeStartTime" />
+            <el-date-picker v-model="formInline.starttime" type="date" />
           </el-form-item>
           <el-form-item label="电压类别">
             <el-select v-model="formInline.voltageType" @change="changeVoltageType">
@@ -28,15 +28,16 @@
           </el-form-item>
           <el-form-item>
             <el-button-group>
-              <el-button type="primary" @click="clickPrev">
+              <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一日
               </el-button>
-              <el-button type="primary" @click="clickNext">
+              <el-button @click="clickNext">
                 下一日<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
           </el-form-item>
           <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
             <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
@@ -147,17 +148,10 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 
 const clickPrev = () => {
   formInline.starttime = moment(formInline.starttime).subtract(1, "d").format("YYYY-MM-DD");
-  tableRef?.value?.resetData();
 };
 
 const clickNext = () => {
   formInline.starttime = moment(formInline.starttime).add(1, "d").format("YYYY-MM-DD");
-  tableRef?.value?.resetData();
-};
-
-const changeStartTime = value => {
-  formInline.starttime = moment(value).format("YYYY-MM-DD");
-  tableRef?.value?.resetData();
 };
 
 const changeVoltageType = value => {
@@ -177,7 +171,7 @@ const fetchData = async (): Promise<any> => {
     const params = {
       stationid: getContextStationId(),
       circuitids: circuit.value,
-      starttime: formInline.starttime,
+      starttime: moment(formInline.starttime).format("YYYY-MM-DD"),
       timeinterval: formInline.timeinterval
     };
     const { data } = await ElectricReport(params);
@@ -214,6 +208,10 @@ const onContextStationChange = () => {
 const onCircuitInfoTreeChange = (circuitids: string[]) => {
   if (circuitids.length === 0) return ElMessage.info({ message: "请至少选择一个回路" });
   circuit.value = circuitids.join("-");
+  tableRef?.value?.resetData();
+};
+
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 </script>
