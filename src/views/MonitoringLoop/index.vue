@@ -20,6 +20,9 @@
               </template>
             </el-popconfirm>
           </template>
+          <template #isuse="{ row }">
+            <el-switch v-model="row.isuse" :active-value="0" :inactive-value="1" @click="changeCircuitState(row)" />
+          </template>
         </PaginationTable>
       </div>
     </div>
@@ -101,7 +104,14 @@ import { Sys } from "@/api/interface/index";
 import { getContextStationId, getContextStationName } from "@/utils";
 import { Meter } from "@/api/interface/index";
 import { getMeterListByStationId } from "@/api/modules/meter";
-import { getCircuitInfoTree, randomCircuitId, insertCircuitInfo, deleteCircuitById, updateCircuitById } from "@/api/modules/sys";
+import {
+  getCircuitInfoTree,
+  randomCircuitId,
+  insertCircuitInfo,
+  updateCircuitIsUseById,
+  deleteCircuitById,
+  updateCircuitById
+} from "@/api/modules/sys";
 import PaginationTable from "@/components/PaginationTable/index.vue";
 import StationContext from "@/components/StationContext/index.vue";
 
@@ -141,12 +151,24 @@ const addCircuit = () => {
   setTimeout(() => circuitFormRef.value?.clearValidate());
 };
 
+const changeCircuitState = async (circuit: any) => {
+  console.log("changeUserState", circuit);
+  const { msg } = await updateCircuitIsUseById({
+    stationid: getContextStationId(),
+    circuitid: circuit.circuitid,
+    state: circuit.isuse
+  });
+  ElMessage.success({ message: msg });
+  tableRef?.value?.resetData();
+};
+
 const columns: any = [
   { prop: "circuitname", label: "回路名称" },
   { prop: "circuitid", label: "回路编号" },
   { prop: "parentname", label: "上级回路" },
   { prop: "customDom", slotName: "isincoming", label: "是否进线" },
   { prop: "meter", label: "仪表编号" },
+  { prop: "customDom", slotName: "isuse", label: "回路状态", width: 172 },
   { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
 ];
 

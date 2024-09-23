@@ -60,7 +60,7 @@ class RequestHttp {
         const userStore = useUserStore();
         config.loading && tryHideFullScreenLoading();
         // 登录失效
-        if (data.code == ResultEnum.OVERDUE) {
+        if (data.code == ResultEnum.OVERDUE || data.code === ResultEnum.TOKENERROR) {
           userStore.setToken("");
           router.replace(LOGIN_URL);
           // ElMessage.error(data.msg);

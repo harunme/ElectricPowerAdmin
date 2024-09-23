@@ -52,6 +52,9 @@
               </template>
             </el-popconfirm>
           </template>
+          <template #status="{ row }">
+            <el-switch v-model="row.status" :active-value="0" :inactive-value="1" @click="changeUserState(row)" />
+          </template>
         </PaginationTable>
       </div>
     </div>
@@ -224,6 +227,7 @@
 </template>
 
 <script setup lang="tsx" name="User">
+// http://111.231.24.91/org/updateUserInfoById
 import { reactive, ref, watch } from "vue";
 import CollapseBox from "@/components/CollapseBox/index.vue";
 import PaginationTable from "@/components/PaginationTable/index.vue";
@@ -238,7 +242,8 @@ import {
   getSubGroupTree,
   updateUserAndSub,
   getSubstationListUnderCompanyOrSubgroup,
-  getSubstationListOfSelected
+  getSubstationListOfSelected,
+  updateUserInfoById
 } from "@/api/modules/org";
 import DeptTree from "@/components/DeptTree/index.vue";
 import type { FormRules, FormInstance } from "element-plus";
@@ -298,6 +303,7 @@ const columns: any = [
   { prop: "telephone", label: "手机号", width: 132 },
   { prop: "email", label: "邮箱" },
   { prop: "title", label: "备注" },
+  { prop: "customDom", slotName: "status", label: "用户状态", width: 172 },
   { prop: "customDom", slotName: "actions", label: "操作", width: 172 }
 ];
 
@@ -348,6 +354,16 @@ const nodeClick = async node => {
   stationList.value = data;
   loadingStation.value = false;
   getSubstationListUnderCompanyOrSubgroupParams.value = params;
+};
+
+const changeUserState = async (user: any) => {
+  console.log("changeUserState", user);
+  const { msg } = await updateUserInfoById({
+    userid: user.userid,
+    state: user.status
+  });
+  ElMessage.success({ message: msg });
+  tableRef?.value?.resetData();
 };
 
 const changeDept = async deptid => {

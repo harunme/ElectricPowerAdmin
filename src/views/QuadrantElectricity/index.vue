@@ -15,7 +15,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" :type="SchemeMap[formInline.scheme].type" />
+            <el-date-picker v-model="formInline.starttime" :type="SchemeMap[formInline.scheme].type" :clearable="false" />
           </el-form-item>
           <el-form-item>
             <el-button-group v-if="formInline.scheme === 'M'">
@@ -53,7 +53,10 @@
           <el-empty v-else description="暂无数据" />
         </div>
         <PaginationTable
+          show-summary
+          no-pagination
           ref="tableRef"
+          :summary-method="getSummaries"
           :fetch-on-mounted="false"
           :span-method="objectSpanMethod"
           :columns="columns"
@@ -66,7 +69,7 @@
 </template>
 
 <script setup lang="tsx" name="QuadrantElectricity">
-import { ref, reactive } from "vue";
+import { ref, reactive, h } from "vue";
 import { min, max } from "lodash";
 import moment from "moment";
 import { AveragePowerReport } from "@/api/modules/main";
@@ -105,6 +108,33 @@ const tableRef = ref<any>(null);
 const option = ref<any>(null);
 const circuit = ref<any>(null);
 const circuitInfoTreeRef = ref<any>(null);
+
+const getSummaries = (param: any) => {
+  const { columns, data } = param;
+  const sums: any[] = [];
+
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = h("div", { style: { fontWeight: "bolder" } }, ["合计"]);
+      return;
+    }
+    if (index === 1) {
+      sums[index] = h("div", { style: {} }, ["-"]);
+      return;
+    }
+    const values = data.map(item => Number(item[column.property]));
+    sums[index] = `${values.reduce((prev, curr) => {
+      const value = Number(curr);
+      if (!Number.isNaN(value)) {
+        return prev + curr;
+      } else {
+        return prev;
+      }
+    }, 0)}`;
+  });
+
+  return sums;
+};
 
 const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   if (columnIndex === 0) {
@@ -160,7 +190,12 @@ const fetchData = async (): Promise<any> => {
       const list =
         data?.list.map(i => ({
           ...i,
-          fPf: Number(i.fPF) / 1000
+          ...i,
+          fEpe: i.fEpe || 0,
+          fEpi: i.fEpi || 0,
+          fEqc: i.fEqc || 0,
+          fEql: i.fEql || 0,
+          fPF: i.fPF ? Number(i.fPF) / 1000 : 0
         })) || [];
       option.value = {
         grid: {
@@ -193,7 +228,7 @@ const fetchData = async (): Promise<any> => {
         xAxis: [
           {
             type: "category",
-            data: list.map(({ collecttime }) => collecttime),
+            data: list.map(({ collecttime }) => moment(collecttime).format("hh:mm")),
             axisPointer: {
               type: "shadow"
             }
@@ -207,8 +242,8 @@ const fetchData = async (): Promise<any> => {
           {
             type: "value",
             name: "功率因数",
-            min: min(list.map(({ fPF }) => fPF)),
-            max: max(list.map(({ fPF }) => fPF))
+            min: min(list.map(({ fPF }) => fPF || 0)),
+            max: max(list.map(({ fPF }) => fPF || 0))
           }
         ],
         series: [
@@ -217,7 +252,7 @@ const fetchData = async (): Promise<any> => {
             type: "bar",
             tooltip: {
               valueFormatter: function (value) {
-                return value + " ml";
+                return value + " kW·h";
               }
             },
             data: list.map(({ fEpe }) => Number(fEpe))
@@ -227,7 +262,7 @@ const fetchData = async (): Promise<any> => {
             type: "bar",
             tooltip: {
               valueFormatter: function (value) {
-                return value + " ml";
+                return value + " kW·h";
               }
             },
             data: list.map(({ fEpi }) => Number(fEpi))
@@ -237,7 +272,7 @@ const fetchData = async (): Promise<any> => {
             type: "bar",
             tooltip: {
               valueFormatter: function (value) {
-                return value + " ml";
+                return value + " kW·h";
               }
             },
             data: list.map(({ fEqc }) => Number(fEqc))
@@ -247,7 +282,7 @@ const fetchData = async (): Promise<any> => {
             type: "bar",
             tooltip: {
               valueFormatter: function (value) {
-                return value + " ml";
+                return value + " kW·h";
               }
             },
             data: list.map(({ fEql }) => Number(fEql))
@@ -263,10 +298,10 @@ const fetchData = async (): Promise<any> => {
             },
             tooltip: {
               valueFormatter: function (value) {
-                return value + " °C";
+                return value;
               }
             },
-            data: list.map(({ fPf }) => Number(fPf))
+            data: list.map(({ fPF }) => Number(fPF))
           }
         ]
       };
@@ -277,6 +312,7 @@ const fetchData = async (): Promise<any> => {
 
 const onExport = async () => {
   const typeString = {
+    D: "日报",
     M: "月报",
     Y: "年报"
   };
@@ -284,7 +320,7 @@ const onExport = async () => {
     stationid: getContextStationId(),
     circuitids: circuit.value,
     scheme: formInline.scheme,
-    starttime: formInline.starttime
+    starttime: moment(formInline.starttime).format(SchemeMap[formInline.scheme].format)
   };
   const textKeyMaps = columns.map(({ label, prop }) => {
     return { [label]: prop };
@@ -301,7 +337,7 @@ const onExport = async () => {
   exportExcel({
     data: list,
     textKeyMaps,
-    filename: `${formInline.starttime}_四象限电能${typeString[formInline.scheme]}.xlsx`
+    filename: `${moment(formInline.starttime).format(SchemeMap[formInline.scheme].format)}_四象限电能${typeString[formInline.scheme]}.xlsx`
   });
 };
 

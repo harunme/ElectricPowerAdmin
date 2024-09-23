@@ -1,8 +1,23 @@
 <template>
   <div class="tabs-box">
     <div class="tabs-menu">
-      <el-tabs v-model="tabsMenuValue" type="card" @tab-click="tabClick" @tab-remove="tabRemove">
-        <el-tab-pane v-for="item in tabsMenuList" :key="item.path" :label="item.title" :name="item.path" :closable="item.close">
+      <div v-show="rightMenu.visible" :style="{ left: rightMenu.left + 'px', top: rightMenu.top + 'px' }" class="contextmenu">
+        <li @click="closeMultipleTab">关闭所有标签</li>
+      </div>
+      <el-tabs
+        v-model="tabsMenuValue"
+        type="card"
+        @tab-click="tabClick"
+        @tab-remove="tabRemove"
+        @contextmenu.prevent="openRightMenu($event)"
+      >
+        <el-tab-pane
+          v-for="item in tabsMenuList"
+          :key="item.path"
+          :label="item.title"
+          :name="item.path"
+          :closable="tabsMenuList.length > 1 && item.close"
+        >
           <template #label>
             <el-icon v-if="item.icon && tabsIcon" class="tabs-icon">
               <component :is="item.icon"></component>
@@ -84,12 +99,19 @@ const audioRef = ref<any>(null);
 const alarmInfo = ref<any>({});
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsIcon = computed(() => globalStore.tabsIcon);
+const rightMenu = ref({
+  left: 0,
+  top: 0,
+  visible: false
+});
 
 onMounted(() => {
   tabsDrop();
   initTabs();
   GetUnConfirmedEventsByCache();
-
+  document.addEventListener("click", () => {
+    rightMenu.value.visible = false;
+  });
   interval.value = window.setInterval(GetUnConfirmedEventsByCache, 5000);
 });
 
@@ -104,6 +126,16 @@ const playAudio = () => {
 
 const pauseAudio = () => {
   audioRef.value.pause();
+};
+
+const openRightMenu = e => {
+  console.log(e);
+  if (e.srcElement.id) {
+    // 右键点击的是tab
+    rightMenu.value.left = e.clientX;
+    rightMenu.value.top = e.clientY;
+    rightMenu.value.visible = true;
+  }
 };
 
 // 监听路由的变化（防止浏览器后退/前进不变化 tabsMenuValue）
@@ -185,6 +217,11 @@ const tabClick = (tabItem: TabsPaneContext) => {
 // Remove Tab
 const tabRemove = (fullPath: TabPaneName) => {
   tabStore.removeTabs(fullPath as string, fullPath == route.fullPath);
+};
+
+const closeMultipleTab = () => {
+  // const fullPath = tabItem.props.name as string;
+  tabStore.closeMultipleTab(tabsMenuValue.value);
 };
 
 const GetUnConfirmedEventsByCache = async () => {

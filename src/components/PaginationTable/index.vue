@@ -9,7 +9,7 @@
         :show-summary="showSummary"
         @selection-change="selectionChange"
         @row-dblclick="row => rowDbclick && rowDbclick(row)"
-        :data="total > 0 ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+        :data="total > 0 || noPagination ? tableData : tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
         style="width: 100%"
         :row-key="rowKey"
         v-loading="loading"
@@ -90,8 +90,10 @@ const handleSizeChange = (val: number) => {
   if (total.value > 0) {
     refreshData();
   } else {
-    pageSize.value = val;
-    currentPage.value = 1;
+    if (!props.noPagination) {
+      pageSize.value = val;
+      currentPage.value = 1;
+    }
   }
 };
 

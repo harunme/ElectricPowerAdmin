@@ -45,7 +45,7 @@ const props = defineProps<{
 onMounted(async () => {
   const res = await getCompanyTree();
   tree.value = res?.data;
-  setTimeout(() => treeRef?.value?.setCurrentKey(res?.data[0]?.deptid));
+  setTimeout(() => res?.data && treeRef?.value?.setCurrentKey(res?.data[0]?.deptid));
   if (props.onChange) {
     props.onChange(res?.data[0]);
   }

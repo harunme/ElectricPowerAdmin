@@ -62,6 +62,12 @@ export const updateUserGroup = (params: Org.ReqUpdateUserGroup) => {
   return http.postForm<Org.ResUpdateUserGroup>(`/org/updateUserGroup`, params);
 };
 
+// 角色 接口10  修改一个用户状态
+// http://111.231.24.91/org/updateUserInfoById
+export const updateUserInfoById = (params: Org.ReqUpdateUserInfoById) => {
+  return http.postForm<Org.ResUpdateUserInfoById>(`/org/updateUserInfoById`, params);
+};
+
 // 角色 接口1 根据组织机构ID查询角色
 export const getRolesListTree = (params: Org.ReqGetRolesListTree) => {
   return http.postForm<Org.ResGetRolesListTree>(`/org/getRolesListTree`, params);

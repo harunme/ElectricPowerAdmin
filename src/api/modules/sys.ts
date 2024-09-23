@@ -21,3 +21,8 @@ export const updateCircuitById = (params: Sys.ReqUpdateCircuitById) => {
 export const randomCircuitId = (params: Sys.ReqRandomCircuitId) => {
   return http.postForm<Sys.ResRandomCircuitId>(`/sys/randomCircuitId`, params);
 };
+// 监测回路 接口6 修改一个回路的使用标志
+// http://111.231.24.91/sys/updateCircuitIsUseById
+export const updateCircuitIsUseById = (params: Sys.ReqUpdateCircuitIsUseById) => {
+  return http.postForm<Sys.ResUpdateCircuitIsUseById>(`/sys/updateCircuitIsUseById`, params);
+};

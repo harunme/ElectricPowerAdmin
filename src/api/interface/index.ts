@@ -81,6 +81,12 @@ export namespace Sys {
   export interface ResRandomCircuitId {
     circuitid: string;
   }
+  export interface ReqUpdateCircuitIsUseById {
+    state: number;
+    stationid: string;
+    circuitid: string;
+  }
+  export interface ResUpdateCircuitIsUseById {}
 }
 
 export namespace Menu {
@@ -189,6 +195,11 @@ export namespace Org {
   export interface ResUpdatePassword {}
   export interface ReqUpdatePassword2 {}
   export interface ResUpdatePassword2 {}
+  export interface ReqUpdateUserInfoById {
+    userid: number;
+    state: number;
+  }
+  export interface ResUpdateUserInfoById {}
 }
 
 // 变电站模块
