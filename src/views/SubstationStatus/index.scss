@@ -54,7 +54,9 @@
       .chart-box {
         display: flex;
         align-items: center;
-        height: 680px;
+
+        // height: 680px;
+        justify-content: center;
 
         // border: 1px solid;
         .line {

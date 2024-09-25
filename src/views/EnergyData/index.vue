@@ -17,7 +17,7 @@
           <el-tab-pane label="月报" name="M"> </el-tab-pane>
           <el-tab-pane label="年报" name="Y"> </el-tab-pane>
         </el-tabs>
-        <div>
+        <div style="height: calc(100% - 118px)">
           <el-form :inline="true" class="table-form-inline">
             <el-form-item v-if="activeTab === 'D'" label="时间范围">
               <el-date-picker style="width: 120px; margin-right: 4px" v-model="lineForm.date" type="date" :clearable="false" />

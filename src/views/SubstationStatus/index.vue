@@ -229,14 +229,15 @@
               </el-radio-group>
             </div>
             <div class="chart-box" v-if="type === 'month'">
-              <div class="line">
-                <ECharts v-if="option !== null" :option="option" />
-                <el-empty v-else description="暂无数据" />
-              </div>
-              <div class="pie">
-                <ECharts v-if="pieOption !== null" :option="pieOption" />
-                <!-- <el-empty v-else description="暂无数据" /> -->
-              </div>
+              <template v-if="option !== null">
+                <div class="line">
+                  <ECharts v-if="option !== null" :option="option" />
+                </div>
+                <div class="pie">
+                  <ECharts v-if="pieOption !== null" :option="pieOption" />
+                </div>
+              </template>
+              <el-empty v-else description="暂无数据" />
             </div>
             <div class="chart-box" v-else>
               <div class="line" style="width: 100%">
@@ -406,9 +407,11 @@ const SubstationStatus = ref({
 
 onMounted(() => {
   if (getContextStationId()) {
-    GetSubstationStatusInterval.value = window.setInterval(() => GetSubstationStatus(), 10000);
+    GetSubstationStatusInterval.value = window.setInterval(() => {
+      GetSubstationStatus();
+      GetMothJFPG();
+    }, 10000);
     GetNowAndLastEnergyTotalValue();
-    GetMothJFPG();
   }
 });
 
