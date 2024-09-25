@@ -96,8 +96,7 @@
           <el-tabs type="card" class="tabs">
             <el-tab-pane label="站点报警排名列表">
               <div class="table-box">
-                <PaginationTable :fetch-on-mounted="false" :columns="typeColumns" :fetch-data="GetMessInfoTypeAlarmLogNum">
-                </PaginationTable>
+                <PaginationTable :columns="typeColumns" :fetch-data="GetMessInfoTypeAlarmLogNum"> </PaginationTable>
               </div>
             </el-tab-pane>
             <el-tab-pane label="站点报警排名图表" lazy>

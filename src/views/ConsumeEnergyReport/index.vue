@@ -16,11 +16,14 @@
           <el-form-item label="时间范围">
             <el-date-picker
               v-model="formInline.date"
-              type="daterange"
+              type="datetimerange"
               unlink-panels
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              date-format="YYYY/MM/DD ddd"
+              time-format="A hh:mm:ss"
             />
           </el-form-item>
           <el-form-item label="电能类别">
