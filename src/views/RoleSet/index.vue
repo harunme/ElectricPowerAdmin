@@ -38,22 +38,6 @@
                 </el-form-item>
               </el-col>
               <el-col :span="24">
-                <el-form-item required label="上级角色" prop="parentid">
-                  <el-cascader
-                    v-model="form.parentid"
-                    style="width: 100%"
-                    :options="userRoleTree"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'roleid',
-                      label: 'rolename',
-                      emitPath: false
-                    }"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
                 <el-form-item required label="组织机构" prop="deptid">
                   <el-cascader
                     v-model="form.deptid"
@@ -65,6 +49,24 @@
                       label: 'deptname',
                       emitPath: false
                     }"
+                    @change="onFormDeptTreeChange"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item required label="上级角色" prop="parentid">
+                  <el-cascader
+                    v-model="form.parentid"
+                    style="width: 100%"
+                    :options="userRoleTree"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'roleid',
+                      label: 'rolename',
+                      emitPath: false
+                    }"
+                    @focus="focusParentid"
                     clearable
                   />
                 </el-form-item>
@@ -170,9 +172,24 @@ const fetchData = async (): Promise<any> => {
     const { data } = await getRolesListTree({
       deptid: deptid.value
     });
-    userRoleTree.value = [{ rolename: "无", roleid: -1 } as any].concat(data);
+
     resolve({ list: data });
   });
+};
+
+const onFormDeptTreeChange = async deptid => {
+  if (deptid) {
+    const { data = [] } = await getRolesListTree({
+      deptid
+    });
+    userRoleTree.value = [{ rolename: "无", roleid: -1 } as any].concat(data);
+  } else {
+    userRoleTree.value = [];
+  }
+};
+
+const focusParentid = () => {
+  if (!form.value.deptid) ElMessage.warning("请先选择组织机构");
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {

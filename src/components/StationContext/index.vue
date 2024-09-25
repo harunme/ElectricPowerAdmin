@@ -45,7 +45,8 @@
                 <el-input style="width: 300px" v-model="formInline.search" placeholder="请输入站点名称或编号" clearable />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
+                <el-button @click="onSubmit">查询</el-button>
+                <el-button type="primary" @click="onSelect">选择全部变配电站</el-button>
               </el-form-item>
             </el-form>
           </div>

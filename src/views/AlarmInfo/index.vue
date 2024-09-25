@@ -1,5 +1,6 @@
 <template>
   <div class="flex-column AlarmInfo">
+    <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="main-box">
       <div class="card left-box">
         <el-tabs type="card" class="tabs" v-model="activeTab" @tab-change="tabChange" stretch>
@@ -123,6 +124,8 @@ import PaginationTable from "@/components/PaginationTable/index.vue";
 import ECharts from "@/components/Charts/echarts.vue";
 import { ElMessage } from "element-plus";
 import * as echarts from "echarts/core";
+import StationContext from "@/components/StationContext/index.vue";
+import { getContextStationId } from "@/utils";
 
 const end = new Date();
 const start = new Date();
@@ -160,6 +163,11 @@ const columns = [
   { prop: "customDom", slotName: "confirmstatus", label: "确认状态", width: 84 },
   { prop: "customDom", slotName: "actions", label: "操作", width: 114 }
 ];
+
+const onContextStationChange = async () => {
+  tableRef?.value?.resetData();
+};
+
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
   return new Promise(async resolve => {
     const params: any = {
@@ -172,6 +180,8 @@ const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
       metersearch: formInline.metersearch,
       messinfotype: formInline.messinfotype
     };
+
+    if (getContextStationId()) params.stationid = getContextStationId();
 
     if (formInline.messinfolevel !== "all") {
       params.messinfolevel = formInline.messinfolevel;

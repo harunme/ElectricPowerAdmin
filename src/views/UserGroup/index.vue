@@ -37,6 +37,24 @@
                 </el-form-item>
               </el-col>
               <el-col :span="24">
+                <el-form-item required label="组织机构" prop="deptid">
+                  <el-cascader
+                    @focus="focusParentid"
+                    v-model="form.deptid"
+                    style="width: 100%"
+                    :options="deptTree"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'deptid',
+                      label: 'deptname',
+                      emitPath: false
+                    }"
+                    @change="onFormDeptTreeChange"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
                 <el-form-item required label="上级用户组" prop="parentid">
                   <el-cascader
                     v-model="form.parentid"
@@ -46,22 +64,6 @@
                       checkStrictly: true,
                       value: 'groupid',
                       label: 'groupname',
-                      emitPath: false
-                    }"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item required label="组织机构" prop="deptid">
-                  <el-cascader
-                    v-model="form.deptid"
-                    style="width: 100%"
-                    :options="deptTree"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'deptid',
-                      label: 'deptname',
                       emitPath: false
                     }"
                     clearable
@@ -149,9 +151,24 @@ const fetchData = async (): Promise<any> => {
     const { data } = await selectUserGroupTree({
       deptid: deptid.value
     });
-    userGroupTree.value = [{ groupname: "无", groupid: -1 } as any].concat(data);
+
     resolve({ list: data });
   });
+};
+
+const onFormDeptTreeChange = async deptid => {
+  if (deptid) {
+    const { data = [] } = await selectUserGroupTree({
+      deptid
+    });
+    userGroupTree.value = [{ groupname: "无", groupid: -1 } as any].concat(data);
+  } else {
+    userGroupTree.value = [];
+  }
+};
+
+const focusParentid = () => {
+  if (!form.value.deptid) ElMessage.warning("请先选择组织机构");
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {

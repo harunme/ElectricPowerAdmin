@@ -9,10 +9,10 @@
       <div class="card flex-column">
         <el-form :inline="true" :model="formInline" class="table-form-inline">
           <el-form-item label="日期">
-            <el-date-picker v-model="formInline.starttime" type="year" />
+            <el-date-picker v-model="formInline.starttime" type="year" :clearable="false" />
           </el-form-item>
           <el-form-item>
-            <el-button-group type="primary">
+            <el-button-group>
               <el-button @click="clickPrev">
                 <el-icon class="el-icon--left"><ArrowLeft /></el-icon>上一年
               </el-button>
@@ -22,6 +22,7 @@
             </el-button-group>
           </el-form-item>
           <el-form-item>
+            <el-button @click="onSubmit" type="primary">查询</el-button>
             <el-button @click="onExport">导出</el-button>
           </el-form-item>
         </el-form>
@@ -68,11 +69,13 @@ const columns = [
 
 const clickPrev = () => {
   formInline.starttime = moment(formInline.starttime).subtract(1, "y").format("YYYY");
-  tableRef?.value?.resetData();
 };
 
 const clickNext = () => {
   formInline.starttime = moment(formInline.starttime).add(1, "y").format("YYYY");
+};
+
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 

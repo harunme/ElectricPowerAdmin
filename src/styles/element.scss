@@ -203,3 +203,6 @@
   color: var(--el-color-primary);
   cursor: pointer;
 }
+.el-message {
+  z-index: 999999 !important;
+}

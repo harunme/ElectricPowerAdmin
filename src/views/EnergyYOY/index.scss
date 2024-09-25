@@ -6,12 +6,12 @@
       overflow: hidden;
     }
     .chart-box {
-      height: 540px;
+      height: 25%;
       margin-bottom: 8px;
     }
     .table-box {
       width: 100%;
-      height: calc(100% - 590px);
+      height: calc(100% - 25%);
     }
   }
 }

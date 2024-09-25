@@ -69,7 +69,6 @@
               <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="时间范围">
                   <el-date-picker
-                    @change="onTimeChange"
                     v-model="formInline.range"
                     type="daterange"
                     unlink-panels
@@ -77,6 +76,9 @@
                     start-placeholder="开始时间"
                     end-placeholder="结束时间"
                   />
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="onSubmit" type="primary">查询</el-button>
                 </el-form-item>
               </el-form>
               <PaginationTable ref="tableRef" :columns="alarmColumns" :fetch-data="GetSubstationAlarmLogNum">
@@ -220,7 +222,7 @@ const GetMonthAlarmLogNum = async () => {
     };
 };
 
-const onTimeChange = () => {
+const onSubmit = () => {
   tableRef?.value?.resetData();
 };
 

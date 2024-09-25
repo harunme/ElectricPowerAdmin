@@ -305,7 +305,7 @@
 </template>
 
 <script setup lang="tsx" name="SubstationStatus">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import { getContextStationId } from "@/utils";
 import { ECOption } from "@/components/Charts/config";
 import ECharts from "@/components/Charts/echarts.vue";
@@ -340,7 +340,7 @@ const columns = ref<any>([]);
 const scheme = ref<"D" | "M" | "Y">("D");
 const type = ref<"month" | "day">("month");
 const url = ref<"CommunicationStatusNew" | "OverLimitEventNew" | "EnergyLineLoss">("CommunicationStatusNew");
-
+const GetSubstationStatusInterval = ref<any>(null);
 // const pieData = ref<any>([]);
 
 const NowAndLastEnergyTotalValue = ref<any>({
@@ -406,10 +406,14 @@ const SubstationStatus = ref({
 
 onMounted(() => {
   if (getContextStationId()) {
-    GetSubstationStatus();
+    GetSubstationStatusInterval.value = window.setInterval(() => GetSubstationStatus(), 10000);
     GetNowAndLastEnergyTotalValue();
     GetMothJFPG();
   }
+});
+
+onUnmounted(() => {
+  if (GetSubstationStatusInterval.value) window.clearInterval(GetSubstationStatusInterval.value);
 });
 
 const onContextStationChange = () => {
