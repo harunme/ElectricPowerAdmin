@@ -12,10 +12,11 @@
       <div class="table-box">
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="groupid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateGroup(row)">修改</a>
+            <!-- <a class="mini-btn" @click="updateGroup(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateGroup(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteGroup(row.groupid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -143,7 +144,7 @@ const columns: any = [
   { prop: "foreignname", label: "英文名称" },
   { prop: "deptname", label: "组织机构" },
   { prop: "groupexplain", label: "用户组说明" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 162 }
 ];
 
 const fetchData = async (): Promise<any> => {

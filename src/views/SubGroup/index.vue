@@ -9,10 +9,10 @@
       <div class="table-box">
         <PaginationTable ref="tableRef" :columns="columns" row-key="regionid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateRegion(row)">修改</a>
+            <el-button type="primary" size="mini" bg text @click="updateRegion(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteRegion(row.regionid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -101,7 +101,7 @@ const addCircuit = () => {
 
 const columns: any = [
   { prop: "regionname", label: "分组名称" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 172 }
 ];
 
 const fetchData = async (): Promise<any> => {

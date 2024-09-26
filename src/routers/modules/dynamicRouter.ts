@@ -33,11 +33,12 @@ export const initDynamicRouter = async () => {
     }
 
     // 3.添加动态路由
-    authStore.flatMenuListGet.forEach(item => {
+    authStore.flatMenuListGet.forEach((item: any) => {
       console.log("item", item);
-      item.children && delete item.children;
+      // item.children && delete item.children;
       if (item.component && typeof item.component == "string") {
         item.component = modules["/src/views" + item.component + ".vue"];
+        item.meta.reload = true;
         if (item.meta.isFull) {
           router.addRoute(item as unknown as RouteRecordRaw);
         } else {
@@ -53,3 +54,7 @@ export const initDynamicRouter = async () => {
     return Promise.reject(error);
   }
 };
+
+// meta: {
+//   reload: true,
+// },

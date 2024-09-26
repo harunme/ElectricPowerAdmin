@@ -12,8 +12,8 @@
         />
       </CollapseBox>
       <div class="card content-box">
-        <el-tabs @tab-click="tabClick">
-          <el-tab-pane lazy label="按日" class="table-box">
+        <el-tabs @tab-change="tabClick" v-model="activeTab">
+          <el-tab-pane lazy label="按日" name="day" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
                 <el-date-picker v-model="formInline.starttime" type="date" />
@@ -27,11 +27,11 @@
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="dayColumns" :fetch-data="fetchData">
               <template #actions="{ row }">
-                <el-button link size="small" @click="showChart(row)">查看图表</el-button>
+                <el-button ltype="primary" size="mini" bg text @click="showChart(row)">查看图表</el-button>
               </template>
             </PaginationTable>
           </el-tab-pane>
-          <el-tab-pane lazy label="按周" class="table-box">
+          <el-tab-pane lazy label="按周" name="week" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
                 <el-date-picker v-model="formInline.starttime" type="date" />
@@ -44,12 +44,12 @@
               </el-form-item>
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="weekColumns" :fetch-data="fetchData">
-              <template #actions="">
-                <el-button link size="small">查看图表</el-button>
+              <template #actions="{ row }">
+                <el-button ltype="primary" size="mini" bg text @click="showChart(row)">查看图表</el-button>
               </template>
             </PaginationTable>
           </el-tab-pane>
-          <el-tab-pane lazy label="按月" class="table-box">
+          <el-tab-pane lazy label="按月" name="month" class="table-box">
             <el-form :inline="true" :model="formInline" class="table-form-inline">
               <el-form-item label="日期">
                 <el-date-picker v-model="formInline.starttime" type="month" />
@@ -62,16 +62,16 @@
               </el-form-item>
             </el-form>
             <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="monthColumns" :fetch-data="fetchData">
-              <!-- <template #actions="">
-                <el-button link size="small">查看图表</el-button>
-              </template> -->
+              <template #actions="{ row }">
+                <el-button ltype="primary" size="mini" bg text @click="showChart(row)">查看图表</el-button>
+              </template>
             </PaginationTable>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
     <el-dialog v-model="dialogVisible" :title="currentRow?.circuitname" width="500">
-      <span class="chart-text">增长值：{{ currentRow.diffvalue }}kW·h 增长率：{{ currentRow.momvalue }}%</span>
+      <span class="chart-text">增长值：{{ currentRow.diffvalue || "-" }}kW·h 增长率：{{ currentRow.momvalue || "-" }}%</span>
       <div class="chart-box">
         <ECharts v-if="option !== null" :option="option" />
       </div>
@@ -98,6 +98,7 @@ const currentRow = ref<any>(null);
 const option = ref<any>(null);
 const circuit = ref<any>(null);
 const circuitInfoTreeRef = ref<any>(null);
+const activeTab = ref<"day" | "week" | "month">("day");
 
 const formInline = reactive<{
   starttime: string;
@@ -112,8 +113,8 @@ const dayColumns = [
   { prop: "curvalue", label: "当日用电 / kW·h" },
   { prop: "beforevalue", label: "上日用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" }
-  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" },
+  { prop: "customDom", slotName: "actions", label: "操作", width: 120 }
 ];
 
 const weekColumns = [
@@ -121,8 +122,8 @@ const weekColumns = [
   { prop: "curvalue", label: "当周用电 / kW·h" },
   { prop: "beforevalue", label: "上周用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" }
-  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" },
+  { prop: "customDom", slotName: "actions", label: "操作", width: 120 }
 ];
 
 const monthColumns = [
@@ -130,12 +131,13 @@ const monthColumns = [
   { prop: "curvalue", label: "当月用电 / kW·h" },
   { prop: "beforevalue", label: "上月用电 / kW·h" },
   { prop: "diffvalue", label: "增加值" },
-  { prop: "momvalue", label: "环比(%)" }
-  // { prop: "customDom", slotName: "actions", label: "操作", width: 80 }
+  { prop: "momvalue", label: "环比(%)" },
+  { prop: "customDom", slotName: "actions", label: "操作", width: 120 }
 ];
 
 const showChart = value => {
   dialogVisible.value = true;
+  currentRow.value = value;
   // row.value = value;
   let curvalueText, beforevalueText;
   if (formInline.scheme === "D") {
@@ -209,6 +211,7 @@ const fetchData = async (): Promise<any> => {
       scheme: formInline.scheme
     };
     const { data } = await energyReportMOM(params);
+    console.log("datadatadata", data);
     if (!data) {
       resolve({ list: [] });
     } else {
@@ -250,7 +253,10 @@ const onCircuitInfoTreeChange = (circuitids: string[]) => {
 };
 
 const tabClick = () => {
-  tableRef?.value?.resetData();
+  if (activeTab.value === "day") formInline.scheme = "D";
+  if (activeTab.value === "week") formInline.scheme = "W";
+  if (activeTab.value === "month") formInline.scheme = "M";
+  window.setTimeout(() => tableRef?.value?.resetData());
 };
 
 const onSubmit = () => {

@@ -52,7 +52,7 @@
           </div>
           <PaginationTable :row-dbclick="row => onSelect(row)" ref="tableRef" :columns="columns" :fetch-data="fetchData">
             <template #actions="{ row }">
-              <el-button type="primary" size="small" @click="onSelect(row)">选择</el-button>
+              <el-button type="primary" size="mini" bg text @click="onSelect(row)">选择</el-button>
             </template>
           </PaginationTable>
         </el-main>

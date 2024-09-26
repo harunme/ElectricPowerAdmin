@@ -40,7 +40,29 @@
           <el-button @click="onExport">导出</el-button>
         </el-form-item>
       </el-form>
-      <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData"> </PaginationTable>
+      <PaginationTable ref="tableRef" :columns="columns" :fetch-data="fetchData">
+        <template #actions="{ row }">
+          <el-button type="primary" size="mini" bg text @click="showAlarmDetail(row)">查看</el-button>
+        </template>
+      </PaginationTable>
+      <el-dialog v-model="dialogDetailVisible" title="报警详情" width="760">
+        <el-descriptions :column="2" :border="true" style="padding: 0 24px 24px">
+          <el-descriptions-item label="变配电站名称"> {{ alarmDetail.stationname }} </el-descriptions-item>
+          <el-descriptions-item label="设备名称"> {{ alarmDetail.metername }} </el-descriptions-item>
+          <el-descriptions-item label="设备编号"> {{ alarmDetail.meter }} </el-descriptions-item>
+          <el-descriptions-item label="报警类型"> {{ alarmDetail.messinfotypetext }} </el-descriptions-item>
+          <!-- <el-descriptions-item label="消息码"> 18100000000 </el-descriptions-item> -->
+          <el-descriptions-item label="发生时间"> {{ alarmDetail.alarttime }} </el-descriptions-item>
+          <el-descriptions-item label="报警详情"> {{ alarmDetail.eventdescription }} </el-descriptions-item>
+          <el-descriptions-item label="参数编号"> {{ alarmDetail.eventname0 }} </el-descriptions-item>
+          <el-descriptions-item label="参数名称"> {{ alarmDetail.paramname }} </el-descriptions-item>
+          <el-descriptions-item label="当前值"> {{ alarmDetail.value }} </el-descriptions-item>
+          <el-descriptions-item label="设定值"> {{ alarmDetail.limitvalue }} </el-descriptions-item>
+          <el-descriptions-item label="确认状态"> {{ alarmDetail.confirmstatus ? "已确认" : "未确认" }} </el-descriptions-item>
+          <el-descriptions-item label="确认人"> {{ alarmDetail.confirmer }} </el-descriptions-item>
+          <el-descriptions-item label="确认时间"> {{ alarmDetail.mconfirmtime }} </el-descriptions-item>
+        </el-descriptions>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -59,6 +81,8 @@ const tableRef = ref<any>(null);
 
 const end = new Date();
 const start = new Date();
+const dialogDetailVisible = ref(false);
+const alarmDetail = ref<any>({});
 start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
 
 const formInline = reactive({
@@ -71,6 +95,11 @@ const formInline = reactive({
 
 const onSubmit = () => {
   tableRef?.value?.resetData();
+};
+
+const showAlarmDetail = alarm => {
+  dialogDetailVisible.value = true;
+  alarmDetail.value = alarm;
 };
 
 const onExport = async () => {
@@ -120,7 +149,8 @@ const columns = [
   { prop: "messinfotypetext", label: "事件类型", width: 80 },
   { prop: "alarmtime", label: "发生时间", width: 200 },
   { prop: "messinfoleveltext", label: "报警等级", width: 80 },
-  { prop: "eventdescription", label: "详情" }
+  { prop: "eventdescription", label: "详情" },
+  { prop: "customDom", slotName: "actions", label: "操作", width: 120 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {

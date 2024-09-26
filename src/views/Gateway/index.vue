@@ -19,10 +19,10 @@
             <span>{{ row.channelname ? `${row.channelname}(${row.channelid})` : "-" }}</span>
           </template>
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <el-button type="primary" size="mini" bg text @click="updateTransformer(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteGateway(row.name)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -153,7 +153,7 @@ const columns: any = [
   { prop: "customDom", slotName: "comdev", label: "通道性质" },
   { prop: "devname1", label: "通道地址" },
   { prop: "customDom", slotName: "useflag", label: "使用状态" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 152 }
 ];
 
 const fetchData = async (): Promise<any> => {

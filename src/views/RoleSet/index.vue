@@ -12,11 +12,13 @@
       <div class="table-box">
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="roleid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="setRoleMenu(row)">设置菜单权限</a>
-            <a class="mini-btn" @click="updateUserRole(row)">修改</a>
+            <!-- <a class="mini-btn" @click="setRoleMenu(row)">设置菜单权限</a> -->
+            <el-button type="primary" size="mini" bg text @click="setRoleMenu(row)">设置菜单权限</el-button>
+            <!-- <a class="mini-btn" @click="updateUserRole(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateUserRole(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteUserRole(row.roleid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -164,7 +166,7 @@ const columns: any = [
   { prop: "rolename", label: "角色名称" },
   { prop: "deptname", label: "组织机构" },
   { prop: "roledesc", label: "角色说明" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 178 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 268 }
 ];
 
 const fetchData = async (): Promise<any> => {

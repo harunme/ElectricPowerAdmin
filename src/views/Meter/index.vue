@@ -26,10 +26,11 @@
             <span>{{ row.channelname ? `${row.channelname}(${row.channelid})` : "-" }}</span>
           </template>
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <!-- <a class="mini-btn" @click="updateTransformer(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateMeter(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteMeter(row.metercode)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -214,7 +215,7 @@ const columns: any = [
   { prop: "customDom", slotName: "metertype", label: "仪表类型" },
   { prop: "meteraddr", label: "仪表地址" },
   { prop: "customDom", slotName: "useflag", label: "仪表状态" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 152 }
 ];
 
 const fetchData = async ({ pageSize, pageNum }: ReqPage): Promise<any> => {
@@ -289,7 +290,7 @@ const submitStatusForm = async (formEl: FormInstance | undefined) => {
   });
 };
 
-const updateTransformer = async row => {
+const updateMeter = async row => {
   isEdit.value = true;
   formVisible.value = true;
   form.value = { ...row };

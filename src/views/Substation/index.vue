@@ -56,10 +56,11 @@
             <span>{{ row.voltageoftrans }}kV</span>
           </template>
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateSubstation(row)">修改</a>
+            <!-- <a class="mini-btn" @click="updateSubstation(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateSubstation(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteSubstation(row.stationid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -459,7 +460,7 @@ const columns = [
   { prop: "transformernum", label: "变压器数量", width: 132 },
   { prop: "head", label: "负责人", width: 132 },
   { prop: "telephone", label: "负责人手机号", width: 132 },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 162 }
 ];
 
 const fetchData = async ({ pageNum, pageSize }): Promise<any> => {

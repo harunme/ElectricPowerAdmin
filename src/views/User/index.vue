@@ -44,11 +44,13 @@
         </el-form>
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" :columns="columns" row-key="userid" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="setRole(row)">权限设置</a>
-            <a class="mini-btn" @click="updateUserAction(row)">修改</a>
+            <!-- <a class="mini-btn" @click="setRole(row)">权限设置</a> -->
+            <el-button type="primary" size="mini" bg text @click="setRole(row)">权限设置</el-button>
+            <!-- <a class="mini-btn" @click="updateUserAction(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateUserAction(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteUserAction(row.userid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -304,7 +306,7 @@ const columns: any = [
   { prop: "email", label: "邮箱" },
   { prop: "title", label: "备注" },
   { prop: "customDom", slotName: "status", label: "用户状态", width: 172 },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 172 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 242 }
 ];
 
 const rules = reactive<FormRules<Org.ReqInsertDeptInfo>>({

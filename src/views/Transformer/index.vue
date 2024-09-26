@@ -10,10 +10,11 @@
       <div class="table-box">
         <PaginationTable :fetch-on-mounted="false" ref="tableRef" :columns="columns" :fetch-data="fetchData">
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateTransformer(row)">修改</a>
+            <!-- <a class="mini-btn" @click="updateTransformer(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateTransformer(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteTransformer(row.transformerid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -133,7 +134,7 @@ const columns: any = [
   { prop: "voltagestep", label: "额定容量(kVA)" },
   { prop: "current", label: "额定电流(A)" },
   { prop: "meter", label: "关联仪表" },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 172 }
 ];
 
 const rules = reactive<FormRules<Meter.ReqInsertTransformerInfo>>({

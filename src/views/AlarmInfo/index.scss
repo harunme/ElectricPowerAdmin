@@ -8,6 +8,39 @@
     border: none;
   }
   .main-box {
+    .alarm-detail {
+      padding: 12px 32px 42px;
+      // border: 1px solid;
+      background-image: url("/public/images/rightTopRed.png");
+      background-repeat: no-repeat;
+      background-position: 95% 30%;
+      :deep(.el-descriptions__body) {
+        background-color: transparent;
+      }
+      .image__inner {
+        display: inline-block;
+        width: 10px;
+        height: 12px;
+        margin-right: 2px;
+      }
+      .quick-action {
+        margin-top: 12px;
+
+        // border: 1px solid;
+        > span {
+          display: inline-block;
+          width: 100%;
+          padding: 0 0 10px 5px;
+          font-size: 16px;
+          color: #000000;
+        }
+        > div {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
     .left-box {
       padding: 0;
       .all-alarms {

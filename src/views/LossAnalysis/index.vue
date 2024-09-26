@@ -22,10 +22,6 @@
       </el-form>
       <div class="table-box">
         <PaginationTable ref="tableRef" :fetch-on-mounted="false" row-key="circuitid" :columns="columns" :fetch-data="fetchData">
-          <template #actions="">
-            <el-button type="text" size="mini">修改</el-button>
-            <el-button type="text" size="mini">删除</el-button>
-          </template>
         </PaginationTable>
       </div>
     </div>

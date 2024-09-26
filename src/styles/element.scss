@@ -206,3 +206,12 @@
 .el-message {
   z-index: 999999 !important;
 }
+.el-table__empty-block {
+  display: block;
+}
+.el-table--border .el-table__inner-wrapper::after,
+.el-table--border::after,
+.el-table--border::before,
+.el-table__inner-wrapper::before {
+  background-color: transparent;
+}

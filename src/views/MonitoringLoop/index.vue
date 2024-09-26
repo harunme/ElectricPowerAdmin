@@ -13,10 +13,11 @@
             <span>{{ row.isincoming ? "是" : "否" }}</span>
           </template>
           <template #actions="{ row }">
-            <a class="mini-btn" @click="updateCircuit(row)">修改</a>
+            <!-- <a class="mini-btn" @click="updateCircuit(row)">修改</a> -->
+            <el-button type="primary" size="mini" bg text @click="updateCircuit(row)">修改</el-button>
             <el-popconfirm title="确认删除?" @confirm="deleteCircuit(row.circuitid)">
               <template #reference>
-                <a class="mini-btn">删除</a>
+                <el-button type="danger" size="mini" bg text>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -169,7 +170,7 @@ const columns: any = [
   { prop: "customDom", slotName: "isincoming", label: "是否进线" },
   { prop: "meter", label: "仪表编号" },
   { prop: "customDom", slotName: "isuse", label: "回路状态", width: 172 },
-  { prop: "customDom", slotName: "actions", label: "操作", width: 132 }
+  { prop: "customDom", slotName: "actions", label: "操作", width: 162 }
 ];
 
 const fetchData = async (): Promise<any> => {
