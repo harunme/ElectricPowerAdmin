@@ -2,7 +2,7 @@
   <div class="SubstationStatus">
     <StationContext :disable-all="true" :on-change="onContextStationChange" />
     <div class="dataVisualize-box">
-      <el-row>
+      <el-row style="height: 38vh" :gutter="16">
         <el-col :span="8">
           <div class="box">
             <div class="title">概况</div>
@@ -10,22 +10,29 @@
               <el-row>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview1" />
-                    <h5>电压等级</h5>
+                    <div>
+                      <img :src="overview1" />
+                      <h5>电压等级</h5>
+                    </div>
+
                     <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.voltagelevel }}kV</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview2" />
-                    <h5>变压器台数</h5>
+                    <div>
+                      <img :src="overview2" />
+                      <h5>变压器台数</h5>
+                    </div>
                     <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.transformernum }}台</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview3" />
-                    <h5>负载率</h5>
+                    <div>
+                      <img :src="overview3" />
+                      <h5>负载率</h5>
+                    </div>
                     <p>20.57%</p>
                   </div>
                 </el-col>
@@ -33,22 +40,28 @@
               <el-row>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview4" />
-                    <h5>额定容量</h5>
+                    <div>
+                      <img :src="overview4" />
+                      <h5>额定容量</h5>
+                    </div>
                     <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.installedcapacity }}kVA</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview5" />
-                    <h5>最大需量</h5>
+                    <div>
+                      <img :src="overview5" />
+                      <h5>最大需量</h5>
+                    </div>
                     <p>{{ SubstationStatus.SubStationStatus.substationstatus.substationinfo.voltagestep }} kW</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
                   <div>
-                    <img :src="overview6" />
-                    <h5>测控装置</h5>
+                    <div>
+                      <img :src="overview6" />
+                      <h5>测控装置</h5>
+                    </div>
                     <p>{{ SubstationStatus.SubStationStatus.substationstatus.subMeterNums }} 个</p>
                   </div>
                 </el-col>
@@ -218,7 +231,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row style="height: calc(62vh - 152px)" :gutter="16">
         <el-col :span="16">
           <div class="box">
             <div class="title">
