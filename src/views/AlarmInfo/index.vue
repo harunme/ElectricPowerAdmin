@@ -147,16 +147,6 @@
                   </template>
                   {{ alarmDetail.messinfotypetext }}
                 </el-descriptions-item>
-                <!-- <el-descriptions-item>
-                  <template #label>
-                    <img
-                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAMCAYAAAC0qUeeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAC3SURBVHgBlZDLDYJQEEXvG2jACsQOXgm2gMQPK+1AO9AOtANhxccAsQIpAUuwAwqQGYkryDNBzm6Sk7l3RlERn1mgMYTgDmRRiX9oPcIIRsl2d7DyZNso9UQjDiyuITTFYh2am4tUN8IzuKsKwhquX0JkgjTVhkzMe3j+qZfrbS6g986QmSVEFh+6LmXJEZYdmDWWbSykxi2aQ1GFInIY/PrW+nVgWyNAn9488nUilcrjx5AoUNcP/0BDWvaXyZkAAAAASUVORK5CYII="
-                      class="image__inner"
-                    />
-                    消息码
-                  </template>
-                  {{ alarmDetail.messinfotypetext }}
-                </el-descriptions-item> -->
                 <el-descriptions-item>
                   <template #label>
                     <img
@@ -329,7 +319,6 @@ const alarmDetail = ref<any>({});
 const dialogDetailVisible = ref(false);
 const option = ref<any>(null);
 const activeTab = ref<"all" | "unconfirm">("all");
-// const activeAlarmTypeTab = ref<"all" | "1" | "2" | "3">("all");
 const total = ref<number>(0);
 const pieOption = ref<any>(null);
 

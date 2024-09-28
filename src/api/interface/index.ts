@@ -1143,8 +1143,8 @@ export namespace Main {
         };
         FTempFHumidity: {
           stationid: string;
-          fTemp: number;
-          fHumi: number;
+          fETemp: number;
+          fEHumi: number;
           collecttime: string;
         };
       };

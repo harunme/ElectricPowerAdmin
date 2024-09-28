@@ -89,7 +89,7 @@
                   />
                   <h5>无功功率</h5>
                   <h4>
-                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FPFQ.fQ }} </span>kW
+                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FPFQ.fQ }} </span>Kvar
                   </h4>
                 </el-col>
                 <el-col :span="6">
@@ -98,7 +98,7 @@
                   />
                   <h5>环境温度</h5>
                   <h4>
-                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fTemp }} </span>℃
+                    <span> {{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fETemp }} </span>℃
                   </h4>
                 </el-col>
                 <el-col :span="6">
@@ -107,7 +107,7 @@
                   />
                   <h5>环境湿度</h5>
                   <h4>
-                    <span>{{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fHumi }} </span>%
+                    <span>{{ SubstationStatus.SubStationStatus.RunningStatus.FTempFHumidity.fEHumi }} </span>%
                   </h4>
                 </el-col>
               </el-row>
@@ -237,8 +237,8 @@
             <div class="title">
               <span>当日逐时用电曲线</span>
               <el-radio-group v-model="type" @input="changeType">
-                <el-radio-button label="month">分时段</el-radio-button>
-                <el-radio-button label="day">总用电</el-radio-button>
+                <el-radio-button label="分时段" value="month"></el-radio-button>
+                <el-radio-button label="总用电" value="day"></el-radio-button>
               </el-radio-group>
             </div>
             <div class="chart-box" v-if="type === 'month'">
@@ -253,7 +253,7 @@
               <el-empty v-else description="暂无数据" />
             </div>
             <div class="chart-box" v-else>
-              <div class="line" style="width: 100%">
+              <div class="line" style=" display: flex; align-items: center;width: 100%">
                 <ECharts v-if="totalOption !== null" :option="totalOption" />
                 <el-empty v-else description="暂无数据" />
               </div>
@@ -508,19 +508,16 @@ const GetNowAndLastEnergyTotalValue = async (scheme: "D" | "M" | "Y" = "D") => {
   NowAndLastEnergyTotalValue.value = data;
 };
 
-const GetMothJFPG = async (type = "month") => {
+const GetMothJFPG = async () => {
   const { data }: any = await getMothJFPG({
     stationid: getContextStationId()
   });
+
   let legend = [] as any;
   let xAxisData = [] as any;
   let series = [] as any;
-  if (!data) {
-    option.value = null;
-    pieOption.value = null;
-    return;
-  }
-  if (type === "month") {
+
+  if (type.value === "month") {
     const NameMap = {
       fEpijsum: "尖总电量",
       fEpifsum: "峰总电量",
@@ -584,31 +581,35 @@ const GetMothJFPG = async (type = "month") => {
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data ? data.Epijlist.map(({ fEpij }) => Number(fEpij)) : []
+        data: data ? (data.Epijlist || []).map(({ fEpij }) => Number(fEpij)) : []
       },
       {
         name: "正向有功峰电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data ? data.Epiflist.map(({ fEpif }) => Number(fEpif)) : []
+        data: data ? (data.Epiflist || []).map(({ fEpif }) => Number(fEpif)) : []
       },
       {
         name: "正向有功平电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data ? data.Epiplist.map(({ fEpip }) => Number(fEpip)) : []
+        data: data ? (data.Epiplist || []).map(({ fEpip }) => Number(fEpip)) : []
       },
       {
         name: "正向有功谷电量",
         type: "line",
         smooth: 0.6,
         stack: "Total",
-        data: data ? data.Epiglist.map(({ fEpig }) => Number(fEpig)) : []
+        data: data ? (data.Epiglist || []).map(({ fEpig }) => Number(fEpig)) : []
       }
     ];
-    xAxisData = data ? data.Epijlist.map(({ collecttime }) => moment(collecttime).format("MM-DD")) : [];
+    xAxisData = data
+      ? (data.Epijlist || data.Epiglist || data.Epiplist || data.Epiflist).map(({ collecttime }) =>
+          moment(collecttime).format("MM-DD")
+        )
+      : [];
     legend = ["正向有功尖电量", "正向有功峰电量", "正向有功平电量", "正向有功谷电量"];
     option.value = {
       tooltip: {
@@ -635,7 +636,7 @@ const GetMothJFPG = async (type = "month") => {
       series
     };
   }
-  if (type === "day") {
+  if (type.value === "day") {
     series = [
       {
         name: "今日",
@@ -662,6 +663,7 @@ const GetMothJFPG = async (type = "month") => {
         data: legend
       },
       grid: {
+        top: "8%",
         left: "3%",
         right: "4%",
         bottom: "3%",
@@ -689,15 +691,15 @@ const GetMothJFPG = async (type = "month") => {
       series
     };
   }
-
-  console.log("GetMothJFPG", data);
 };
 
 const changeScheme = e => {
   GetNowAndLastEnergyTotalValue(e.target.value);
 };
-const changeType = e => {
-  GetMothJFPG(e.target.value);
+const changeType = () => {
+  // type.value = e.target.value;
+
+  GetMothJFPG();
 };
 // changeType
 </script>

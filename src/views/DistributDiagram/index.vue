@@ -9,7 +9,13 @@
       <el-icon v-if="isFullScreen" class="close-icon" @click="isFullScreen = false">
         <CloseBold />
       </el-icon>
-      <object id="demo-tiger" type="image/svg+xml" @load="onSvgLoaded" data="/配电图.svg" style="width: 100%; height: 100%">
+      <object
+        id="demo-tiger"
+        type="image/svg+xml"
+        @load="onSvgLoaded"
+        data="http://111.231.24.91/ems-cloud/svg/appindex.svg"
+        style="width: 100%; height: 100%"
+      >
         Your browser does not support SVG
       </object>
     </div>

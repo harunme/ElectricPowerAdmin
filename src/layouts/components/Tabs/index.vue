@@ -225,16 +225,14 @@ const closeMultipleTab = () => {
 };
 
 const GetUnConfirmedEventsByCache = async () => {
-  const { numsByLevel }: any = await getUnConfirmedEventsByCache();
+  const { numsByLevel, lastestUnConfirmedEvent }: any = await getUnConfirmedEventsByCache();
   const info = {};
-  let count = 0;
   numsByLevel?.forEach(({ unconfirmcount, eventtype }) => {
     info[eventtype] = unconfirmcount;
-    count += unconfirmcount;
   });
-  console.log("countcount", count);
-  if (count) {
+  if (lastestUnConfirmedEvent.length) {
     playAudio();
+    // lastestUnConfirmedEvent.forEach(() => {});
   } else {
     pauseAudio();
   }

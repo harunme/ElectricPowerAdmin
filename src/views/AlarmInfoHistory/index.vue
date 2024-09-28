@@ -51,7 +51,6 @@
           <el-descriptions-item label="设备名称"> {{ alarmDetail.metername }} </el-descriptions-item>
           <el-descriptions-item label="设备编号"> {{ alarmDetail.meter }} </el-descriptions-item>
           <el-descriptions-item label="报警类型"> {{ alarmDetail.messinfotypetext }} </el-descriptions-item>
-          <!-- <el-descriptions-item label="消息码"> 18100000000 </el-descriptions-item> -->
           <el-descriptions-item label="发生时间"> {{ alarmDetail.alarttime }} </el-descriptions-item>
           <el-descriptions-item label="报警详情"> {{ alarmDetail.eventdescription }} </el-descriptions-item>
           <el-descriptions-item label="参数编号"> {{ alarmDetail.eventname0 }} </el-descriptions-item>
@@ -143,10 +142,10 @@ const onExport = async () => {
 };
 
 const columns = [
-  { prop: "stationname", label: "变配电站名称" },
-  { prop: "metername", label: "设备名称" },
-  { prop: "alarmtype", label: "报警类型分类", width: 120 },
-  { prop: "messinfotypetext", label: "事件类型", width: 80 },
+  { prop: "stationname", label: "变配电站名称", width: 180 },
+  { prop: "metername", label: "设备名称", width: 180 },
+  { prop: "messinfotypetext", label: "报警类型分类", width: 120 },
+  { prop: "alarmtype", label: "事件类型", width: 120 },
   { prop: "alarmtime", label: "发生时间", width: 200 },
   { prop: "messinfoleveltext", label: "报警等级", width: 80 },
   { prop: "eventdescription", label: "详情" },
