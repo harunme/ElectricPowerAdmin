@@ -163,7 +163,8 @@ const GetSubstationAlarmLogNum = async ({ pageSize, pageNum }: ReqPage): Promise
       starttime: moment(formInline.range[0]).format("YYYY-MM-DD"),
       endtime: moment(formInline.range[1]).format("YYYY-MM-DD")
     });
-    resolve({ list: data.list, total: data.total });
+    if (data) resolve({ list: data.list, total: data.total });
+    else resolve({ list: [], total: 0 });
   });
 };
 
@@ -193,7 +194,7 @@ const GetDMYAlarmCompare = async () => {
 };
 
 const GetMonthAlarmLogNum = async () => {
-  const { data } = await getMonthAlarmLogNum({
+  const { data = [] } = await getMonthAlarmLogNum({
     starttime: moment(formInline.starttime).format("YYYY-MM")
   });
 
