@@ -527,8 +527,10 @@ const submitPriceForm = async (formEl: FormInstance | undefined) => {
     epigtime,
     epiptime
   });
-  if (code === 1) ElMessage.success({ message: msg });
-  else ElMessage.error({ message: msg });
+  if (code === 1) {
+    ElMessage.success({ message: msg });
+    tableRef?.value?.resetData();
+  } else ElMessage.error({ message: msg });
   priceSetVisible.value = false;
 };
 

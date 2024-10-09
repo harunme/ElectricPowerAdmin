@@ -66,7 +66,21 @@
         </el-popover>
       </div>
     </div>
-    <audio ref="audioRef" src="/warning.mp3" loop></audio>
+    <audio ref="audioRef" src="/warning.mp3" loop allow="autoplay"></audio>
+    <div class="alarm-board" @click="alarmBoxVisible = !alarmBoxVisible">
+      <el-icon><Operation /></el-icon>
+    </div>
+    <div v-if="alarmBoxVisible" class="bottom-alarm">
+      <span v-if="accidentAlarm.length === 0">暂无数据</span>
+      <div @click="toAlarmInfo" v-else :key="item.alarmtime" v-for="item in accidentAlarm">
+        <span>事故</span>
+        <div>
+          <span>{{ item.alarmtime }}</span>
+          <span>{{ `${item.stationname}的${item.circuitname}发生了${item.alarmtype}` }}</span>
+          <span>{{ item.eventdescription }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,14 +88,14 @@
 import { LOGIN_URL } from "@/config";
 import Sortable from "sortablejs";
 import { localClear } from "@/utils";
-// import router from "@/routers";
+import { Operation } from "@element-plus/icons-vue";
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useAuthStore } from "@/stores/modules/auth";
 import { TabsPaneContext, TabPaneName } from "element-plus";
-import { ElMessageBox, ElMessage } from "element-plus";
+import { ElMessageBox, ElMessage, ElNotification } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 import { getUnConfirmedEventsByCache } from "@/api/modules/main";
 import { logout as logoutApi } from "@/api/modules/login";
@@ -97,6 +111,9 @@ const tabsMenuValue = ref(route.fullPath);
 const interval = ref<any>(null);
 const audioRef = ref<any>(null);
 const alarmInfo = ref<any>({});
+const accidentAlarm = ref<any>([]);
+const alarmBoxVisible = ref<boolean>(false);
+
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsIcon = computed(() => globalStore.tabsIcon);
 const rightMenu = ref({
@@ -225,14 +242,31 @@ const closeMultipleTab = () => {
 };
 
 const GetUnConfirmedEventsByCache = async () => {
-  const { numsByLevel, lastestUnConfirmedEvent }: any = await getUnConfirmedEventsByCache();
+  const { numsByLevel, lastestUnConfirmedEvent = [] }: any = await getUnConfirmedEventsByCache();
+  accidentAlarm.value = [];
+
   const info = {};
   numsByLevel?.forEach(({ unconfirmcount, eventtype }) => {
     info[eventtype] = unconfirmcount;
   });
   if (lastestUnConfirmedEvent.length) {
     playAudio();
-    // lastestUnConfirmedEvent.forEach(() => {});
+    window.setTimeout(() => pauseAudio(), 5000);
+    lastestUnConfirmedEvent.forEach(
+      ({ messinfoleveltext, eventdescription, alarmtime, circuitname, alarmtype, stationname, messinfolevel }) => {
+        if (messinfolevel === 3) {
+          alarmBoxVisible.value = true;
+          accidentAlarm.value = [...accidentAlarm.value, { alarmtime, stationname, circuitname, alarmtype, eventdescription }];
+        } else {
+          ElNotification({
+            title: messinfoleveltext,
+            message: `${stationname}的${circuitname}发生了 ${alarmtype}`,
+            type: "warning",
+            duration: 5000
+          });
+        }
+      }
+    );
   } else {
     pauseAudio();
   }

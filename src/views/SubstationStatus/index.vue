@@ -33,7 +33,7 @@
                       <img :src="overview3" />
                       <h5>负载率</h5>
                     </div>
-                    <p>20.57%</p>
+                    <p>{{ SubstationStatus.SubStationStatus.substationstatus.loadfactor }}%</p>
                   </div>
                 </el-col>
               </el-row>
@@ -253,7 +253,7 @@
               <el-empty v-else description="暂无数据" />
             </div>
             <div class="chart-box" v-else>
-              <div class="line" style=" display: flex; align-items: center;width: 100%">
+              <div class="line" style="display: flex; align-items: center; width: 100%">
                 <ECharts v-if="totalOption !== null" :option="totalOption" />
                 <el-empty v-else description="暂无数据" />
               </div>
@@ -273,7 +273,7 @@
             <div class="power-overview">
               <div class="energy">
                 <div>
-                  <span>今年用电</span>
+                  <span>{{ TimeMap[scheme][0] }}用电</span>
                 </div>
                 <div>
                   <span>{{ NowAndLastEnergyTotalValue.NowTotalValue.sumvalue }} kW·h</span>
@@ -281,7 +281,7 @@
               </div>
               <div class="energy">
                 <div>
-                  <span>昨天同期</span>
+                  <span>{{ TimeMap[scheme][1] }}同期</span>
                 </div>
                 <div>
                   <span>{{ NowAndLastEnergyTotalValue.LastTotalValue.sumvalue }} kW·h</span>
@@ -297,11 +297,11 @@
               </div>
               <div class="energytime">
                 <div>
-                  <p class="top">10:30-10:45</p>
+                  <p class="top">{{ SubstationStatus.EHCAndES.EnergyStatus.MaxValueTimes }}</p>
                   <p class="last">最大用电时间</p>
                 </div>
                 <div>
-                  <p class="top">3113.48kW</p>
+                  <p class="top">{{ SubstationStatus.EHCAndES.EnergyStatus.MaxValueInfoOfOneDay }}kW</p>
                   <p class="last">该时段平均功率</p>
                 </div>
               </div>
@@ -342,6 +342,13 @@ import overview6 from "./images/overview-6.png";
 import { useRouter } from "vue-router";
 
 import { getSubstationStatus } from "@/api/modules/main";
+
+const TimeMap = {
+  D: ["当日", "昨日"],
+  M: ["当月", "上月"],
+  Y: ["今年", "去年"]
+};
+
 const router = useRouter();
 
 const dialogVisible = ref<boolean>(false);
@@ -396,6 +403,10 @@ const SubstationStatus = ref({
     }
   },
   EHCAndES: {
+    EnergyStatus: {
+      MaxValueTimes: "-",
+      MaxValueInfoOfOneDay: "-"
+    },
     EnergyHourCurve: {
       resToday: [
         {
@@ -420,10 +431,13 @@ const SubstationStatus = ref({
 
 onMounted(() => {
   if (getContextStationId()) {
-    GetSubstationStatusInterval.value = window.setInterval(() => {
-      GetSubstationStatus();
-      GetMothJFPG();
-    }, 10000);
+    GetSubstationStatusInterval.value = window.setInterval(
+      () => {
+        GetSubstationStatus();
+        GetMothJFPG();
+      },
+      1000 * 60 * 3
+    );
     GetNowAndLastEnergyTotalValue();
   }
 });
@@ -695,6 +709,7 @@ const GetMothJFPG = async () => {
 
 const changeScheme = e => {
   GetNowAndLastEnergyTotalValue(e.target.value);
+  GetSubstationStatus();
 };
 const changeType = () => {
   // type.value = e.target.value;

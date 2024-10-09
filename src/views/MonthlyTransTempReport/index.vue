@@ -80,6 +80,7 @@ const onSubmit = () => {
 
 const fetchData = async (): Promise<any> => {
   if (transformer?.value?.length === 0) return ElMessage.info({ message: "请至少选择一个变压器" });
+  columns.value = [];
   return new Promise(async resolve => {
     const { data }: any = await transformerTempMonthReport(
       transformer.value.map(({ stationid, transformerid }) => ({

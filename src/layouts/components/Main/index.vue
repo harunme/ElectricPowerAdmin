@@ -11,7 +11,6 @@
         </transition>
       </router-view>
     </el-main>
-    <div style="position: fixed; right: 15px; bottom: 170px; width: 15px; height: 15px; border: 1px solid"></div>
   </div>
 
   <!-- <el-footer v-show="footer">

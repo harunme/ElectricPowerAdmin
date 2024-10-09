@@ -59,6 +59,11 @@ class RequestHttp {
 
         const userStore = useUserStore();
         config.loading && tryHideFullScreenLoading();
+
+        if (data.token) {
+          userStore.setToken(data.token);
+          console.log("update token");
+        }
         // 登录失效
         if (data.code == ResultEnum.OVERDUE || data.code === ResultEnum.TOKENERROR) {
           userStore.setToken("");
