@@ -93,10 +93,7 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   }
 };
 
-const columns = ref([
-  { prop: "fCircuitname", label: "回路名称" },
-  { prop: "paramsName", label: "参数名称" }
-]);
+const columns = ref<any>([]);
 
 const clickPrev = () => {
   formInline.starttime = moment(formInline.starttime).subtract(1, "d").format("YYYY-MM-DD");
@@ -108,7 +105,10 @@ const clickNext = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    columns.value = [];
+    columns.value = [
+      { prop: "fCircuitname", label: "回路名称" },
+      { prop: "paramsName", label: "参数名称" }
+    ];
     const { data }: any = await ElectricReportNew({
       stationid: getContextStationId(),
       circuitids: circuit.value,

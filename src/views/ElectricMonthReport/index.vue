@@ -94,10 +94,7 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
   }
 };
 
-const columns = ref([
-  { prop: "fCircuitname", label: "回路名称" },
-  { prop: "paramsName", label: "参数名称" }
-]);
+const columns = ref<any>([]);
 
 const loading = ref(true);
 
@@ -119,7 +116,10 @@ const changeVoltageType = () => {
 
 const fetchData = async (): Promise<any> => {
   return new Promise(async resolve => {
-    columns.value = [];
+    columns.value = [
+      { prop: "fCircuitname", label: "回路名称" },
+      { prop: "paramsName", label: "参数名称" }
+    ];
     loading.value = true;
     const { data }: any = await ElectricMonthReport({
       stationid: getContextStationId(),
